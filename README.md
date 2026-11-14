@@ -10,6 +10,7 @@ Standalone version of the Aspire seller calculator: profit calculator, products,
 - `config.js` : Firebase web config. `null` = demo mode (data only in the browser)
 - `firestore.rules` : database rules, each user can only touch `users/{uid}/...`
 - `manifest.webmanifest`, `icons/` : lets the phone install it like an app
+- `sw.js` : service worker, keeps the app opening without internet (network first)
 
 ## Going live (one time)
 1. Firebase console: create a project, add a Web app, copy its config into `config.js`.

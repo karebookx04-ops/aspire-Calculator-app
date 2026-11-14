@@ -340,8 +340,13 @@ img{max-width:100%}
     setInterval(function(){ if(!synced) return; var cur=localStorage.getItem(STORE); if(cur&&cur!==last){ last=cur; r.set({json:cur,at:new Date().toISOString()}).catch(function(){}); } },2500);
   }
 
+  if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load",function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
   if(!CFG){
-    document.addEventListener("DOMContentLoaded",function(){ $("demo-note").hidden=false; });
+    document.addEventListener("DOMContentLoaded",function(){
+      $("demo-note").hidden=false;
+      var p=document.querySelector("#v-khata .view-head p"); if(p) p.textContent=p.textContent.replace("Online save hota hai, kisi bhi device se khulega.","Demo mode mein ye sirf is browser mein save hota hai. Backup file download karke rakh lo.");
+      var q=document.querySelector("#v-bill .view-head p"); if(q) q.textContent=q.textContent.replace("Bill online save hota hai","Demo mode mein bill is browser mein save hota hai");
+    });
     giveDb(localDb()); return;
   }
 
