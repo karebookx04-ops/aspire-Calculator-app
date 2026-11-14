@@ -11,18 +11,18 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap">
 <style>
-:root{--bg:#F4F1EB;--surface:#fff;--ink:#111;--muted:#6A655C;--line:#E6E0D5;--orange:#FF4D1A;--orange-ink:#C2360D;--orange-soft:#FFE6DC;--tile:#F1ECE3;--good:#1E7A46;--good-soft:#DFF2E6;--bad:#C62828;--bad-soft:#FBE3E3;--warn:#9A6A00;--warn-soft:#FBF0D2;--blue:#2E6FD8;--violet:#7B4FE0;
-  --side:#111;--side-ink:#CFC9BF;--shadow:0 1px 2px rgb(0 0 0 / .04),0 4px 14px rgb(0 0 0 / .04);
-  --display:"Outfit","Noto Sans Devanagari",system-ui,sans-serif;--body:"Inter","Noto Sans Devanagari",system-ui,sans-serif}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121110;--surface:#1B1917;--ink:#F6F2EA;--muted:#ADA699;--line:#302D29;--tile:#24211E;--orange-ink:#FF8D66;--orange-soft:#3A2017;--good:#5BC88A;--good-soft:#173322;--bad:#FF7A7A;--bad-soft:#3A1A1A;--warn:#E8B64C;--warn-soft:#352A12;--blue:#7AA7F0;--violet:#B39AF5;--side:#0B0A09;--shadow:none;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#121110;--surface:#1B1917;--ink:#F6F2EA;--muted:#ADA699;--line:#302D29;--tile:#24211E;--orange-ink:#FF8D66;--orange-soft:#3A2017;--good:#5BC88A;--good-soft:#173322;--bad:#FF7A7A;--bad-soft:#3A1A1A;--warn:#E8B64C;--warn-soft:#352A12;--blue:#7AA7F0;--violet:#B39AF5;--side:#0B0A09;--shadow:none;color-scheme:dark}
+:root{--bg:#F5F6F8;--surface:#fff;--ink:#14161A;--muted:#667085;--line:#E4E7EC;--orange:#FF4D1A;--orange-ink:#C2360D;--orange-soft:#FFEDE6;--tile:#F2F4F7;--good:#067647;--good-soft:#E3F6EC;--bad:#B42318;--bad-soft:#FDE8E6;--warn:#93600B;--warn-soft:#FDF2D6;--blue:#1D5FD1;--violet:#6941C6;
+  --side:#0F1115;--side-ink:#A5ACBA;--shadow:0 1px 2px rgb(16 24 40 / .05);
+  --display:"Inter","Noto Sans Devanagari",system-ui,sans-serif;--body:"Inter","Noto Sans Devanagari",system-ui,sans-serif;--brand:"Outfit","Inter",system-ui,sans-serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0C0E11;--surface:#15181D;--ink:#F2F4F7;--muted:#98A2B3;--line:#252A32;--tile:#1C2027;--orange-ink:#FF8D66;--orange-soft:#38200F;--good:#4CC38A;--good-soft:#12301F;--bad:#F97066;--bad-soft:#3A1614;--warn:#F0B84B;--warn-soft:#33270F;--blue:#84ADFF;--violet:#B8A1F8;--side:#090A0D;--shadow:none;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0C0E11;--surface:#15181D;--ink:#F2F4F7;--muted:#98A2B3;--line:#252A32;--tile:#1C2027;--orange-ink:#FF8D66;--orange-soft:#38200F;--good:#4CC38A;--good-soft:#12301F;--bad:#F97066;--bad-soft:#3A1614;--warn:#F0B84B;--warn-soft:#33270F;--blue:#84ADFF;--violet:#B8A1F8;--side:#090A0D;--shadow:none;color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
-h1,h2,h3{font-family:var(--display);margin:0;line-height:1.15}
-h1{font-size:26px;letter-spacing:-.01em}
-h2{font-size:18px}
-h3{font-size:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font:14.5px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.2;font-weight:700;letter-spacing:-.015em}
+h1{font-size:24px}
+h2{font-size:16.5px}
+h3{font-size:15px}
 a{color:inherit}
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--orange);outline-offset:2px;border-radius:8px}
@@ -41,17 +41,20 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* ---------- layout ---------- */
 .app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
 .side{background:var(--side);color:var(--side-ink);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:20px 14px;gap:4px;overflow-y:auto}
-.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:.02em;color:#F6F2EA;padding:4px 10px 18px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--brand);font-weight:800;font-size:19px;letter-spacing:.02em;color:#F6F2EA;padding:4px 10px 8px}
 .brand svg{width:30px;height:30px;flex:none}
 .brand small{display:block;font-family:var(--body);font-weight:600;font-size:10.5px;letter-spacing:.16em;color:#FF4D1A;text-transform:uppercase;margin-top:2px}
 .nav{display:flex;align-items:center;gap:12px;border:0;background:none;color:var(--side-ink);padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:500;text-align:left;width:100%;text-decoration:none;font-size:14.5px}
 .nav svg{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.nav:hover{background:#1F1D1A;color:#fff}
-.nav.on{background:#FF4D1A;color:#111;font-weight:700}
+.nav{position:relative}
+.nav:hover{background:#191C22;color:#fff}
+.nav.on{background:#1C2028;color:#fff;font-weight:600}
+.nav.on svg{color:#FF4D1A}
+.nav.on::before{content:"";position:absolute;left:-14px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:#FF4D1A}
 .nav .cnt{margin-left:auto;background:#FF4D1A;color:#111;border-radius:999px;font-size:11.5px;font-weight:700;padding:1px 8px}
-.nav.on .cnt{background:#111;color:#FF4D1A}
+
 .side .sp{flex:1}
-.side .who{font-size:12.5px;padding:10px 12px;color:#8F897F;word-break:break-all}
+.side .who{font-size:12px;padding:10px 12px;color:#5F6675;word-break:break-all;border-top:1px solid #1C2028;margin-top:6px}
 .content{min-width:0;display:flex;flex-direction:column}
 .topbar{display:none}
 main{padding:26px clamp(16px,3vw,36px) 90px;max-width:1240px;width:100%}
@@ -76,29 +79,79 @@ main{padding:26px clamp(16px,3vw,36px) 90px;max-width:1240px;width:100%}
   .bnav .cnt{position:absolute;top:0;left:calc(50% + 6px);background:var(--orange);color:#111;border-radius:999px;font-size:10px;font-weight:800;padding:0 6px;line-height:16px}
 }
 
+/* ---------- desktop top bar ---------- */
+.tb{display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:12px clamp(16px,3vw,36px);min-height:66px}
+.tb .crumb{display:grid;line-height:1.2;min-width:0}
+.tb .crumb small{font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.tb .crumb b{font-family:var(--display);font-size:17px}
+.gs{position:relative;flex:1;max-width:440px;margin-left:auto}
+.gs input{padding-left:38px!important;background:var(--tile);box-shadow:none;border-color:transparent}
+.gs>svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;pointer-events:none}
+.gres{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 40px rgb(0 0 0 / .16);padding:6px;z-index:40;max-height:70vh;overflow:auto}
+.gres h4{margin:8px 10px 4px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.gres button{display:flex;gap:10px;align-items:center;width:100%;border:0;background:none;padding:8px 10px;border-radius:9px;cursor:pointer;text-align:left;font-size:14px}
+.gres button:hover,.gres button:focus{background:var(--tile)}
+.gres button span{color:var(--muted);font-size:12.5px;margin-left:auto;white-space:nowrap}
+.tbi{border:1px solid var(--line);background:var(--surface);width:40px;height:40px;border-radius:8px;box-shadow:var(--shadow);display:grid;place-items:center;cursor:pointer;position:relative;flex:none;color:var(--ink)}
+.tbi svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tbi .cnt{position:absolute;top:-6px;right:-6px;background:var(--orange);color:#111;border-radius:999px;font-size:10.5px;font-weight:800;padding:0 6px;line-height:18px;border:2px solid var(--surface)}
+.langsel{width:auto!important;padding:8px 10px!important;font-weight:600;font-size:13.5px}
+.me{display:flex;align-items:center;gap:10px;padding-left:4px}
+.me .av{width:38px;height:38px}
+.me .nm{display:grid;line-height:1.2;font-size:13px;max-width:170px}
+.me .nm small{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:1180px){.me .nm{display:none}}
+@media (max-width:900px){.tb{display:none}}
+.sgl{font-size:10.5px;letter-spacing:.14em;color:#5F6675;padding:16px 12px 6px;text-transform:uppercase;font-weight:700}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;padding:8px 12px;font-weight:600;font-size:13.5px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--muted)}
+.seg button svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.seg button.on{background:var(--ink);color:var(--bg)}
+@media (max-width:900px){.seg.views{display:none}}
+.otbl{width:100%;border-collapse:collapse;font-size:14px}
+.otbl th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;padding:12px 14px;background:var(--tile);white-space:nowrap}
+.otbl td{padding:13px 14px;border-top:1px solid var(--line);vertical-align:middle}
+.otbl .orow{cursor:pointer}
+.otbl .orow:hover td{background:color-mix(in srgb,var(--tile) 60%,transparent)}
+.otbl .orow.open td{background:var(--tile)}
+.otbl .r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.otbl .no{font:700 13px ui-monospace,Menlo,Consolas,monospace;white-space:nowrap}
+.otbl .chev{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2;transition:transform .15s}
+.otbl .orow.open .chev{transform:rotate(180deg)}
+.otbl .odet>td{padding:0 14px 14px;background:var(--tile);border-top:0}
+.otbl .odet .ord{margin:0;box-shadow:none}
+.sbar{display:flex;height:14px;border-radius:8px;overflow:hidden;background:var(--tile);margin:6px 0 14px}
+.sbar i{display:block;height:100%}
+.leg{display:grid;gap:8px}
+.leg div{display:flex;align-items:center;gap:10px;font-size:14px}
+.leg i{width:10px;height:10px;border-radius:3px;flex:none}
+.leg b{margin-left:auto;font-variant-numeric:tabular-nums}
+.foot{color:var(--muted);font-size:12px;text-align:center;padding:26px 0 0}
+[data-lang="hi"] .sgl,[data-lang="hi"] .brand small,[data-lang="hi"] .crumb small,[data-lang="hi"] th,[data-lang="hi"] .gres h4,[data-lang="hi"] .pill{letter-spacing:0!important}
 /* ---------- elements ---------- */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap;font-size:14px}
-.btn:hover{border-color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 14px;font-weight:600;box-shadow:var(--shadow);cursor:pointer;text-decoration:none;white-space:nowrap;font-size:14px}
+.btn:hover{background:var(--tile)}
+.btn.solid:hover{background:#E8410F}.btn.dark:hover{background:var(--ink);opacity:.9}
 .btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
-.btn.solid{background:var(--orange);border-color:var(--orange);color:#111}
+.btn.solid{background:var(--orange);border-color:var(--orange);color:#fff}
 .btn.dark{background:var(--ink);border-color:var(--ink);color:var(--bg)}
-.btn.sm{padding:6px 10px;font-size:13px;border-radius:9px}
+.btn.sm{padding:6px 10px;font-size:13px;border-radius:7px}
 .btn.wa{border-color:#1E9E55;color:#1E9E55}
 .btn.danger{border-color:var(--bad);color:var(--bad)}
 .btn[disabled]{opacity:.5;cursor:not-allowed}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:var(--shadow);min-width:0}
 .card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-label.f{display:grid;gap:6px;font-size:13.5px;font-weight:600;min-width:0}
+label.f{display:grid;gap:6px;font-size:13px;font-weight:600;min-width:0;align-content:start}
 label.f span.h{font-weight:400;color:var(--muted);font-size:12.5px}
-input[type=text],input[type=email],input[type=password],input[type=number],input[type=tel],input[type=search],select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;min-width:0}
+input[type=text],input[type=email],input[type=password],input[type=number],input[type=tel],input[type=search],select,textarea{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 12px;min-width:0;box-shadow:var(--shadow)}
 textarea{resize:vertical}
-input:focus,select:focus,textarea:focus{border-color:var(--orange);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--orange);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--orange) 18%,transparent)}
 .msg{padding:10px 14px;border-radius:10px;font-size:14px}
 .msg.ok{background:var(--good-soft);color:var(--good)}
 .msg.bad{background:var(--bad-soft);color:var(--bad)}
 .msg.info{background:var(--tile)}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
 .chip.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 .pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.03em;background:var(--tile);white-space:nowrap}
 .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
@@ -110,13 +163,13 @@ input:focus,select:focus,textarea:focus{border-color:var(--orange);outline:none}
 .tag-out{background:var(--bad-soft);color:var(--bad)}
 .tag-low{background:var(--warn-soft);color:var(--warn)}
 .tag-ok{background:var(--good-soft);color:var(--good)}
-.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,160%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:600;z-index:60;transition:transform .25s,visibility .25s;visibility:hidden;max-width:calc(100% - 32px);box-shadow:0 8px 30px rgb(0 0 0 / .2)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,160%);background:#14161A;color:#fff;padding:11px 16px;border-radius:10px;font-weight:600;font-size:14px;z-index:60;transition:transform .25s,visibility .25s;visibility:hidden;max-width:calc(100% - 32px);box-shadow:0 8px 30px rgb(0 0 0 / .2)}
 .toast.show{transform:translate(-50%,0);visibility:visible}
 @media (max-width:900px){.toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
 .empty{padding:28px;text-align:center;color:var(--muted)}
 
 /* ---------- login ---------- */
-.loginwrap{min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:radial-gradient(1200px 500px at 50% -10%,#2a1a12,#111 60%)}
+.loginwrap{min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:#0F1115}
 .login{width:100%;max-width:400px}
 .login .brand{justify-content:center;padding-bottom:22px}
 .login .card{padding:24px}
@@ -124,20 +177,20 @@ input:focus,select:focus,textarea:focus{border-color:var(--orange);outline:none}
 /* ---------- dashboard ---------- */
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
 @media (max-width:1050px){.kpis{grid-template-columns:repeat(2,1fr)}}
-.kpi{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow);display:grid;gap:4px;min-width:0}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);display:grid;gap:4px;min-width:0}
 .kpi .l{font-size:13px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:8px}
-.kpi .l i{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--orange-soft);color:var(--orange-ink);font-style:normal}
+.kpi .l i{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:var(--orange-soft);color:var(--orange-ink);font-style:normal}
 .kpi .l i svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.kpi b{font-family:var(--display);font-size:clamp(20px,2.4vw,28px);font-variant-numeric:tabular-nums;line-height:1.2;overflow-wrap:anywhere}
+.kpi b{font-family:var(--display);font-weight:700;letter-spacing:-.02em;font-size:clamp(20px,2.3vw,28px);font-variant-numeric:tabular-nums;line-height:1.2;overflow-wrap:anywhere}
 .kpi .d{font-size:12.5px;color:var(--muted)}
 .up{color:var(--good);font-weight:700}.down{color:var(--bad);font-weight:700}
 .dgrid{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;margin-bottom:18px}
-@media (max-width:1050px){.dgrid{grid-template-columns:1fr}}
-.chart{display:flex;align-items:flex-end;gap:4px;height:210px;padding-top:10px;border-bottom:1.5px solid var(--line);position:relative}
+@media (max-width:1050px){.dgrid{grid-template-columns:1fr!important}}
+.chart{display:flex;align-items:flex-end;gap:4px;height:210px;margin-top:26px;border-bottom:1.5px solid var(--line);position:relative}
 .chart .gl{position:absolute;left:0;right:0;border-top:1px dashed var(--line);font-size:10.5px;color:var(--muted)}
 .chart .gl span{position:absolute;left:0;top:-16px;background:var(--surface);padding-right:4px}
 .bar{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;cursor:default}
-.bar i{display:block;background:var(--orange);border-radius:5px 5px 0 0;min-height:2px;transition:filter .15s}
+.bar i{display:block;background:var(--orange);border-radius:4px 4px 0 0;min-height:2px;transition:filter .15s}
 .bar.zero i{background:var(--line)}
 .bar:hover i{filter:brightness(.85)}
 .bar .tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);font-size:12px;padding:5px 8px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;z-index:3}
@@ -165,7 +218,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--orange);outline:none}
 /* ---------- orders ---------- */
 .toolbar{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-bottom:12px;align-items:center}
 @media (max-width:700px){.toolbar{grid-template-columns:1fr 1fr}.toolbar input{grid-column:1/-1}}
-.ord{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:grid;gap:12px;margin-bottom:14px;box-shadow:var(--shadow);border-left:5px solid var(--orange)}
+.ord{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:grid;gap:12px;margin-bottom:14px;box-shadow:var(--shadow);border-left:3px solid var(--orange)}
 .ord[data-s="confirmed"]{border-left-color:var(--blue)}.ord[data-s="shipped"]{border-left-color:var(--violet)}.ord[data-s="delivered"]{border-left-color:var(--good)}.ord[data-s="cancelled"]{border-left-color:var(--line);opacity:.8}
 .ord .no{font:700 14px ui-monospace,Menlo,Consolas,monospace}
 .ord h3{font-size:17px}
@@ -174,7 +227,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--orange);outline:none}
 .ord td.r{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;padding-left:10px}
 .ord .acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-top:1px solid var(--line);padding-top:12px}
 .ord .acts select{width:auto;padding:6px 10px;font-weight:600}
-.ord .ship{display:grid;grid-template-columns:1fr 1fr 2fr;gap:10px}
+.ord .ship{display:grid;grid-template-columns:1fr 1fr 2fr;gap:10px;align-items:end}
 @media (max-width:700px){.ord .ship{grid-template-columns:1fr 1fr}.ord .ship label:last-child{grid-column:1/-1}}
 details.wam{position:relative}
 details.wam summary{list-style:none}
@@ -190,7 +243,7 @@ details.wam .menu a small{display:block;color:var(--muted);font-size:12px}
 .tbl td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
 .tbl td.r,.tbl th.r{text-align:right;font-variant-numeric:tabular-nums}
 .tbl tr:last-child td{border-bottom:0}
-.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--orange-soft);color:var(--orange-ink);font-weight:800;font-family:var(--display);flex:none}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--tile);color:var(--ink);border:1px solid var(--line);font-weight:700;font-size:13.5px;flex:none}
 .cname{display:flex;gap:10px;align-items:center;min-width:0}
 @media (max-width:760px){
   .tbl.resp thead{display:none}
@@ -204,8 +257,8 @@ details.wam .menu a small{display:block;color:var(--muted);font-size:12px}
 
 /* ---------- products / stock ---------- */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
-.pc{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow)}
-.pc .im{aspect-ratio:1;background:#F6F2EA;position:relative}
+.pc{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.pc .im{aspect-ratio:1;background:#F6F2EA;position:relative;border-bottom:1px solid var(--line)}
 .pc .im img{width:100%;height:100%;object-fit:cover;display:block}
 .pc .im .pill{position:absolute;top:10px;left:10px}
 .pc .bd{padding:12px 14px;display:grid;gap:6px;flex:1}
@@ -213,9 +266,9 @@ details.wam .menu a small{display:block;color:var(--muted);font-size:12px}
 .pc .ft{display:flex;gap:8px;padding:0 14px 14px}
 .pc .ft .btn{flex:1}
 .pc.off{opacity:.6}
-.stk{display:inline-flex;align-items:center;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg)}
+.stk{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
 .stk button{border:0;background:none;width:36px;height:38px;font-size:18px;font-weight:700;cursor:pointer}
-.stk input{width:70px!important;border:0!important;border-radius:0!important;text-align:center;background:transparent!important;padding:8px 4px!important}
+.stk input{width:70px!important;border:0!important;border-radius:0!important;text-align:center;background:transparent!important;padding:8px 4px!important;box-shadow:none!important}
 .photos{display:flex;gap:10px;flex-wrap:wrap}
 .ph{width:110px;display:grid;gap:6px}
 .ph img{width:110px;height:110px;object-fit:cover;border-radius:12px;border:2px solid var(--line);background:#F6F2EA}
@@ -227,12 +280,12 @@ details.wam .menu a small{display:block;color:var(--muted);font-size:12px}
 .crow input[type=color]{width:54px;height:40px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);padding:3px}
 .cprow{display:grid;grid-template-columns:1.2fr .9fr .8fr .8fr .8fr auto;gap:8px;align-items:end}
 @media (max-width:760px){.cprow{grid-template-columns:1fr 1fr}}
-.sticky-save{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));margin-top:6px;display:flex;gap:10px;flex-wrap:wrap;z-index:5}
+.sticky-save{position:sticky;bottom:0;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));margin-top:6px;display:flex;gap:10px;flex-wrap:wrap;z-index:5}
 @media (max-width:900px){.sticky-save{bottom:calc(64px + env(safe-area-inset-bottom,0px))}}
 
 /* ---------- modal ---------- */
 .modal{position:fixed;inset:0;z-index:50;background:rgb(0 0 0 / .45);display:grid;place-items:center;padding:16px}
-.modal .box{background:var(--surface);border-radius:18px;max-width:880px;width:100%;max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden}
+.modal .box{background:var(--surface);border-radius:14px;max-width:880px;width:100%;max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden}
 .modal .mh{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .modal .mb{overflow:auto;padding:18px;background:var(--tile)}
 .sheet{background:#fff;color:#111;max-width:800px;margin:0 auto;padding:28px;border-radius:6px;box-shadow:0 2px 10px rgb(0 0 0 / .08);font:13px/1.45 var(--body)}
@@ -276,7 +329,7 @@ details.wam .menu a small{display:block;color:var(--muted);font-size:12px}
   <div class="login">
     <div class="brand"><svg viewBox="0 0 100 100"><path d="M4 90 L44 10 H66 L26 90 Z" fill="#F6F2EA"/><path d="M52 52 L64 28 L96 90 H72 Z" fill="#FF4D1A"/></svg><span>ASPIRE<small>Admin panel</small></span></div>
     <div class="card stack">
-      <div><h2>Login</h2><p class="muted small" style="margin:4px 0 0">Sirf dukaan ke maalik ke liye.</p></div>
+      <div class="row between"><div><h2>Login</h2><p class="muted small" style="margin:4px 0 0">Sirf dukaan ke maalik ke liye.</p></div><select class="langsel" data-lang aria-label="Language"></select></div>
       <label class="f">Email<input type="email" id="lEmail" autocomplete="username"></label>
       <label class="f">Password<input type="password" id="lPass" autocomplete="current-password"></label>
       <div id="lMsg"></div>
@@ -303,15 +356,24 @@ details.wam .menu a small{display:block;color:var(--muted);font-size:12px}
     <header class="topbar">
       <div class="brand"><svg viewBox="0 0 100 100"><path d="M4 90 L44 10 H66 L26 90 Z" fill="#F6F2EA"/><path d="M52 52 L64 28 L96 90 H72 Z" fill="#FF4D1A"/></svg><span>ASPIRE<small>Admin</small></span></div>
       <span class="sp"></span>
+      <select class="langsel" data-lang aria-label="Language" style="background:#222;color:#F6F2EA;border-color:#333!important;padding:7px 6px!important"></select>
       <a class="ib" href="./" target="_blank" rel="noopener" aria-label="Website dekho"><svg viewBox="0 0 24 24"><path d="M14 4h6v6"/><path d="M10 14 20 4"/><path d="M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6"/></svg></a>
       <button class="ib" data-go="stock" aria-label="Stock"><svg viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/></svg></button>
       <button class="ib" data-go="settings" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </header>
+    <header class="tb">
+      <div class="crumb"><small>Aspire Enterprises</small><b id="tbTitle">Dashboard</b></div>
+      <div class="gs"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" id="gq" placeholder="Order, customer ya product dhoondho" autocomplete="off"><div class="gres hide" id="gres"></div></div>
+      <select class="langsel" data-lang aria-label="Language"></select>
+      <button class="tbi" id="themeBtn" aria-label="Dark / light"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+      <button class="tbi" data-go="orders" data-of="new" aria-label="Naye orders" id="bellBtn"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
+      <div class="me"><span class="av" id="meAv">A</span><span class="nm"><b>Owner</b><small id="meEmail"></small></span></div>
     </header>
     <main>
       <section id="dash" class="hide"></section>
       <section id="orders" class="hide">
         <div class="phead"><div><h1>Orders</h1><p>Website se aaye saare orders. Status badlo, bill print karo, customer ko WhatsApp karo.</p></div>
-          <button class="btn" id="oXls"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Excel download</button></div>
+          <div class="row"><div class="seg views"><button data-ov="table"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>Table</button><button data-ov="cards"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/></svg>Cards</button></div><button class="btn" id="oXls"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Excel download</button></div></div>
         <div class="toolbar">
           <input type="search" id="osearch" placeholder="Naam, mobile ya order number se dhoondho">
           <select id="orange" aria-label="Kab ke orders"><option value="all">Saare din</option><option value="today">Aaj</option><option value="7">Pichhle 7 din</option><option value="30">Pichhle 30 din</option><option value="month">Is mahine</option></select>
@@ -354,7 +416,193 @@ function errText(e){
   if(c.includes("network")||c.includes("unavailable")) return "Internet check kariye, phir dobara try kariye.";
   return "Kuch gadbad hui: "+(e&&e.message||c||e);
 }
+/* ---------- theme + language ---------- */
+try{const th=localStorage.getItem("aspire-admin-theme");if(th)document.documentElement.dataset.theme=th}catch(e){}
+const LANGS=[["hx","Hinglish"],["en","English"],["hi","हिन्दी"]];
+let LANG=(()=>{try{return localStorage.getItem("aspire-admin-lang")||"hx"}catch(e){return "hx"}})();
+const ORIG=new WeakMap(), ORIGA=new WeakMap();
+function trS(str){
+  if(LANG==="hx"||!str) return str;
+  const m=str.match(/^(\s*)([\s\S]*?)(\s*)$/); let k=m[2]; if(!k||!/[A-Za-z]/.test(k)) return str;
+  const i=LANG==="en"?0:1;
+  if(I18N[k]) return m[1]+I18N[k][i]+m[3];
+  for(const [re,en,hi] of I18P){re.lastIndex=0;if(re.test(k)){re.lastIndex=0;k=k.replace(re,typeof en==="function"?en:(i?hi:en))}re.lastIndex=0}
+  return m[1]+k+m[3];
+}
+function skip(n){const e=n.nodeType===1?n:n.parentElement;return !e||!!e.closest("script,style,textarea,.doc,#printArea,[data-notr]")}
+function trNode(root){
+  if(!root) return;
+  if(root.nodeType===3){if(!skip(root)){if(!ORIG.has(root))ORIG.set(root,root.nodeValue);const v=trS(ORIG.get(root));if(root.nodeValue!==v)root.nodeValue=v}return}
+  if(root.nodeType!==1||skip(root)) return;
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode:n=>n.nodeType===1&&n.matches("script,style,textarea,.doc,#printArea,[data-notr]")?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
+  let n=root; do{
+    if(n.nodeType===3){if(!ORIG.has(n))ORIG.set(n,n.nodeValue);const v=trS(ORIG.get(n));if(n.nodeValue!==v)n.nodeValue=v}
+    else{for(const a of ["placeholder","aria-label","title","data-l"]){if(n.hasAttribute(a)){let o=ORIGA.get(n);if(!o){o={};ORIGA.set(n,o)}if(!(a in o))o[a]=n.getAttribute(a);const v=trS(o[a]);if(n.getAttribute(a)!==v)n.setAttribute(a,v)}}}
+  }while((n=w.nextNode()));
+}
+new MutationObserver(ms=>{for(const m of ms)m.addedNodes.forEach(trNode)}).observe(document.documentElement,{childList:true,subtree:true});
+function setLang(l){LANG=l;try{localStorage.setItem("aspire-admin-lang",l)}catch(e){}document.documentElement.lang=l==="en"?"en":"hi";document.documentElement.dataset.lang=l;
+  document.querySelectorAll("select[data-lang]").forEach(x=>{x.value=l});if(user){renderPage();drawNav()}trNode(document.body)}
+document.querySelectorAll("select[data-lang]").forEach(x=>{x.innerHTML=LANGS.map(([k,l])=>`<option value="${k}">${l}</option>`).join("");x.value=LANG;x.addEventListener("change",()=>setLang(x.value))});
+document.documentElement.lang=LANG==="en"?"en":"hi";document.documentElement.dataset.lang=LANG;
 function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=()=>no(new Error("load "+src));document.head.appendChild(s)})}
+
+/* ---------- translations: Hinglish text -> [English, Hindi] ---------- */
+const I18N={
+"Load ho raha hai...":["Loading...","लोड हो रहा है..."],
+"Firebase load nahi hua. Internet check karke page refresh kariye.":["Could not load. Check your internet and refresh the page.","लोड नहीं हुआ। इंटरनेट जाँचें और पेज रिफ्रेश करें।"],
+"Admin panel":["Admin panel","एडमिन पैनल"],"Admin":["Admin","एडमिन"],
+"Login":["Login","लॉगिन"],"Sirf dukaan ke maalik ke liye.":["For the shop owner only.","सिर्फ़ दुकान के मालिक के लिए।"],
+"Email":["Email","ईमेल"],"Password":["Password","पासवर्ड"],
+"Pehli baar? Account banao":["First time? Create account","पहली बार? अकाउंट बनाएँ"],"Password bhool gaye":["Forgot password","पासवर्ड भूल गए"],
+"Language":["Language","भाषा"],"Dark / light mode":["Dark / light mode","डार्क / लाइट मोड"],"Dark / light":["Dark / light","डार्क / लाइट"],"Owner":["Owner","मालिक"],
+"Email ya password galat hai.":["Wrong email or password.","ईमेल या पासवर्ड गलत है।"],
+"Email sahi likhiye.":["Please enter a valid email.","सही ईमेल लिखें।"],
+"Internet check kariye, phir dobara try kariye.":["Check your internet and try again.","इंटरनेट जाँचें और दोबारा कोशिश करें।"],
+"Is email ka account pehle se hai. Seedha Login dabaiye.":["An account with this email already exists. Just press Login.","इस ईमेल का अकाउंट पहले से है। सीधे लॉगिन दबाएँ।"],
+"Password kam se kam 6 akshar ka rakhiye.":["Password must be at least 6 characters.","पासवर्ड कम से कम 6 अक्षर का रखें।"],
+"Permission nahi mili. Firestore Rules Publish kiye hain? Aur kya aap dukaan wale email se login hain?":["Permission denied. Are the Firestore rules published, and are you logged in with the shop email?","अनुमति नहीं मिली। क्या Firestore Rules पब्लिश किए हैं? और क्या आप दुकान वाले ईमेल से लॉगिन हैं?"],
+"Pehle upar email likhiye.":["Enter your email above first.","पहले ऊपर ईमेल लिखें।"],
+/* nav */
+"Overview":["Overview","ओवरव्यू"],"Bikri":["Sales","बिक्री"],"Catalog":["Catalog","कैटलॉग"],"System":["System","सिस्टम"],
+"Dashboard":["Dashboard","डैशबोर्ड"],"Orders":["Orders","ऑर्डर"],"Customers":["Customers","ग्राहक"],"Products":["Products","प्रोडक्ट"],"Stock":["Stock","स्टॉक"],"Settings":["Settings","सेटिंग्स"],"Home":["Home","होम"],
+"Website dekho":["View website","वेबसाइट देखें"],"Logout":["Logout","लॉगआउट"],
+"Order, customer ya product dhoondho":["Search orders, customers or products","ऑर्डर, ग्राहक या प्रोडक्ट खोजें"],"Kuch nahi mila":["Nothing found","कुछ नहीं मिला"],
+/* dashboard */
+"Aaj ki bikri":["Today's sales","आज की बिक्री"],"Is mahine ki bikri":["This month's sales","इस महीने की बिक्री"],"Naye orders":["New orders","नए ऑर्डर"],"Average order":["Average order","औसत ऑर्डर"],
+"Confirm karna baaki":["Waiting for confirmation","कन्फर्म करना बाकी"],"Sab handle ho gaye":["All handled","सब संभाल लिए"],"pichhle mahine se":["vs last month","पिछले महीने से"],
+"7 din":["7 days","7 दिन"],"30 din":["30 days","30 दिन"],"12 mahine":["12 months","12 महीने"],
+"Sabse zyada bikne wale":["Best sellers","सबसे ज़्यादा बिकने वाले"],"Is samay mein abhi koi bikri nahi.":["No sales in this period yet.","इस समय में अभी कोई बिक्री नहीं।"],"Is samay mein abhi koi order nahi.":["No orders in this period yet.","इस समय में अभी कोई ऑर्डर नहीं।"],
+"Saare orders →":["All orders →","सारे ऑर्डर →"],"Stock alert":["Stock alerts","स्टॉक अलर्ट"],"Stock →":["Stock →","स्टॉक →"],"Badlo":["Edit","बदलें"],
+"Sab products ka stock theek hai.":["All products have enough stock.","सभी प्रोडक्ट का स्टॉक ठीक है।"],"Stock abhi track nahi ho raha.":["Stock is not being tracked yet.","स्टॉक अभी ट्रैक नहीं हो रहा।"],"Stock bharo":["Add stock","स्टॉक भरें"],
+"Abhi tak koi order nahi aaya. Jab customer website se order karega, yahan turant dikhega aur ek awaaz bhi aayegi.":["No orders yet. When a customer orders on the website it will show here instantly, with a sound.","अभी तक कोई ऑर्डर नहीं आया। ग्राहक के ऑर्डर करते ही यहाँ दिखेगा और आवाज़ भी आएगी।"],
+"Order status":["Order status","ऑर्डर की स्थिति"],"Top shehar":["Top cities","टॉप शहर"],
+/* statuses */
+"Naya":["New","नया"],"Confirm":["Confirmed","कन्फर्म"],"Bhej diya":["Shipped","भेज दिया"],"Deliver ho gaya":["Delivered","डिलीवर हो गया"],"Cancel":["Cancelled","रद्द"],"Sab":["All","सब"],
+/* orders */
+"Website se aaye saare orders. Status badlo, bill print karo, customer ko WhatsApp karo.":["All orders from the website. Update status, print invoices and WhatsApp customers.","वेबसाइट से आए सारे ऑर्डर। स्टेटस बदलें, बिल प्रिंट करें, ग्राहक को WhatsApp करें।"],
+"Excel download":["Download Excel","Excel डाउनलोड"],"Table":["Table","टेबल"],"Cards":["Cards","कार्ड"],
+"Naam, mobile ya order number se dhoondho":["Search by name, mobile or order number","नाम, मोबाइल या ऑर्डर नंबर से खोजें"],"Kab ke orders":["Date range","कब के ऑर्डर"],
+"Saare din":["All time","सारे दिन"],"Aaj":["Today","आज"],"Pichhle 7 din":["Last 7 days","पिछले 7 दिन"],"Pichhle 30 din":["Last 30 days","पिछले 30 दिन"],"Is mahine":["This month","इस महीने"],"Pichhle 12 mahine":["Last 12 months","पिछले 12 महीने"],
+"Order":["Order","ऑर्डर"],"Tareekh":["Date","तारीख"],"Customer":["Customer","ग्राहक"],"Saman":["Items","सामान"],"Payment":["Payment","भुगतान"],"Payment:":["Payment:","भुगतान:"],"Status":["Status","स्टेटस"],"Amount":["Amount","राशि"],
+"Delivery":["Delivery","डिलीवरी"],"Free":["Free","फ़्री"],"Total":["Total","कुल"],"Cash on delivery":["Cash on delivery","कैश ऑन डिलीवरी"],"UPI":["UPI","UPI"],"Hindi":["Hindi","हिन्दी"],
+"Courier, tracking aur note":["Courier, tracking and note","कूरियर, ट्रैकिंग और नोट"],"Courier":["Courier","कूरियर"],"Tracking number":["Tracking number","ट्रैकिंग नंबर"],"Apna note":["Private note","अपना नोट"],"customer ko nahi dikhta":["customer can't see this","ग्राहक को नहीं दिखता"],"Delhivery, DTDC...":["Delhivery, DTDC...","Delhivery, DTDC..."],
+"WhatsApp ▾":["WhatsApp ▾","WhatsApp ▾"],"Call":["Call","कॉल"],"GST bill":["GST invoice","GST बिल"],"Packing slip":["Packing slip","पैकिंग स्लिप"],"Copy":["Copy","कॉपी"],"Delete":["Delete","डिलीट"],
+"Pakka? Phir dabaiye":["Sure? Press again","पक्का? फिर दबाएँ"],"Pakka delete? Phir dabaiye":["Really delete? Press again","पक्का डिलीट? फिर दबाएँ"],
+"Order confirm karne ko poochho":["Ask customer to confirm","ऑर्डर कन्फर्म करने को पूछें"],"Fake COD order se bachne ke liye":["Avoids fake COD orders","फ़र्ज़ी COD ऑर्डर से बचने के लिए"],
+"Order confirm ho gaya":["Order confirmed","ऑर्डर कन्फर्म हो गया"],"Order bhej diya (tracking ke saath)":["Order shipped (with tracking)","ऑर्डर भेज दिया (ट्रैकिंग के साथ)"],"Courier aur tracking pehle bharein":["Fill courier and tracking first","कूरियर और ट्रैकिंग पहले भरें"],
+"Deliver ho gaya, review maango":["Delivered, ask for review","डिलीवर हो गया, रिव्यू माँगें"],"Khaali message":["Blank message","खाली मैसेज"],"Apna message likho":["Write your own","अपना मैसेज लिखें"],
+"Ask to confirm the order":["Ask to confirm the order","ऑर्डर कन्फर्म करने को पूछें"],"To avoid fake COD orders":["To avoid fake COD orders","फ़र्ज़ी COD ऑर्डर से बचने के लिए"],"Order confirmed":["Order confirmed","ऑर्डर कन्फर्म हो गया"],"Order shipped (with tracking)":["Order shipped (with tracking)","ऑर्डर भेज दिया (ट्रैकिंग के साथ)"],"Fill courier and tracking first":["Fill courier and tracking first","कूरियर और ट्रैकिंग पहले भरें"],"Delivered, ask for review":["Delivered, ask for review","डिलीवर हो गया, रिव्यू माँगें"],
+"Abhi tak koi order nahi aaya. Jab customer website se order karega, woh yahan turant dikhega.":["No orders yet. When a customer orders on the website it will show here instantly.","अभी तक कोई ऑर्डर नहीं आया। ग्राहक के ऑर्डर करते ही यहाँ तुरंत दिखेगा।"],
+"Is filter mein koi order nahi.":["No orders match this filter.","इस फ़िल्टर में कोई ऑर्डर नहीं।"],
+"Place of supply":["Place of supply","सप्लाई का स्थान"],"Print / PDF":["Print / PDF","प्रिंट / PDF"],"Band karo":["Close","बंद करें"],
+"HSN aur GST % Settings mein badal sakte ho. Print mein \"Save as PDF\" chunke PDF bhi bana sakte ho.":["You can change HSN and GST % in Settings. Choose \"Save as PDF\" in the print window to make a PDF.","HSN और GST % सेटिंग्स में बदल सकते हैं। प्रिंट में \"Save as PDF\" चुनकर PDF भी बना सकते हैं।"],
+/* customers */
+"Kaun kitni baar khareed chuka hai. Purane customer ko WhatsApp par naya offer bhejo.":["Who bought how often. Send returning customers a new offer on WhatsApp.","किसने कितनी बार खरीदा। पुराने ग्राहकों को WhatsApp पर नया ऑफ़र भेजें।"],
+"Kul customers":["Total customers","कुल ग्राहक"],"Dobara kharidne wale":["Repeat buyers","दोबारा खरीदने वाले"],"Ek customer average":["Average per customer","प्रति ग्राहक औसत"],
+"Naam, mobile ya shehar":["Name, mobile or city","नाम, मोबाइल या शहर"],"Sabse zyada kharida":["Highest spend","सबसे ज़्यादा खरीदा"],"Sabse zyada order":["Most orders","सबसे ज़्यादा ऑर्डर"],"Haal hi mein":["Most recent","हाल ही में"],
+"Shehar":["City","शहर"],"Kul kharida":["Total spent","कुल खरीदा"],"Aakhri order":["Last order","आख़िरी ऑर्डर"],"Repeat":["Repeat","दोबारा"],
+"Koi customer nahi mila.":["No customer found.","कोई ग्राहक नहीं मिला।"],"Pehla order aate hi customer yahan dikhenge.":["Customers will appear here after the first order.","पहला ऑर्डर आते ही ग्राहक यहाँ दिखेंगे।"],
+/* products */
+"+ Naya product":["+ New product","+ नया प्रोडक्ट"],"Website ke products yahan se badlo.":["Manage the website's products here.","वेबसाइट के प्रोडक्ट यहाँ से बदलें।"],
+"Online abhi koi product nahi hai.":["There are no products online yet.","ऑनलाइन अभी कोई प्रोडक्ट नहीं है।"],
+"Website ke 12 products (photo, daam, Hindi naam ke saath) ek click mein yahan le aaiye. Phir yahin se badal sakte hain.":["Bring the website's 12 products (with photos, prices and Hindi names) here in one click. Then edit them here.","वेबसाइट के 12 प्रोडक्ट (फ़ोटो, दाम, हिन्दी नाम के साथ) एक क्लिक में यहाँ लाएँ। फिर यहीं से बदल सकते हैं।"],
+"12 products import karo":["Import 12 products","12 प्रोडक्ट इम्पोर्ट करें"],"Import ho raha hai...":["Importing...","इम्पोर्ट हो रहा है..."],
+"Chhupao":["Hide","छिपाएँ"],"Dikhao":["Show","दिखाएँ"],"Chhupa hai":["Hidden","छिपा है"],"Stock khatam":["Out of stock","स्टॉक ख़त्म"],"Track nahi":["Not tracked","ट्रैक नहीं"],
+"← Products":["← Products","← प्रोडक्ट"],"Naya product":["New product","नया प्रोडक्ट"],"Product badlo":["Edit product","प्रोडक्ट बदलें"],
+"Photos":["Photos","फ़ोटो"],"Pehli photo main photo hai (narangi border). Square, saaf photo sabse achhi dikhti hai. Photo apne aap chhoti karke save hoti hai.":["The first photo is the main photo (orange border). Square, clear photos look best. Photos are resized automatically.","पहली फ़ोटो मुख्य फ़ोटो है (नारंगी बॉर्डर)। चौकोर, साफ़ फ़ोटो सबसे अच्छी दिखती है। फ़ोटो अपने आप छोटी होकर सेव होती है।"],
+"+ Photo jodo":["+ Add photo","+ फ़ोटो जोड़ें"],"(phone/PC se)":["(from phone/PC)","(फ़ोन/PC से)"],"Main":["Main","मुख्य"],"Hatao":["Remove","हटाएँ"],
+"Naam aur daam":["Name and price","नाम और दाम"],"Naam (English)":["Name (English)","नाम (English)"],"Naam (Hindi)":["Name (Hindi)","नाम (हिन्दी)"],
+"Bechne ka daam (₹)":["Selling price (₹)","बेचने का दाम (₹)"],"GST mila kar":["including GST","GST मिलाकर"],"MRP (₹)":["MRP (₹)","MRP (₹)"],"kata hua daam":["shown struck out","कटा हुआ दाम"],
+"Label":["Label","लेबल"],"jaise Bestseller, New":["e.g. Bestseller, New","जैसे Bestseller, New"],"Category":["Category","कैटेगरी"],"Type":["Type","टाइप"],"Bags":["Bags","बैग"],"Covers":["Covers","कवर"],"Appliance covers":["Appliance covers","अप्लायंस कवर"],
+"List mein number":["Position in list","लिस्ट में नंबर"],"chhota number = pehle":["smaller number shows first","छोटा नंबर = पहले"],"Website par dikhao":["Show on website","वेबसाइट पर दिखाएँ"],
+"Stock aur GST":["Stock and GST","स्टॉक और GST"],"Stock (kitne piece)":["Stock (pieces)","स्टॉक (कितने पीस)"],"khaali = track nahi":["blank = not tracked","खाली = ट्रैक नहीं"],
+"Kitne piece par alert":["Alert below (pieces)","कितने पीस पर अलर्ट"],"isse kam hone par Dashboard par dikhega":["shows on Dashboard when stock falls to this","इससे कम होने पर डैशबोर्ड पर दिखेगा"],
+"HSN code":["HSN code","HSN कोड"],"GST %":["GST %","GST %"],"HSN":["HSN","HSN"],
+"Rang":["Colours","रंग"],"Rang ka naam (Black, Grey...)":["Colour name (Black, Grey...)","रंग का नाम (Black, Grey...)"],"+ Rang jodo":["+ Add colour","+ रंग जोड़ें"],
+"Size":["Size","साइज़"],"Saare size, comma laga kar":["All sizes, separated by commas","सारे साइज़, कॉमा लगाकर"],"jaise: 6-6.5 kg, 7-7.5 kg, 8-9 kg. Size na ho to khali chhodiye.":["e.g. 6-6.5 kg, 7-7.5 kg, 8-9 kg. Leave blank if there are no sizes.","जैसे: 6-6.5 kg, 7-7.5 kg, 8-9 kg। साइज़ न हो तो खाली छोड़ें।"],
+"Size guide table":["Size guide table","साइज़ गाइड टेबल"],"Pehli line mein heading, phir har size ki ek line. Khane | se alag karein. Jaise:":["Headings on the first line, then one line per size. Separate columns with |. For example:","पहली लाइन में हेडिंग, फिर हर साइज़ की एक लाइन। खाने | से अलग करें। जैसे:"],
+"Khaas baatein":["Key features","ख़ास बातें"],"English":["English","English"],"har line ek point":["one point per line","हर लाइन एक पॉइंट"],
+"Customer reviews":["Customer reviews","ग्राहक रिव्यू"],"Sirf asli reviews daaliye. Har line: Naam | Stars (1-5) | Tareekh | Review":["Only add real reviews. Each line: Name | Stars (1-5) | Date | Review","सिर्फ़ असली रिव्यू डालें। हर लाइन: नाम | स्टार (1-5) | तारीख | रिव्यू"],
+"Save karo":["Save","सेव करें"],"Save ho raha hai...":["Saving...","सेव हो रहा है..."],"Wapas":["Back","वापस"],"Product delete karo":["Delete product","प्रोडक्ट डिलीट करें"],
+"Ek product mein zyada se zyada 6 photo.":["A product can have at most 6 photos.","एक प्रोडक्ट में ज़्यादा से ज़्यादा 6 फ़ोटो।"],
+"Naam likhiye":["Enter a name","नाम लिखें"],
+/* stock */
+"Har product ke kitne piece bache hain. Order confirm karte hi stock apne aap kam hoga, cancel karne par wapas judega. Stock 0 hote hi website par \"Out of stock\" dikhega.":["Pieces left for each product. Confirming an order reduces stock automatically, cancelling adds it back. At 0 the website shows \"Out of stock\".","हर प्रोडक्ट के कितने पीस बचे हैं। ऑर्डर कन्फर्म करते ही स्टॉक अपने आप कम होगा, रद्द करने पर वापस जुड़ेगा। स्टॉक 0 होते ही वेबसाइट पर \"Out of stock\" दिखेगा।"],
+"Kul piece":["Total pieces","कुल पीस"],"Kam stock":["Low stock","कम स्टॉक"],
+"Stock khaali chhodo = track nahi hoga (website par hamesha available). Number badalte hi save ho jata hai.":["Leave stock blank to not track it (always available on the website). Changes save instantly.","स्टॉक खाली छोड़ें = ट्रैक नहीं होगा (वेबसाइट पर हमेशा उपलब्ध)। नंबर बदलते ही सेव हो जाता है।"],
+"Product":["Product","प्रोडक्ट"],"Abhi stock":["In stock","अभी स्टॉक"],"Kitne par alert":["Alert at","कितने पर अलर्ट"],"Alert":["Alert","अलर्ट"],"Haal":["Status","हाल"],"Kam":["Less","कम"],"Zyada":["More","ज़्यादा"],
+"Pehle Products mein jaakar 12 products import karo.":["First import the 12 products from the Products page.","पहले प्रोडक्ट पेज पर जाकर 12 प्रोडक्ट इम्पोर्ट करें।"],
+/* settings */
+"Dukaan ki jaankari, delivery, coupon aur bill. Save karte hi website par lag jata hai.":["Shop details, delivery, coupons and invoices. Changes go live on the website when saved.","दुकान की जानकारी, डिलीवरी, कूपन और बिल। सेव करते ही वेबसाइट पर लग जाता है।"],
+"Abhi website file wali settings use kar rahi hai. Yahan Save karte hi aapki settings online ho jaayengi.":["The website is using its built-in settings. Save here to put your settings online.","अभी वेबसाइट फ़ाइल वाली सेटिंग्स इस्तेमाल कर रही है। यहाँ सेव करते ही आपकी सेटिंग्स ऑनलाइन हो जाएँगी।"],
+"Dukaan ki jaankari":["Shop details","दुकान की जानकारी"],"Phone (dikhane ke liye)":["Phone (shown on website)","फ़ोन (दिखाने के लिए)"],"WhatsApp number":["WhatsApp number","WhatsApp नंबर"],
+"91 + number, bina + ke. Jaise 919990602827":["91 + number, without +. e.g. 919990602827","91 + नंबर, बिना + के। जैसे 919990602827"],"Email (website par dikhega)":["Email (shown on website)","ईमेल (वेबसाइट पर दिखेगा)"],"khaali chhod sakte hain":["optional","खाली छोड़ सकते हैं"],
+"Timing (English)":["Opening hours (English)","समय (English)"],"Timing (Hindi)":["Opening hours (Hindi)","समय (हिन्दी)"],"Address":["Address","पता"],
+"Delivery aur return":["Delivery and returns","डिलीवरी और रिटर्न"],"Free delivery kitne ₹ se":["Free delivery above (₹)","फ़्री डिलीवरी कितने ₹ से"],"Delivery charge (₹)":["Delivery charge (₹)","डिलीवरी चार्ज (₹)"],"Return ke din":["Return days","रिटर्न के दिन"],
+"Dispatch kitne din mein":["Dispatch time (days)","डिस्पैच कितने दिन में"],"Delivery kitne din mein":["Delivery time (days)","डिलीवरी कितने दिन में"],"jaise 1-2":["e.g. 1-2","जैसे 1-2"],"jaise 3-7":["e.g. 3-7","जैसे 3-7"],
+"Firm ka naam":["Firm name","फ़र्म का नाम"],"GSTIN":["GSTIN","GSTIN"],"GSTIN:":["GSTIN:","GSTIN:"],"Bill number ki shuruaat":["Invoice number prefix","बिल नंबर की शुरुआत"],"jaise AE":["e.g. AE","जैसे AE"],
+"Bags: HSN":["Bags: HSN","बैग: HSN"],"Bags: GST %":["Bags: GST %","बैग: GST %"],"Covers: HSN":["Covers: HSN","कवर: HSN"],"Covers: GST %":["Covers: GST %","कवर: GST %"],
+"Har product ka GST % aur HSN":["GST % and HSN per product","हर प्रोडक्ट का GST % और HSN"],
+"Yahan har product ka GST % aur HSN code bharo. Khaali chhodoge to upar wala category ka rate lagega. Badalte hi save ho jata hai.":["Fill GST % and HSN for each product here. Leave blank to use the category rate above. Changes save instantly.","यहाँ हर प्रोडक्ट का GST % और HSN कोड भरें। खाली छोड़ने पर ऊपर वाला कैटेगरी का रेट लगेगा। बदलते ही सेव हो जाता है।"],
+"Coupon / Offer":["Coupons / Offers","कूपन / ऑफ़र"],"Pehla coupon website ke upar aur home page par dikhta hai. Type: % chhoot ya seedhe ₹ chhoot.":["The first coupon shows at the top of the website and on the home page. Type: % off or flat ₹ off.","पहला कूपन वेबसाइट के ऊपर और होम पेज पर दिखता है। टाइप: % छूट या सीधे ₹ छूट।"],
+"Code":["Code","कोड"],"% chhoot":["% off","% छूट"],"₹ chhoot":["₹ off","₹ छूट"],"Kitni":["Amount","कितनी"],"Max ₹":["Max ₹","अधिकतम ₹"],"(% ke liye)":["(for %)","(% के लिए)"],"Min order ₹":["Min order ₹","न्यूनतम ऑर्डर ₹"],
+"Offer ka text (English)":["Offer text (English)","ऑफ़र का टेक्स्ट (English)"],"Offer ka text (Hindi)":["Offer text (Hindi)","ऑफ़र का टेक्स्ट (हिन्दी)"],"+ Coupon jodo":["+ Add coupon","+ कूपन जोड़ें"],
+"Naye order ki khabar":["New order alerts","नए ऑर्डर की ख़बर"],"Admin panel khula ho to naya order aate hi awaaz aati hai. Notification chalu karne par screen par bhi message aayega.":["While the admin panel is open, a sound plays for every new order. Turn on notifications to also get a pop-up.","एडमिन पैनल खुला हो तो नया ऑर्डर आते ही आवाज़ आती है। नोटिफ़िकेशन चालू करने पर स्क्रीन पर भी मैसेज आएगा।"],
+"Notification chalu karo":["Turn on notifications","नोटिफ़िकेशन चालू करें"],"Notification chalu hai":["Notifications are on","नोटिफ़िकेशन चालू है"],"Login:":["Logged in as:","लॉगिन:"],
+"Settings save karo":["Save settings","सेटिंग्स सेव करें"],"Save ho gaya. Website par turant lag gaya.":["Saved. Live on the website now.","सेव हो गया। वेबसाइट पर तुरंत लग गया।"],
+"WhatsApp number 91 ke saath 12 ankon ka hona chahiye, jaise 919990602827.":["WhatsApp number must be 12 digits starting with 91, e.g. 919990602827.","WhatsApp नंबर 91 के साथ 12 अंकों का होना चाहिए, जैसे 919990602827।"],
+/* toasts */
+"12 products import ho gaye":["12 products imported","12 प्रोडक्ट इम्पोर्ट हो गए"],"Abhi koi customer nahi":["No customers yet","अभी कोई ग्राहक नहीं"],"Alert limit save":["Alert limit saved","अलर्ट सीमा सेव"],
+"Copy ho gaya":["Copied","कॉपी हो गया"],"Copy nahi hua":["Could not copy","कॉपी नहीं हुआ"],"Customer list download hui":["Customer list downloaded","ग्राहक सूची डाउनलोड हुई"],"Download ke liye koi order nahi":["No orders to download","डाउनलोड के लिए कोई ऑर्डर नहीं"],
+"GST % save ho gaya":["GST % saved","GST % सेव हो गया"],"HSN save ho gaya":["HSN saved","HSN सेव हो गया"],"Is browser mein notification nahi chalta":["This browser doesn't support notifications","इस ब्राउज़र में नोटिफ़िकेशन नहीं चलता"],
+"Order delete ho gaya":["Order deleted","ऑर्डर डिलीट हो गया"],"Photo jud gayi. Ab Save karo dabaiye.":["Photo added. Now press Save.","फ़ोटो जुड़ गई। अब सेव करें दबाएँ।"],"Product delete ho gaya":["Product deleted","प्रोडक्ट डिलीट हो गया"],
+"Save ho gaya":["Saved","सेव हो गया"],"Save ho gaya. Website par dikhne laga.":["Saved. Now showing on the website.","सेव हो गया। वेबसाइट पर दिखने लगा।"],"Settings save ho gayi. Website par lag gayi.":["Settings saved and live on the website.","सेटिंग्स सेव हो गईं। वेबसाइट पर लग गईं।"],
+"Notification chalu ho gaye":["Notifications turned on","नोटिफ़िकेशन चालू हो गए"],"Notification allow nahi hua":["Notifications were not allowed","नोटिफ़िकेशन की अनुमति नहीं मिली"],
+"Website par dikhne laga":["Now showing on the website","वेबसाइट पर दिखने लगा"],"Website se chhup gaya":["Hidden from the website","वेबसाइट से छिप गया"],"Stock kam kiya":["Stock reduced","स्टॉक कम किया"],"Stock wapas joda":["Stock added back","स्टॉक वापस जोड़ा"],"Stock track band":["Stock tracking off","स्टॉक ट्रैकिंग बंद"],
+/* short dates (Hindi only matters) */
+"Mon":["Mon","सोम"],"Tue":["Tue","मंगल"],"Wed":["Wed","बुध"],"Thu":["Thu","गुरु"],"Fri":["Fri","शुक्र"],"Sat":["Sat","शनि"],"Sun":["Sun","रवि"],
+"Jan":["Jan","जन"],"Feb":["Feb","फ़र"],"Mar":["Mar","मार्च"],"Apr":["Apr","अप्रैल"],"May":["May","मई"],"Jun":["Jun","जून"],"Jul":["Jul","जुलाई"],"Aug":["Aug","अग"],"Sept":["Sep","सित"],"Sep":["Sep","सित"],"Oct":["Oct","अक्टू"],"Nov":["Nov","नव"],"Dec":["Dec","दिस"]
+};
+const L1=(w)=>{const e=I18N[w];return e?e[LANG==="en"?0:1]:w};
+const EN=()=>LANG==="en", pl=(n,w)=>n+" "+w+(+n===1?"":"s");
+const I18P=[
+ [/^Namaste · /,"Hello · ","नमस्ते · "],[/^Good morning · /,"Good morning · ","सुप्रभात · "],[/^Good evening · /,"Good evening · ","शुभ संध्या · "],
+ [/^(.+) \((\d+)\)$/,(m,a,b)=>L1(a)+" ("+b+")"],
+ [/^(Naya|Confirm|Bhej diya|Deliver ho gaya|Cancel): (\d+)$/,(m,a,b)=>L1(a)+": "+b],
+ [/^(.+) ★$/,(m,a)=>L1(a)+" ★"],
+ [/(\d+) naye order dekho/,(m,n)=>EN()?"View "+n+" new "+(+n===1?"order":"orders"):n+" नए ऑर्डर देखें"],
+ [/^(\d+) naye order aaye!$/,"$1 new orders!","$1 नए ऑर्डर आए!"],
+ [/^Naya order aaya: /,"New order: ","नया ऑर्डर आया: "],
+ [/^(\d+) order Excel file mein download hue$/,"$1 orders downloaded to Excel","$1 ऑर्डर Excel फ़ाइल में डाउनलोड हुए"],
+ [/(\d+) order aaj/,(m,n)=>EN()?pl(n,"order")+" today":"आज "+n+" ऑर्डर"],
+ [/(\d+) order is mahine/,(m,n)=>EN()?pl(n,"order")+" this month":"इस महीने "+n+" ऑर्डर"],
+ [/(\d+) order ab tak/,(m,n)=>EN()?pl(n,"order")+" so far":"अब तक "+n+" ऑर्डर"],
+ [/(\d+) products track ho rahe/,"$1 products tracked","$1 प्रोडक्ट ट्रैक हो रहे"],
+ [/(\d+) products · (\d+) website par dikh rahe/,"$1 products · $2 live on website","$1 प्रोडक्ट · $2 वेबसाइट पर दिख रहे"],
+ [/(\d+)% customers/,"$1% of customers","$1% ग्राहक"],
+ [/\(\+(\d+) cancel\)/,"(+$1 cancelled)","(+$1 रद्द)"],
+ [/^Purana customer · (\d+) order$/,(m,n)=>EN()?"Returning customer · "+pl(n,"order"):"पुराने ग्राहक · "+n+" ऑर्डर"],
+ [/^Kam: (\d+)$/,"Low: $1","कम: $1"],
+ [/^Stock: (\d+)$/,"Stock: $1","स्टॉक: $1"],
+ [/^Status: ([^·]+?)( · (.+))?$/,(m,a,b,c)=>(LANG==="en"?"Status: ":"स्टेटस: ")+L1(a)+(c?" · "+L1(c):"")],
+ [/^Bill (\S+)$/,"Invoice $1","बिल $1"],[/^GST bill · (.+)$/,"GST invoice · $1","GST बिल · $1"],[/^Bill number: (.+)$/,"Invoice number: $1","बिल नंबर: $1"],
+ [/^Photo save ho rahi hai: /,"Saving photo: ","फ़ोटो सेव हो रही है: "],[/^Photo save nahi hui: /,"Photo not saved: ","फ़ोटो सेव नहीं हुई: "],
+ [/^Kuch gadbad hui: /,"Something went wrong: ","कुछ गड़बड़ हुई: "],
+ [/^Password badalne ka link (.+) par bhej diya\.$/,"Password reset link sent to $1.","पासवर्ड बदलने का लिंक $1 पर भेज दिया।"],
+ [/^khaali = Settings wala \((.+)\)$/,"blank = Settings value ($1)","खाली = सेटिंग्स वाला ($1)"],
+ [/Bechne ka daam likhiye/,"Enter a selling price","बेचने का दाम लिखें"],[/MRP bechne ke daam se kam nahi ho sakta/,"MRP cannot be lower than the selling price","MRP बेचने के दाम से कम नहीं हो सकता"],[/Naam likhiye/,"Enter a name","नाम लिखें"],
+ [/Pichhle 30 din/g,"Last 30 days","पिछले 30 दिन"],[/Pichhle 7 din/g,"Last 7 days","पिछले 7 दिन"],[/Pichhle 12 mahine/g,"Last 12 months","पिछले 12 महीने"],
+ [/ · Qty (\d+)/g," · Qty $1"," · मात्रा $1"],[/^Qty (\d+)$/,"Qty $1","मात्रा $1"],
+ [/\bQty (\d+)/g,"Qty $1","मात्रा $1"],
+ [/(\d+) piece\b/g,(m,n)=>EN()?pl(n,"pc"):n+" पीस"],
+ [/(\d+) order\b/g,(m,n)=>EN()?pl(n,"order"):n+" ऑर्डर"],
+ [/Laptop bags/g,"Laptop bags","लैपटॉप बैग"],[/Hand bags/g,"Hand bags","हैंड बैग"],[/Washing machine covers/g,"Washing machine covers","वॉशिंग मशीन कवर"],[/Kitchen appliance covers/g,"Kitchen appliance covers","किचन अप्लायंस कवर"],[/AC covers/g,"AC covers","एसी कवर"],
+ [/(^| )· Hindi$/,"$1· Hindi","$1· हिन्दी"],[/^Coupon (\S+)$/,"Coupon $1","कूपन $1"],[/ · (Naya|Confirm|Bhej diya|Deliver ho gaya|Cancel)$/,(m,a)=>" · "+L1(a)],
+ [/^Bill par yahi details chhapengi\. Bill number apne aap (\S+)001, \S+002\.\.\. banta hai\..*$/,"These details are printed on the invoice. Invoice numbers are created automatically: $1001, $1002... Fill the category GST % below; if a product differs, fill it under \"GST % and HSN per product\".","बिल पर यही जानकारी छपेगी। बिल नंबर अपने आप $1001, $1002... बनता है। नीचे कैटेगरी का GST % भरें; किसी प्रोडक्ट का अलग हो तो \"हर प्रोडक्ट का GST % और HSN\" में भरें।"],
+ [/^Login: /,"Logged in as: ","लॉगिन: "],
+ [/ · chhupa hai/," · hidden"," · छिपा है"],[/ · GST /," · GST "," · GST "]
+];
 
 /* ---------- icons + nav ---------- */
 const IC={
@@ -380,7 +628,10 @@ const BNAV=[["dash","Home"],["orders","Orders"],["products","Products"],["custom
 function drawNav(){
   const n=ORD.filter(o=>o.status==="new").length, low=stockAlerts().length;
   const cnt=k=>k==="orders"&&n?`<span class="cnt">${n}</span>`:k==="stock"&&low?`<span class="cnt">${low}</span>`:"";
-  $("#sideNav").innerHTML=PAGES.map(([k,l])=>`<button class="nav ${PAGE===k?"on":""}" data-go="${k}">${svg(k)}${l}${cnt(k)}</button>`).join("");
+  const G=[["Overview",["dash"]],["Bikri",["orders","customers"]],["Catalog",["products","stock"]],["System",["settings"]]];
+  $("#sideNav").innerHTML=G.map(([g,ks])=>`<div class="sgl">${g}</div>`+ks.map(k=>{const l=PAGES.find(p=>p[0]===k)[1];return `<button class="nav ${PAGE===k||(k==="products"&&PAGE==="pedit")?"on":""}" data-go="${k}">${svg(k)}${l}${cnt(k)}</button>`}).join("")).join("");
+  $("#tbTitle").textContent=(PAGES.find(p=>p[0]===(PAGE==="pedit"?"products":PAGE))||["","Dashboard"])[1];
+  $("#bellBtn").innerHTML=`${svg("bell")}${n?`<span class="cnt">${n}</span>`:""}`;
   $("#bnav").innerHTML=BNAV.map(([k,l])=>`<button class="${PAGE===k||(k==="products"&&(PAGE==="pedit"))?"on":""}" data-go="${k}">${svg(k)}${l}${cnt(k)}</button>`).join("");
   document.title=(n?`(${n}) `:"")+"Aspire Admin";
 }
@@ -397,7 +648,7 @@ loadScript(B+"firebase-app-compat.js").then(()=>Promise.all([loadScript(B+"fireb
     $("#boot").classList.add("hide");
     $("#login").classList.toggle("hide",!!u); $("#app").classList.toggle("hide",!u);
     if(!u) return;
-    $("#who").textContent=u.email; firstOrders=true; seenIds=new Set(); startData(); go(location.hash.slice(1)||"dash");
+    $("#who").textContent=u.email; $("#meEmail").textContent=u.email; $("#meAv").textContent=(u.email||"A")[0].toUpperCase(); firstOrders=true; seenIds=new Set(); startData(); go(location.hash.slice(1)||"dash");
   });
 }).catch(()=>{$("#bootMsg").className="msg bad";$("#bootMsg").textContent="Firebase load nahi hua. Internet check karke page refresh kariye."});
 
@@ -477,7 +728,7 @@ function renderDash(){
   const alerts=stockAlerts();
   const rangeLbl={"7":"Pichhle 7 din","30":"Pichhle 30 din","12m":"Pichhle 12 mahine"}[R];
   $("#dash").innerHTML=`
-  <div class="phead"><div><h1>${hello} 👋</h1><p>${n.toLocaleDateString("hi-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})} · Aapki dukaan ka haal</p></div>
+  <div class="phead"><div><h1>Dashboard</h1><p>${hello} · ${n.toLocaleDateString(LANG==="hi"?"hi-IN":"en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</p></div>
     ${newO?`<button class="btn solid" data-go="orders" data-of="new">${svg("bell")}${newO} naye order dekho</button>`:""}</div>
   <div class="kpis">
     ${kpi("rupee","Aaj ki bikri",rs(sum(today)),`${today.length} order aaj`)}
@@ -501,13 +752,29 @@ function renderDash(){
       ${alerts.length?alerts.slice(0,6).map(p=>`<div class="alert">${pImg(p)}<div style="min-width:0"><b class="small" style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.name)}</b>${stockPill(p)}</div><button class="btn sm" data-go="stock">Badlo</button></div>`).join("")
         :`<div class="empty">${PRD.some(tracked)?"Sab products ka stock theek hai.":"Stock abhi track nahi ho raha. <br><button class='btn sm' data-go='stock' style='margin-top:10px'>Stock bharo</button>"}</div>`}
     </div>
+  </div>
+  ${statusCityHTML(rangeOrders,rangeLbl)}
+  <div class="foot">Aspire Enterprises · GSTIN ${esc((SET&&SET.gstin)||"07BMCPH3880E1Z8")}</div>`;
+}
+const SCOL={new:"var(--orange)",confirmed:"var(--blue)",shipped:"var(--violet)",delivered:"var(--good)",cancelled:"var(--muted)"};
+function statusCityHTML(rangeOrders,lbl){
+  const all=ORD.filter(o=>chartRange==="12m"?toD(o.createdAt)>=new Date(new Date().getFullYear(),new Date().getMonth()-11,1):inRange(o,chartRange));
+  const tot=all.length||1, cnt=STATUSES.map(([k,l])=>[k,l,all.filter(o=>o.status===k).length]);
+  const cities={}; rangeOrders.forEach(o=>{const c=(o.city||"—").trim();cities[c]=cities[c]||{c,n:0,v:0};cities[c].n++;cities[c].v+=Number(o.total)||0});
+  const top=Object.values(cities).sort((a,b)=>b.v-a.v).slice(0,5), cmax=top[0]?top[0].v:1;
+  return `<div class="dgrid" style="grid-template-columns:1fr 1fr">
+    <div class="card"><div class="card-h"><h2>Order status</h2><span class="muted small">${lbl} · ${all.length} order</span></div>
+      ${all.length?`<div class="sbar">${cnt.filter(c=>c[2]).map(([k,l,n])=>`<i style="width:${n/tot*100}%;background:${SCOL[k]}" title="${l}: ${n}"></i>`).join("")}</div>
+      <div class="leg">${cnt.map(([k,l,n])=>`<div><i style="background:${SCOL[k]}"></i>${l}<b>${n}</b><span class="muted small" style="width:44px;text-align:right">${Math.round(n/tot*100)}%</span></div>`).join("")}</div>`:`<div class="empty">Is samay mein abhi koi order nahi.</div>`}</div>
+    <div class="card"><div class="card-h"><h2>Top shehar</h2><span class="muted small">${lbl}</span></div>
+      ${top.length?`<div class="best">${top.map((c,i)=>`<div class="bi" style="grid-template-columns:28px 1fr auto"><b class="muted">${i+1}</b><div style="min-width:0"><div class="nm">${esc(c.c)}</div><div class="track"><i style="width:${Math.max(4,c.v/cmax*100)}%"></i></div></div><div class="v"><b>${rs(c.v)}</b>${c.n} order</div></div>`).join("")}</div>`:`<div class="empty">Is samay mein abhi koi bikri nahi.</div>`}</div>
   </div>`;
 }
 function chartHTML(L,R){
   const n=new Date(); let buckets=[];
-  if(R==="12m"){for(let i=11;i>=0;i--){const d=new Date(n.getFullYear(),n.getMonth()-i,1);buckets.push({k:d.getFullYear()+"-"+d.getMonth(),l:d.toLocaleDateString("en-IN",{month:"short"}),full:d.toLocaleDateString("en-IN",{month:"long",year:"numeric"}),v:0,c:0})}
+  if(R==="12m"){for(let i=11;i>=0;i--){const d=new Date(n.getFullYear(),n.getMonth()-i,1);buckets.push({k:d.getFullYear()+"-"+d.getMonth(),l:d.toLocaleDateString(LOC(),{month:"short"}),full:d.toLocaleDateString(LOC(),{month:"long",year:"numeric"}),v:0,c:0})}
     L.forEach(o=>{const d=toD(o.createdAt),b=buckets.find(x=>x.k===d.getFullYear()+"-"+d.getMonth());if(b){b.v+=Number(o.total)||0;b.c++}})}
-  else{const days=+R;for(let i=days-1;i>=0;i--){const d=new Date(n);d.setDate(d.getDate()-i);buckets.push({k:d.toDateString(),l:days<=7?d.toLocaleDateString("en-IN",{weekday:"short"}):d.getDate(),full:d.toLocaleDateString("en-IN",{day:"numeric",month:"short"}),v:0,c:0})}
+  else{const days=+R;for(let i=days-1;i>=0;i--){const d=new Date(n);d.setDate(d.getDate()-i);buckets.push({k:d.toDateString(),l:days<=7?d.toLocaleDateString(LOC(),{weekday:"short"}):d.getDate(),full:d.toLocaleDateString(LOC(),{day:"numeric",month:"short"}),v:0,c:0})}
     L.forEach(o=>{const b=buckets.find(x=>x.k===toD(o.createdAt).toDateString());if(b){b.v+=Number(o.total)||0;b.c++}})}
   const max=Math.max(...buckets.map(b=>b.v)); const top=max>0?niceMax(max):1000;
   const every=buckets.length>14?5:1;
@@ -518,7 +785,8 @@ function chartHTML(L,R){
 function niceMax(v){const p=Math.pow(10,Math.floor(Math.log10(v)));const m=v/p;return (m<=1?1:m<=2?2:m<=5?5:10)*p}
 
 /* ---------- ORDERS ---------- */
-const fmtDate=v=>{const d=toD(v);return isNaN(d)?"":d.toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})};
+const LOC=()=>LANG==="hi"?"hi-IN":"en-IN";
+const fmtDate=v=>{const d=toD(v);return isNaN(d)?"":d.toLocaleString(LOC(),{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})};
 function filteredOrders(){
   const q=$("#osearch").value.trim().toLowerCase();
   return ORD.filter(o=>(oFilter==="all"||o.status===oFilter)&&inRange(o,oRange)&&(!q||[o.name,o.phone,o.orderNo,o.city,o.invoiceNo,o.tracking].join(" ").toLowerCase().includes(q)));
@@ -530,10 +798,17 @@ function renderOrders(){
   const list=filteredOrders();
   $("#ocount").textContent=list.length?`${list.length} order · ${rs(sum(list.filter(o=>o.status!=="cancelled")))}`:"";
   const ae=document.activeElement, keep=ae&&ae.dataset&&ae.dataset.of2?`[data-of2="${ae.dataset.of2}"][data-id="${ae.dataset.id}"]`:null, pos=keep?ae.selectionStart:0;
-  $("#olist").innerHTML=list.length?list.map(orderCard).join(""):`<div class="card empty">${ORD.length?"Is filter mein koi order nahi.":"Abhi tak koi order nahi aaya. Jab customer website se order karega, woh yahan turant dikhega."}</div>`;
+  document.querySelectorAll("[data-ov]").forEach(b=>b.classList.toggle("on",b.dataset.ov===OVIEW));
+  const tbl=OVIEW==="table"&&matchMedia("(min-width:901px)").matches;
+  if(tbl&&list.length){ $("#olist").innerHTML=`<div class="card" style="padding:0;overflow:hidden"><table class="otbl"><thead><tr><th>Order</th><th>Tareekh</th><th>Customer</th><th>Saman</th><th>Payment</th><th>Status</th><th class="r">Amount</th><th></th></tr></thead><tbody>
+    ${list.map(o=>`<tr class="orow ${OPEN.has(o._id)?"open":""}" data-orow="${o._id}"><td class="no">${esc(o.orderNo||"")}</td><td class="small">${fmtDate(o.createdAt)}</td><td><b>${esc(o.name)}</b><div class="small muted">${esc(o.phone)} · ${esc(o.city||"")}</div></td>
+      <td class="small">${(o.items||[]).reduce((a,i)=>a+(+i.qty||0),0)} piece<div class="muted" style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc((o.items||[]).map(i=>i.name).join(", "))}</div></td>
+      <td class="small">${esc(o.pay||"")}</td><td><span class="pill s-${esc(o.status)}">${stName(o.status)}</span></td><td class="r"><b>${rs(o.total)}</b></td><td><svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></td></tr>
+      ${OPEN.has(o._id)?`<tr class="odet"><td colspan="8">${orderCard(o)}</td></tr>`:""}`).join("")}</tbody></table></div>`;
+  } else $("#olist").innerHTML=list.length?list.map(orderCard).join(""):`<div class="card empty">${ORD.length?"Is filter mein koi order nahi.":"Abhi tak koi order nahi aaya. Jab customer website se order karega, woh yahan turant dikhega."}</div>`;
   if(keep){const n=document.querySelector(keep);if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}}}
 }
-const SHIPOPEN=new Set();
+const SHIPOPEN=new Set(), OPEN=new Set(); let OVIEW=(()=>{try{return localStorage.getItem("aspire-admin-oview")||"table"}catch(e){return "table"}})();
 document.addEventListener("toggle",e=>{const d=e.target;if(d.dataset&&d.dataset.shipd){d.open?SHIPOPEN.add(d.dataset.shipd):SHIPOPEN.delete(d.dataset.shipd)}},true);
 function waTemplates(o){
   const hi=o.lang!=="en", nm=o.name||"", no=o.orderNo, tot=rs(o.total), st=SET||{}, dd=st.deliveryDays||STORE.deliveryDays||"3-7", dp=st.dispatchDays||STORE.dispatchDays||"1-2";
@@ -544,10 +819,10 @@ function waTemplates(o){
     ["shipped","Order bhej diya (tracking ke saath)","Courier aur tracking pehle bharein",`Namaste ${nm} ji, aapka order ${no} bhej diya gaya hai. 🚚\n${o.courier?"Courier: "+o.courier+"\n":""}${o.tracking?"Tracking no: "+o.tracking+"\n":""}${dd} din mein pahunch jayega.${o.pay&&/cash/i.test(o.pay)?"\nDelivery par "+tot+" cash dena hai.":""}\nAspire Enterprises`],
     ["delivered","Deliver ho gaya, review maango","",`Namaste ${nm} ji, umeed hai aapko order ${no} pasand aaya. 🙏\nAgar 1 minute ho to apna review is WhatsApp par bhej dijiye, isse humein bahut madad milti hai.\nKoi bhi dikkat ho to yahin message karein.\nAspire Enterprises`]
   ]:[
-    ["verify","Ask to confirm the order","To avoid fake COD orders",`Hello ${nm}, this is Aspire Enterprises.\nYou placed order ${no}: ${items}.\nTotal: ${tot} (${o.pay}).\nShall we ship it? Please reply "Yes".`],
-    ["confirmed","Order confirmed","",`Hello ${nm}, your order ${no} is confirmed. ✅\nIt will be dispatched in ${dp} days and we will send you the tracking number.\nThank you, Aspire Enterprises`],
-    ["shipped","Order shipped (with tracking)","Fill courier and tracking first",`Hello ${nm}, your order ${no} has been shipped. 🚚\n${o.courier?"Courier: "+o.courier+"\n":""}${o.tracking?"Tracking no: "+o.tracking+"\n":""}Expected delivery in ${dd} days.${o.pay&&/cash/i.test(o.pay)?"\nPlease keep "+tot+" ready for cash on delivery.":""}\nAspire Enterprises`],
-    ["delivered","Delivered, ask for review","",`Hello ${nm}, we hope you liked your order ${no}. 🙏\nIf you have a minute, please send us a short review here on WhatsApp. It helps us a lot.\nAspire Enterprises`]
+    ["verify","Order confirm karne ko poochho","Fake COD order se bachne ke liye",`Hello ${nm}, this is Aspire Enterprises.\nYou placed order ${no}: ${items}.\nTotal: ${tot} (${o.pay}).\nShall we ship it? Please reply "Yes".`],
+    ["confirmed","Order confirm ho gaya","",`Hello ${nm}, your order ${no} is confirmed. ✅\nIt will be dispatched in ${dp} days and we will send you the tracking number.\nThank you, Aspire Enterprises`],
+    ["shipped","Order bhej diya (tracking ke saath)","Courier aur tracking pehle bharein",`Hello ${nm}, your order ${no} has been shipped. 🚚\n${o.courier?"Courier: "+o.courier+"\n":""}${o.tracking?"Tracking no: "+o.tracking+"\n":""}Expected delivery in ${dd} days.${o.pay&&/cash/i.test(o.pay)?"\nPlease keep "+tot+" ready for cash on delivery.":""}\nAspire Enterprises`],
+    ["delivered","Deliver ho gaya, review maango","",`Hello ${nm}, we hope you liked your order ${no}. 🙏\nIf you have a minute, please send us a short review here on WhatsApp. It helps us a lot.\nAspire Enterprises`]
   ];
   return T;
 }
@@ -601,6 +876,8 @@ document.addEventListener("change",async e=>{
   if(el.dataset.ost){setStatus(el.dataset.ost,el.value);return}
   if(el.dataset.of2){try{await db.collection("store_orders").doc(el.dataset.id).update({[el.dataset.of2]:el.value.trim()});toast("Save ho gaya")}catch(x){toast(errText(x))}return}
   if(el.dataset.stk){saveStock(el.dataset.stk);return}
+  if(el.dataset.phsn!==undefined&&el.dataset.phsn){try{await db.collection("store_products").doc(el.dataset.phsn).update({hsn:el.value.trim()});toast("HSN save ho gaya")}catch(x){toast(errText(x))}return}
+  if(el.dataset.pgst){const v=el.value.trim();try{await db.collection("store_products").doc(el.dataset.pgst).update({gst:v===""?null:Math.max(0,+v||0)});toast("GST % save ho gaya")}catch(x){toast(errText(x))}return}
   if(el.dataset.low){const v=el.value===""?5:Math.max(0,Math.round(+el.value)||0);try{await db.collection("store_products").doc(el.dataset.low).update({lowStock:v});toast("Alert limit save")}catch(x){toast(errText(x))}return}
   if(el.id==="ePhotoIn"&&el.files.length){addPhotos([...el.files]);return}
   if(el.id==="billState"){renderBillModal();return}
@@ -645,7 +922,7 @@ function renderCustomers(keepQ){
       <select id="csort"><option value="spent" ${custSort==="spent"?"selected":""}>Sabse zyada kharida</option><option value="orders" ${custSort==="orders"?"selected":""}>Sabse zyada order</option><option value="recent" ${custSort==="recent"?"selected":""}>Haal hi mein</option></select></div>
     ${list.length?`<table class="tbl resp"><thead><tr><th>Customer</th><th>Shehar</th><th class="r">Order</th><th class="r">Kul kharida</th><th>Aakhri order</th><th></th></tr></thead><tbody>
     ${list.map(c=>`<tr><td class="nolabel"><div class="cname"><span class="av">${esc((c.name||"?").trim()[0]||"?").toUpperCase()}</span><div style="min-width:0"><b>${esc(c.name)}</b>${c.orders>1?` <span class="pill s-confirmed" style="margin-left:4px">Repeat</span>`:""}<div class="small muted">${esc(c.phone)}${c.gstin?" · GST "+esc(c.gstin):""}</div></div></div></td>
-      <td data-l="Shehar">${esc(c.city||"")}</td><td class="r" data-l="Order">${c.orders}${c.cancelled?` <span class="muted small">(+${c.cancelled} cancel)</span>`:""}</td><td class="r" data-l="Kul kharida"><b>${rs(c.spent)}</b></td><td data-l="Aakhri order">${c.last?c.last.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}):""}</td>
+      <td data-l="Shehar">${esc(c.city||"")}</td><td class="r" data-l="Order">${c.orders}${c.cancelled?` <span class="muted small">(+${c.cancelled} cancel)</span>`:""}</td><td class="r" data-l="Kul kharida"><b>${rs(c.spent)}</b></td><td data-l="Aakhri order">${c.last?c.last.toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"numeric"}):""}</td>
       <td class="nolabel"><div class="row" style="gap:6px;justify-content:flex-end"><button class="btn sm" data-oq="${esc(p10(c.phone))}">Orders</button><a class="btn sm wa" href="${waUrl(c.phone,`Namaste ${c.name} ji, Aspire Enterprises se. `)}" target="_blank" rel="noopener">${svg("wa")}WhatsApp</a></div></td></tr>`).join("")}
     </tbody></table>`:`<div class="empty">${total?"Koi customer nahi mila.":"Pehla order aate hi customer yahan dikhenge."}</div>`}
   </div>`;
@@ -685,7 +962,7 @@ function billDefaults(){return {firm:"Aspire Enterprises",gstin:STORE.gstin||"07
 /* ---------- STOCK ---------- */
 function renderStock(){
   const al=stockAlerts(), tr=PRD.filter(tracked);
-  $("#stock").innerHTML=`<div class="phead"><div><h1>Stock</h1><p>Har product ke kitne piece bache hain. Order <b>Confirm</b> karte hi stock apne aap kam hoga, <b>Cancel</b> karne par wapas judega. Stock 0 hote hi website par "Out of stock" dikhega.</p></div></div>
+  $("#stock").innerHTML=`<div class="phead"><div><h1>Stock</h1><p>Har product ke kitne piece bache hain. Order confirm karte hi stock apne aap kam hoga, cancel karne par wapas judega. Stock 0 hote hi website par "Out of stock" dikhega.</p></div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr)">
     <div class="kpi"><span class="l">Kul piece</span><b>${tr.reduce((a,p)=>a+p.stock,0)}</b><span class="d">${tr.length} products track ho rahe</span></div>
     <div class="kpi"><span class="l">Stock khatam</span><b style="color:var(--bad)">${tr.filter(p=>p.stock<=0).length}</b></div>
@@ -724,7 +1001,7 @@ function renderEdit(){
     <div class="grid2"><label class="f">Naam (English)<input type="text" id="eName" value="${esc(p.name)}"></label><label class="f">Naam (Hindi)<input type="text" id="eNameHi" value="${esc(p.name_hi)}"></label></div>
     <div class="grid3"><label class="f">Bechne ka daam (₹) <span class="h">GST mila kar</span><input type="number" id="ePrice" min="0" value="${p.price||""}"></label><label class="f">MRP (₹) <span class="h">kata hua daam</span><input type="number" id="eMrp" min="0" value="${p.mrp||""}"></label><label class="f">Label <span class="h">jaise Bestseller, New</span><input type="text" id="eTag" value="${esc(p.tag)}"></label></div>
     <div class="grid3"><label class="f">Category<select id="eCat"><option value="bags" ${p.cat==="bags"?"selected":""}>Bags</option><option value="covers" ${p.cat==="covers"?"selected":""}>Appliance covers</option></select></label>
-      <label class="f">Type<select id="eType">${TYPES.map(x=>`<option ${p.type===x?"selected":""}>${x}</option>`).join("")}</select></label>
+      <label class="f">Type<select id="eType" data-notr>${TYPES.map(x=>`<option ${p.type===x?"selected":""}>${x}</option>`).join("")}</select></label>
       <label class="f">List mein number <span class="h">chhota number = pehle</span><input type="number" id="eOrder" value="${p.order??0}"></label></div>
     <label class="row small"><input type="checkbox" id="eActive" ${p.active!==false?"checked":""}> Website par dikhao</label></div>
   <div class="card stack"><h3>Stock aur GST</h3>
@@ -856,7 +1133,7 @@ function renderBillModal(){
   $("#modal").innerHTML=`<div class="box"><div class="mh"><h2>GST bill · ${esc(o.invoiceNo)}</h2><span style="flex:1"></span>
     <label class="row small" style="gap:6px">Place of supply <select id="billState" style="width:auto">${STATES.map(([c,n])=>`<option value="${c}" ${c===BILL.state?"selected":""}>${n} (${c})</option>`).join("")}</select></label>
     <button class="btn solid sm" data-print="bill">${svg("print")}Print / PDF</button><button class="btn sm" data-close>Band karo</button></div>
-    <div class="mb"><div class="sheet">${invoiceHTML(o,BILL.state)}</div><p class="small muted" style="max-width:800px;margin:10px auto 0">HSN aur GST % Settings mein badal sakte ho. Rate apne CA se ek baar confirm kar lijiye. Print mein "Save as PDF" chunke PDF bhi bana sakte ho.</p></div></div>`;
+    <div class="mb"><div class="sheet">${invoiceHTML(o,BILL.state)}</div><p class="small muted" style="max-width:800px;margin:10px auto 0">HSN aur GST % Settings mein badal sakte ho. Print mein "Save as PDF" chunke PDF bhi bana sakte ho.</p></div></div>`;
   $("#modal").classList.remove("hide");
 }
 function printDoc(html){$("#printArea").innerHTML=html;setTimeout(()=>window.print(),60)}
@@ -866,7 +1143,13 @@ let delArm=null;
 document.addEventListener("click",async e=>{
   const det=e.target.closest("details.wam"); document.querySelectorAll("details.wam[open]").forEach(d=>{if(d!==det)d.open=false});
   const row=e.target.closest("[data-oq]"); if(row&&!e.target.closest("a")){go("orders");oFilter="all";oRange="all";$("#osearch").value=row.dataset.oq;renderOrders();return}
+  const orow=e.target.closest("[data-orow]"); if(orow){const id=orow.dataset.orow;OPEN.has(id)?OPEN.delete(id):OPEN.add(id);renderOrders();return}
   const el=e.target.closest("button,a"); if(!el) return;
+  if(el.dataset.ov){OVIEW=el.dataset.ov;try{localStorage.setItem("aspire-admin-oview",OVIEW)}catch(x){}renderOrders();return}
+  if(el.id==="themeBtn"||el.hasAttribute("data-thm")){const dark=document.documentElement.dataset.theme?document.documentElement.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.dataset.theme=dark?"light":"dark";try{localStorage.setItem("aspire-admin-theme",document.documentElement.dataset.theme)}catch(x){}return}
+  if(el.dataset.gp){$("#gres").classList.add("hide");$("#gq").value="";const [k,v]=[el.dataset.gp,el.dataset.gv];
+    if(k==="o"||k==="c"){go("orders");oFilter="all";oRange="all";$("#osearch").value=v;if(k==="o"){const o=ORD.find(x=>x.orderNo===v);if(o)OPEN.add(o._id)}renderOrders()}
+    if(k==="p"){openEdit(PRD.find(p=>p.id===v))}return}
   if(el.dataset.go){const f=el.dataset.of;go(el.dataset.go);if(f){oFilter=f;renderOrders()}return}
   if(el.hasAttribute("data-logout")){auth.signOut();return}
   if(el.dataset.cr){chartRange=el.dataset.cr;renderDash();return}
@@ -895,6 +1178,20 @@ document.addEventListener("click",async e=>{
   if(el.dataset.cpdel){readSettings();SDRAFT.coupons.splice(+el.dataset.cpdel,1);renderSettings(true);return}
   if(el.id==="notifOn"){if(!window.Notification){toast("Is browser mein notification nahi chalta");return}Notification.requestPermission().then(p=>{toast(p==="granted"?"Notification chalu ho gaye":"Notification allow nahi hua");renderSettings(true)});return}
 });
+/* ---------- global search ---------- */
+$("#gq").addEventListener("input",()=>{
+  const q=$("#gq").value.trim().toLowerCase(), box=$("#gres"); if(q.length<2){box.classList.add("hide");return}
+  const os=ORD.filter(o=>[o.orderNo,o.name,o.phone,o.invoiceNo,o.tracking].join(" ").toLowerCase().includes(q)).slice(0,5);
+  const cs=customerList().filter(c=>[c.name,c.phone,c.city].join(" ").toLowerCase().includes(q)).slice(0,4);
+  const ps=PRD.filter(p=>[p.name,p.name_hi,p.type].join(" ").toLowerCase().includes(q)).slice(0,4);
+  box.innerHTML=(os.length?`<h4>Orders</h4>`+os.map(o=>`<button data-gp="o" data-gv="${esc(o.orderNo)}"><b class="num">${esc(o.orderNo)}</b> ${esc(o.name)}<span>${rs(o.total)} · ${stName(o.status)}</span></button>`).join(""):"")
+    +(cs.length?`<h4>Customers</h4>`+cs.map(c=>`<button data-gp="c" data-gv="${esc(p10(c.phone))}">${esc(c.name)}<span>${esc(c.phone)} · ${c.orders} order</span></button>`).join(""):"")
+    +(ps.length?`<h4>Products</h4>`+ps.map(p=>`<button data-gp="p" data-gv="${esc(p.id)}">${esc(p.name)}<span>${rs(p.price)}</span></button>`).join(""):"")
+    ||`<div class="empty small">Kuch nahi mila</div>`;
+  box.classList.remove("hide");
+});
+$("#gq").addEventListener("keydown",e=>{if(e.key==="Escape"){$("#gres").classList.add("hide");$("#gq").blur()}if(e.key==="Enter"){const b=$("#gres button");if(b)b.click()}});
+document.addEventListener("click",e=>{if(!e.target.closest(".gs"))$("#gres").classList.add("hide")});
 $("#modal").addEventListener("click",e=>{if(e.target.id==="modal")$("#modal").classList.add("hide")});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")$("#modal").classList.add("hide")});
 window.addEventListener("afterprint",()=>{$("#printArea").innerHTML=""});
@@ -917,10 +1214,14 @@ function renderSettings(keep){
   <div class="card stack"><h3>Delivery aur return</h3>
     <div class="grid3">${f("sFree","Free delivery kitne ₹ se",s.freeShipAbove,"number")}${f("sShip","Delivery charge (₹)",s.shipping,"number")}${f("sRet","Return ke din",s.returnDays,"number")}</div>
     <div class="grid2">${f("sDisp","Dispatch kitne din mein",s.dispatchDays,"text","jaise 1-2")}${f("sDel","Delivery kitne din mein",s.deliveryDays,"text","jaise 3-7")}</div></div>
-  <div class="card stack"><h3>GST bill</h3><span class="muted small">Bill par yahi details chhapengi. Bill number apne aap ${esc(s.invPrefix||"AE")}001, ${esc(s.invPrefix||"AE")}002... banta hai. GST rate apne CA se confirm kar lijiye.</span>
+  <div class="card stack"><h3>GST bill</h3><span class="muted small">Bill par yahi details chhapengi. Bill number apne aap ${esc(s.invPrefix||"AE")}001, ${esc(s.invPrefix||"AE")}002... banta hai. Neeche category ka GST % bharo, aur kisi product ka alag ho to "Har product ka GST %" mein bharo.</span>
     <div class="grid3">${f("sFirm","Firm ka naam",s.firm)}${f("sGstin","GSTIN",s.gstin)}${f("sPre","Bill number ki shuruaat",s.invPrefix,"text","jaise AE")}</div>
     <div class="grid2">${f("sHsnB","Bags: HSN",s.hsnBags)}${f("sGstB","Bags: GST %",s.gstBags,"number")}</div>
     <div class="grid2">${f("sHsnC","Covers: HSN",s.hsnCovers)}${f("sGstC","Covers: GST %",s.gstCovers,"number")}</div></div>
+  ${PRD.length?`<div class="card stack"><h3>Har product ka GST % aur HSN</h3><span class="muted small">Yahan har product ka GST % aur HSN code bharo. Khaali chhodoge to upar wala category ka rate lagega. Badalte hi save ho jata hai.</span>
+    <table class="tbl resp"><thead><tr><th>Product</th><th>Category</th><th>HSN</th><th>GST %</th></tr></thead><tbody>
+    ${PRD.map(p=>`<tr><td class="nolabel"><b>${esc(p.name)}</b></td><td data-l="Category">${p.cat==="covers"?"Covers":"Bags"}</td><td data-l="HSN"><input type="text" data-phsn="${p.id}" value="${esc(p.hsn||"")}" placeholder="${esc(p.cat==="covers"?s.hsnCovers:s.hsnBags)}" style="width:110px"></td><td data-l="GST %"><input type="number" min="0" max="28" step="0.1" data-pgst="${p.id}" value="${typeof p.gst==="number"?p.gst:""}" placeholder="${p.cat==="covers"?s.gstCovers:s.gstBags}" style="width:90px"></td></tr>`).join("")}
+    </tbody></table></div>`:""}
   <div class="card stack"><h3>Coupon / Offer</h3><span class="muted small">Pehla coupon website ke upar aur home page par dikhta hai. Type: % chhoot ya seedhe ₹ chhoot.</span>
     ${s.coupons.map((c,i)=>`<div class="stack" style="border-top:1px solid var(--line);padding-top:12px"><div class="cprow">
       <label class="f">Code<input type="text" data-cp="code" data-i="${i}" value="${esc(c.code)}" style="text-transform:uppercase"></label>
@@ -933,7 +1234,7 @@ function renderSettings(keep){
     <div><button class="btn sm" id="cpAdd">+ Coupon jodo</button></div></div>
   <div class="card stack"><h3>Naye order ki khabar</h3><span class="muted small">Admin panel khula ho to naya order aate hi awaaz aati hai. Notification chalu karne par screen par bhi message aayega.</span>
     <div class="row">${np==="granted"?`<span class="pill tag-ok">Notification chalu hai</span>`:`<button class="btn sm" id="notifOn">${svg("bell")}Notification chalu karo</button>`}</div></div>
-  <div class="card row between"><span class="small muted">Login: <b style="color:var(--ink)">${esc(user&&user.email)}</b></span><button class="btn sm danger" data-logout>Logout</button></div>
+  <div class="card row between"><span class="small muted">Login: <b style="color:var(--ink)">${esc(user&&user.email)}</b></span><div class="row"><button class="btn sm" data-thm>Dark / light mode</button><button class="btn sm danger" data-logout>Logout</button></div></div>
   <div id="sMsg"></div>
   <div class="sticky-save"><button class="btn solid" id="sSave">Settings save karo</button></div></div>`;
   $("#settings").oninput=()=>{settingsDirty=true};
@@ -952,6 +1253,7 @@ async function saveSettings(){
   const d={...SDRAFT}; delete d.lastInv;
   try{await db.collection("store_settings").doc("main").set(d,{merge:true});settingsDirty=false;toast("Settings save ho gayi. Website par lag gayi.");m.className="msg ok";m.textContent="Save ho gaya. Website par turant lag gaya."}catch(e){m.className="msg bad";m.textContent=errText(e)}
 }
+trNode(document.body);
 </script>
 </body>
 </html>
