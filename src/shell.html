@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="hi-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<!--HEAD-->
+<style>
+body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+#auth{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+#auth .box{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:28px 24px;display:flex;flex-direction:column;gap:14px}
+#auth .bm{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+#auth .bm svg{width:46px;height:40px;flex:none}
+#auth .bm b{font:800 1.15rem var(--f-head);letter-spacing:.01em}
+#auth .bm b span{color:var(--accent)}
+#auth .bm small{display:block;color:var(--muted);font-size:.78rem}
+#auth h2{font-size:1.1rem}
+#auth input{padding:10px 12px;font-size:.95rem}
+#auth button.btn{padding:11px 14px;font-size:.95rem;width:100%}
+#auth .links{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+#auth-msg{font-size:.84rem;min-height:1.2em;color:var(--bad)}
+#auth-msg.ok{color:var(--good)}
+#app-user{display:flex;align-items:center;gap:10px;font-size:.76rem;color:var(--bar-muted);min-width:0}
+#app-user span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
+#app-user button{background:none;border:1px solid var(--bar-muted);color:var(--bar-ink);border-radius:7px;font:600 .76rem var(--f-body);padding:5px 10px;cursor:pointer}
+@media(max-width:640px){#app-user span{display:none}#savenote{display:none}}
+#demo-note{background:var(--warn-soft);color:var(--warn);font-size:.82rem;padding:8px 16px;text-align:center}
+</style>
+<script src="config.js"></script>
+</head>
+<body>
+<div id="auth" hidden>
+  <form class="box" id="auth-form" autocomplete="on">
+    <div class="bm"><svg viewBox="0 6 100 88" aria-hidden="true"><path d="M4 90 L44 10 H66 L26 90 Z" fill="currentColor"/><path d="M52 52 L64 28 L96 90 H72 Z" fill="#FF4D1A"/></svg><div><b>ASPIRE <span>ENTERPRISES</span></b><small>Seller App</small></div></div>
+    <h2 id="auth-title">Login karo</h2>
+    <div><label class="fl" for="auth-email">Email</label><input type="email" id="auth-email" autocomplete="username" required></div>
+    <div><label class="fl" for="auth-pass">Password</label><input type="password" id="auth-pass" autocomplete="current-password" required minlength="6"></div>
+    <button class="btn" type="submit" id="auth-go">Login</button>
+    <div class="links"><button class="link" type="button" id="auth-mode">Naya account banao</button><button class="link" type="button" id="auth-reset">Password bhool gaye?</button></div>
+    <div id="auth-msg" aria-live="polite"></div>
+  </form>
+</div>
+<div id="demo-note" hidden>Demo mode: abhi data sirf isi browser mein save ho raha hai. Online login chalu hone ke baad har device par milega.</div>
+<script>
+/* Platform layer: gives the calculator the same small API it had inside Claude
+   (window.claude.use("db" | "downloads")), backed by Firebase when config.js has a
+   project, or by this browser's storage (demo mode) when it does not. */
+(function(){
+  var CFG=window.ASPIRE_FIREBASE||null, giveDb, dbP=new Promise(function(r){ giveDb=r; });
+  var MIME={html:"text/html",csv:"text/csv",json:"application/json",txt:"text/plain"};
+  var downloads={save:function(o){ return new Promise(function(res,rej){ try{
+    var ext=String(o.filename).split(".").pop().toLowerCase(), b=o.data instanceof Blob?o.data:new Blob([o.data],{type:(MIME[ext]||"application/octet-stream")+";charset=utf-8"});
+    var u=URL.createObjectURL(b), a=document.createElement("a"); a.href=u; a.download=o.filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(u); },5000); res({status:"saved"});
+  }catch(e){ rej({code:"unavailable"}); } }); }};
+  window.claude={use:function(n){ return n==="db"?dbP:Promise.resolve(n==="downloads"?downloads:null); }};
+  function $(i){ return document.getElementById(i); }
+
+  // ----- demo mode: same API over localStorage -----
+  function localDb(){
+    var KEY="aspire_app_local_v1", store={}, subs={}, dsubs={}, seq=0;
+    try{ store=JSON.parse(localStorage.getItem(KEY)||"{}")||{}; }catch(e){}
+    function persist(){ try{ localStorage.setItem(KEY,JSON.stringify(store)); }catch(e){} }
+    function copy(x){ return JSON.parse(JSON.stringify(x)); }
+    function fire(c){
+      (subs[c]||[]).forEach(function(fn){ fn({docs:Object.keys(store[c]||{}).map(function(id){ return {id:id,data:function(){ return copy(store[c][id]); }}; }),metadata:{fromCache:false}}); });
+      Object.keys(dsubs).forEach(function(k){ if(k.indexOf(c+"/")===0) dsubs[k].forEach(function(f){ f(); }); });
+    }
+    function newId(){ return "l"+Date.now().toString(36)+(seq++).toString(36)+Math.random().toString(36).slice(2,6); }
+    function ref(c,id){ return {id:id,
+      set:function(d){ (store[c]=store[c]||{})[id]=copy(d); persist(); fire(c); return Promise.resolve(); },
+      delete:function(){ if(store[c]) delete store[c][id]; persist(); fire(c); return Promise.resolve(); },
+      onSnapshot:function(fn){ var f=function(){ var d=(store[c]||{})[id]; fn({exists:!!d,data:function(){ return d?copy(d):undefined; },metadata:{fromCache:false,hasPendingWrites:false}}); }; (dsubs[c+"/"+id]=dsubs[c+"/"+id]||[]).push(f); setTimeout(f,0); return function(){}; } }; }
+    return { doc:function(p){ var a=p.split("/"); return ref(a[0],a[1]); },
+      collection:function(c){ return { onSnapshot:function(fn){ (subs[c]=subs[c]||[]).push(fn); setTimeout(function(){ fire(c); },0); return function(){}; },
+        add:function(d){ var r=ref(c,newId()); return r.set(d).then(function(){ return r; }); }, doc:function(id){ return ref(c,id||newId()); } }; } };
+  }
+
+  // ----- calculator numbers: keep the browser copy and the online copy the same -----
+  function syncCalc(db){
+    var STORE="aspire_seller_calc_v1", last=null, synced=false, r=db.doc("calc/main");
+    r.onSnapshot(function(sn){
+      var cur=localStorage.getItem(STORE);
+      if(sn.exists){ var d=sn.data()||{}; if(d.json&&d.json!==cur&&d.json!==last){ try{ last=d.json; if(window.aspCalc) window.aspCalc.load(JSON.parse(d.json)); }catch(e){} } }
+      synced=true;
+    },function(){});
+    setInterval(function(){ if(!synced) return; var cur=localStorage.getItem(STORE); if(cur&&cur!==last){ last=cur; r.set({json:cur,at:new Date().toISOString()}).catch(function(){}); } },2500);
+  }
+
+  if(!CFG){
+    document.addEventListener("DOMContentLoaded",function(){ $("demo-note").hidden=false; });
+    giveDb(localDb()); return;
+  }
+
+  // ----- online mode: Firebase login + Firestore, each user's data under users/{uid} -----
+  var V="10.12.2", base="https://www.gstatic.com/firebasejs/"+V+"/";
+  function load(src){ return new Promise(function(res,rej){ var s=document.createElement("script"); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
+  var ERR={"auth/invalid-credential":"Email ya password galat hai.","auth/wrong-password":"Password galat hai.","auth/user-not-found":"Is email ka account nahi mila.","auth/invalid-email":"Email sahi nahi hai.","auth/email-already-in-use":"Is email ka account pehle se hai. Login karo.","auth/weak-password":"Password kam se kam 6 akshar ka rakho.","auth/too-many-requests":"Bahut baar try hua. Thodi der baad dobara karo.","auth/network-request-failed":"Internet nahi chal raha. Check karke dobara try karo.","auth/operation-not-allowed":"Naya account banana abhi band hai."};
+  function say(t,ok){ var m=$("auth-msg"); m.textContent=t||""; m.className=ok?"ok":""; }
+  document.addEventListener("DOMContentLoaded",function(){
+    var signup=false; $("auth").hidden=false;
+    load(base+"firebase-app-compat.js").then(function(){ return Promise.all([load(base+"firebase-auth-compat.js"),load(base+"firebase-firestore-compat.js")]); }).then(function(){
+      var fb=window.firebase; fb.initializeApp(CFG);
+      var auth=fb.auth(), fs=fb.firestore(), given=false;
+      try{ fs.settings({ignoreUndefinedProperties:true}); }catch(e){}
+      try{ fs.enablePersistence({synchronizeTabs:true}).catch(function(){}); }catch(e){}
+      auth.onAuthStateChanged(function(u){
+        if(!u){ if(given){ location.reload(); return; } $("auth").hidden=false; return; }
+        $("auth").hidden=true;
+        var bar=document.querySelector(".appbar .in"), box=document.createElement("div"); box.id="app-user";
+        var sp=document.createElement("span"); sp.textContent=u.email||""; var bt=document.createElement("button"); bt.type="button"; bt.textContent="Logout";
+        bt.addEventListener("click",function(){ try{ ["aspire_seller_calc_v1","aspire_launch_plan_v1","aspire_calc_bin_v1"].forEach(function(k){ localStorage.removeItem(k); }); }catch(e){} auth.signOut(); }); box.appendChild(sp); box.appendChild(bt); if(bar&&!$("app-user")) bar.appendChild(box);
+        if(!given){ given=true; var root=fs.collection("users").doc(u.uid);
+          var db={collection:function(c){ return root.collection(c); },doc:function(p){ var a=p.split("/"); return root.collection(a[0]).doc(a[1]); }};
+          giveDb(db); syncCalc(db); }
+      });
+      $("auth-mode").addEventListener("click",function(){ signup=!signup; $("auth-title").textContent=signup?"Naya account banao":"Login karo"; $("auth-go").textContent=signup?"Account banao":"Login"; $("auth-mode").textContent=signup?"Pehle se account hai? Login":"Naya account banao"; $("auth-pass").autocomplete=signup?"new-password":"current-password"; say(""); });
+      $("auth-reset").addEventListener("click",function(){ var e=$("auth-email").value.trim(); if(!e){ say("Pehle upar apna email likho."); return; } auth.sendPasswordResetEmail(e).then(function(){ say("Password badalne ka link aapke email par bhej diya hai.",true); },function(er){ say(ERR[er&&er.code]||"Link nahi bhej paaya. Dobara try karo."); }); });
+      $("auth-form").addEventListener("submit",function(ev){
+        ev.preventDefault(); var e=$("auth-email").value.trim(), p=$("auth-pass").value, b=$("auth-go"); b.disabled=true; say("Ruko…",true);
+        (signup?auth.createUserWithEmailAndPassword(e,p):auth.signInWithEmailAndPassword(e,p)).then(function(){ say(""); },function(er){ say(ERR[er&&er.code]||"Login nahi hua. Dobara try karo."); }).then(function(){ b.disabled=false; });
+      });
+    }).catch(function(){ say("App load nahi hua. Internet check karke page reload karo."); });
+  });
+})();
+</script>
+<!--APP-->
+</body>
+</html>
