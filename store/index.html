@@ -390,7 +390,7 @@ const T={
  noMatch:["No products match “{q}”","“{q}” से कोई प्रोडक्ट नहीं मिला"], tryThis:["Try “bag” or “cover”.","“bag” या “cover” लिखकर देखें।"], showAll:["Show all products","सभी प्रोडक्ट दिखाएं"],
  notFound:["Product not found","प्रोडक्ट नहीं मिला"], back:["Back to shop","दुकान पर वापस"],
  incl:["Inclusive of all taxes","सभी टैक्स शामिल"], mrp:["MRP","MRP"], colour:["Colour","रंग"], size:["Size","साइज़"], qty:["Quantity","मात्रा"],
- buy:["Buy now","अभी खरीदें"], ask:["Ask on WhatsApp","WhatsApp पर पूछें"],
+ buy:["Buy now","अभी खरीदें"], oos:["Out of stock","स्टॉक खत्म"], oosAsk:["Out of stock. Ask on WhatsApp when it will be back.","अभी स्टॉक खत्म है। WhatsApp पर पूछें कब आएगा।"], ask:["Ask on WhatsApp","WhatsApp पर पूछें"],
  freeDel:["Free delivery","फ़्री डिलीवरी"], delivery:["Delivery","डिलीवरी"], panIndia:["Pan India","पूरे भारत में"], gstInv:["GST invoice","GST बिल"], withEvery:["With every order","हर ऑर्डर के साथ"],
  easyRet:["{days}-day returns","{days} दिन में वापसी"], retS:["Damaged or wrong item","टूटा या गलत सामान"],
  details:["Product details","प्रोडक्ट की जानकारी"], sizeGuide:["Size guide","साइज़ गाइड"], sgNote:["Approx. sizes in cm. Please measure your appliance before ordering. Not sure? Ask us on WhatsApp.","साइज़ लगभग सेंटीमीटर में है। ऑर्डर से पहले अपना सामान नाप लें। पक्का नहीं? WhatsApp पर पूछें।"],
@@ -484,8 +484,9 @@ function pic(p,colIdx,im,big){
   const dfull=big&&im.f&&im.f.startsWith("ph:")?`data-full="${im.f.slice(3)}"`:"";
   return `<img src="${src}" ${fb} ${dfull} alt="${esc(pn(p))}" ${big?'fetchpriority="high"':'loading="lazy"'} decoding="async" width="1000" height="1000" style="width:100%;height:100%;object-fit:cover">`;
 }
+function oos(p){return !!p&&typeof p.stock==="number"&&p.stock<=0}
 function addToCart(id,colour,size,qty){
-  const p=pById(id); colour=colour||(p.colours?p.colours[0][0]:""); size=size||(p.sizes?p.sizes[0]:"");
+  const p=pById(id); if(oos(p)){toast(t("oos"));return} colour=colour||(p.colours?p.colours[0][0]:""); size=size||(p.sizes?p.sizes[0]:"");
   const ex=cart.find(i=>i.id===id&&i.colour===colour&&i.size===size);
   if(ex) ex.qty=Math.min(99,ex.qty+(qty||1)); else cart.push({id,colour,size,qty:qty||1});
   save(); toast(`${t("added")} <a href="#cart">${t("viewCart")}</a>`);
@@ -516,11 +517,11 @@ function avg(id){const r=revs(pById(id));return r.length?r.reduce((a,x)=>a+x.sta
    ====================================================================== */
 function card(p){
   const r=revs(p);
-  return `<article class="pc"><div class="art"><a href="#p-${p.id}" aria-label="${esc(pn(p))}" style="display:contents">${p.tag?`<span class="tag">${esc(p.tag)}</span>`:""}${pic(p,0)}</a>${heart(p)}</div>
+  return `<article class="pc"><div class="art"><a href="#p-${p.id}" aria-label="${esc(pn(p))}" style="display:contents">${oos(p)?`<span class="tag" style="background:#111;color:#F6F2EA">${t("oos")}</span>`:p.tag?`<span class="tag">${esc(p.tag)}</span>`:""}${pic(p,0)}</a>${heart(p)}</div>
   <div class="info"><span class="cat">${esc(pt(p))}</span><a href="#p-${p.id}"><h3>${esc(pn(p))}</h3></a>
   ${r.length?`<span class="rating"><span class="stars">${stars(avg(p.id))}</span> (${r.length})</span>`:""}
   <div class="price rs"><b>${rs(p.price)}</b><s>${rs(p.mrp)}</s><span class="off">${off(p)}% ${t("off")}</span></div></div>
-  <button class="btn dark add" data-add="${p.id}">${t("add")}</button></article>`;
+  ${oos(p)?`<button class="btn add" disabled style="opacity:.55;cursor:not-allowed">${t("oos")}</button>`:`<button class="btn dark add" data-add="${p.id}">${t("add")}</button>`}</article>`;
 }
 const icons={
   truck:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h12v10H2zM14 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg>`,
@@ -632,14 +633,14 @@ function product(id){
       ${p.sizes?`<div class="opt"><span class="lbl">${t("size")}</span><div class="sizes">${p.sizes.map((s,i)=>`<button class="sz ${i===pdState.size?"on":""}" data-size="${i}" aria-pressed="${i===pdState.size}">${s}</button>`).join("")}</div></div>`:""}
       ${sizeGuide(p)}
       <div class="opt"><span class="lbl">${t("qty")}</span><div class="qty"><button data-q="-1" aria-label="-">−</button><span class="rs">${pdState.qty}</span><button data-q="1" aria-label="+">+</button></div></div>
-      <div class="buyrow"><button class="btn dark" id="addBtn">${t("add")}</button><button class="btn solid" id="buyBtn">${t("buy")}</button></div>
+      ${oos(p)?`<div class="buyrow"><button class="btn" disabled style="opacity:.6;cursor:not-allowed;flex:1">${t("oos")}</button></div><span class="muted" style="font-size:14px">${t("oosAsk")}</span>`:`<div class="buyrow"><button class="btn dark" id="addBtn">${t("add")}</button><button class="btn solid" id="buyBtn">${t("buy")}</button></div>`}
       <a class="btn wa-ask" href="${waLink(askTxt)}" target="_blank" rel="noopener">${t("ask")}</a>
       <div class="perks"><div><b>${p.price>=STORE.freeShipAbove?t("freeDel"):t("delivery")+" "+rs(STORE.shipping)}</b>${t("panIndia")}</div><div><b>${t("gstInv")}</b>${t("withEvery")}</div><div><b>${t("easyRet",{days:STORE.returnDays})}</b>${t("retS")}</div></div>
       <div class="opt"><span class="lbl">${t("details")}</span><ul class="points">${ppts(p).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
     </div>
   </div>
   ${reviewsBlock(p)}
-  <div class="buybar"><span class="bp rs"><b>${rs(p.price)}</b><s>${rs(p.mrp)}</s></span><button class="btn dark" data-bar="add">${t("add")}</button><button class="btn solid" data-bar="buy">${t("buy")}</button></div>
+  <div class="buybar"><span class="bp rs"><b>${rs(p.price)}</b><s>${rs(p.mrp)}</s></span>${oos(p)?`<button class="btn" disabled style="opacity:.6">${t("oos")}</button>`:`<button class="btn dark" data-bar="add">${t("add")}</button><button class="btn solid" data-bar="buy">${t("buy")}</button>`}</div>
   <section class="sec" style="padding-top:0"><div class="sec-head"><div><h2>${t("alsoLike")}</h2></div></div>
   <div class="grid">${PRODUCTS.filter(x=>x.cat===p.cat&&x.id!==p.id).slice(0,4).map(card).join("")}</div></section></div>`;
 }
@@ -823,7 +824,7 @@ document.addEventListener("click",e=>{
   if(el.dataset.colour!==undefined){pdState.colour=+el.dataset.colour;pdState.img=0;app.innerHTML=product(pdState.id);return}
   if(el.dataset.size!==undefined){pdState.size=+el.dataset.size;app.innerHTML=product(pdState.id);return}
   if(el.dataset.q){pdState.qty=Math.max(1,Math.min(99,pdState.qty+ +el.dataset.q));app.innerHTML=product(pdState.id);return}
-  if(el.dataset.bar){(el.dataset.bar==="add"?$("#addBtn"):$("#buyBtn")).click();return}
+  if(el.dataset.bar){const b=el.dataset.bar==="add"?$("#addBtn"):$("#buyBtn");if(b)b.click();return}
   if(el.id==="addBtn"||el.id==="buyBtn"){const p=pById(pdState.id);addToCart(p.id,p.colours?p.colours[pdState.colour][0]:"",p.sizes?p.sizes[pdState.size]:"",pdState.qty);if(el.id==="buyBtn")location.hash="cart";return}
   if(el.dataset.cq!==undefined){const i=cart[+el.dataset.cq];i.qty=Math.max(1,Math.min(99,i.qty+ +el.dataset.d));save();app.innerHTML=cartView();return}
   if(el.dataset.rm!==undefined){cart.splice(+el.dataset.rm,1);save();app.innerHTML=cartView();toast(t("removed"));return}
@@ -917,7 +918,7 @@ function applyRemote(data){
     ["freeShipAbove","shipping","returnDays"].forEach(k=>{if(typeof st[k]==="number")STORE[k]=st[k]});
     if(Array.isArray(st.coupons)) COUPONS.splice(0,COUPONS.length,...st.coupons.filter(c=>c.code));
   }
-  cart=cart.filter(i=>pById(i.id)); wish=wish.filter(pById); recent=recent.filter(pById);
+  cart=cart.filter(i=>pById(i.id)&&!oos(pById(i.id))); wish=wish.filter(pById); recent=recent.filter(pById);
 }
 async function loadRemote(){
   try{
