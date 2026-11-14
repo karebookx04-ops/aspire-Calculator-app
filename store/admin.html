@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Aspire Admin</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23111'/%3E%3Cpath d='M14 84 L46 20 H62 L30 84 Z' fill='%23F6F2EA'/%3E%3Cpath d='M54 54 L63 36 L88 84 H70 Z' fill='%23FF4D1A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap">
+<style>
+/* Owner panel: plain working UI in the store's black/orange/cream palette */
+:root{--bg:#F6F2EA;--surface:#fff;--ink:#111;--muted:#5E5A53;--line:#E4DDD1;--orange:#FF4D1A;--orange-ink:#C2360D;--tile:#EEE7DB;--good:#1E7A46;--bad:#C62828;--warn:#9A6A00;
+  --display:"Outfit","Noto Sans Devanagari",system-ui,sans-serif;--body:"Inter","Noto Sans Devanagari",system-ui,sans-serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#131211;--surface:#1C1A18;--ink:#F6F2EA;--muted:#B0A99E;--line:#33302B;--tile:#252220;--orange-ink:#FF8D66;--good:#5BC88A;--bad:#FF7A7A;--warn:#E8B64C;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#131211;--surface:#1C1A18;--ink:#F6F2EA;--muted:#B0A99E;--line:#33302B;--tile:#252220;--orange-ink:#FF8D66;--good:#5BC88A;--bad:#FF7A7A;--warn:#E8B64C;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.15}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px;border-radius:8px}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{background:#111;color:#F6F2EA;position:sticky;top:0;z-index:10}
+.top .wrap{display:flex;align-items:center;gap:14px;padding-block:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:.02em}
+.brand svg{width:30px;height:30px}
+.brand small{font-family:var(--body);font-weight:600;font-size:11px;letter-spacing:.12em;color:#FF4D1A;text-transform:uppercase}
+.top .sp{flex:1}
+.top a,.top button{color:#F6F2EA}
+.tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line);background:var(--surface)}
+.tabs .wrap{display:flex;gap:4px}
+.tabs button{border:0;background:none;padding:14px 14px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--orange)}
+.badge{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--orange);color:#111;font-size:12px;font-weight:700;margin-left:6px}
+main{padding-block:22px 80px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:2px solid var(--ink);background:transparent;border-radius:10px;padding:10px 16px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn.solid{background:var(--orange);border-color:var(--orange);color:#111}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.btn.sm{padding:6px 10px;font-size:13.5px;border-width:1.5px}
+.btn.ghost{border-color:var(--line)}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:700px){.grid2,.grid3{grid-template-columns:1fr}}
+label.f{display:grid;gap:6px;font-size:13.5px;font-weight:600;min-width:0}
+label.f span.h{font-weight:400;color:var(--muted);font-size:12.5px}
+input[type=text],input[type=email],input[type=password],input[type=number],input[type=tel],select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+textarea{resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--orange);outline:none}
+.stack{display:grid;gap:14px}
+.msg{padding:10px 14px;border-radius:10px;font-size:14px}
+.msg.ok{background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good)}
+.msg.bad{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+.msg.info{background:var(--tile)}
+.login{max-width:420px;margin:40px auto}
+/* orders */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.stat b{display:block;font-family:var(--display);font-size:24px;font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;color:var(--muted)}
+@media (max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13.5px;font-weight:500;cursor:pointer}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.ord{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--orange);border-radius:12px;padding:14px 16px;display:grid;gap:10px;margin-bottom:12px}
+.ord[data-s="confirmed"]{border-left-color:#2E6FD8}.ord[data-s="shipped"]{border-left-color:#8A5CF5}.ord[data-s="delivered"]{border-left-color:var(--good)}.ord[data-s="cancelled"]{border-left-color:var(--muted);opacity:.75}
+.ord h3{font-size:17px}
+.ord .no{font:700 14px ui-monospace,Menlo,Consolas,monospace}
+.ord table{width:100%;border-collapse:collapse;font-size:14px}
+.ord td{padding:5px 0;border-bottom:1px dashed var(--line);vertical-align:top}
+.ord td.r{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--tile)}
+.pill.new{background:var(--orange);color:#111}
+/* products */
+.plist{display:grid;gap:10px}
+.pitem{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.pitem img,.pitem .noimg{width:64px;height:64px;border-radius:10px;object-fit:cover;background:#F6F2EA;display:block}
+.pitem .noimg{display:grid;place-items:center;font-size:11px;color:var(--muted)}
+.pitem h3{font-size:15.5px;font-family:var(--body);font-weight:600}
+.pitem.off{opacity:.55}
+@media (max-width:560px){.pitem{grid-template-columns:56px 1fr}.pitem .acts{grid-column:1/-1}}
+.photos{display:flex;gap:10px;flex-wrap:wrap}
+.ph{width:110px;display:grid;gap:6px}
+.ph img{width:110px;height:110px;object-fit:cover;border-radius:10px;border:2px solid var(--line);background:#F6F2EA}
+.ph.main img{border-color:var(--orange)}
+.ph .row{gap:4px}
+.addph{width:110px;height:110px;border:2px dashed var(--line);border-radius:10px;display:grid;place-items:center;text-align:center;font-size:13px;color:var(--muted);cursor:pointer;padding:8px}
+.addph:hover{border-color:var(--orange);color:var(--ink)}
+.crow{display:grid;grid-template-columns:1fr 54px auto;gap:8px;align-items:center}
+.crow input[type=color]{width:54px;height:42px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);padding:3px}
+.cprow{display:grid;grid-template-columns:1.2fr .9fr .8fr .8fr .8fr auto;gap:8px;align-items:end}
+@media (max-width:760px){.cprow{grid-template-columns:1fr 1fr}}
+.sticky-save{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;z-index:5}
+.hide{display:none!important}
+details summary{cursor:pointer;font-weight:600}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,160%);background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:12px;font-weight:600;z-index:50;transition:transform .25s,visibility .25s;visibility:hidden;max-width:calc(100% - 32px)}
+.toast.show{transform:translate(-50%,0);visibility:visible}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+  <div class="brand"><svg viewBox="0 0 100 100"><path d="M4 90 L44 10 H66 L26 90 Z" fill="#F6F2EA"/><path d="M52 52 L64 28 L96 90 H72 Z" fill="#FF4D1A"/></svg><span>ASPIRE <small>Admin</small></span></div>
+  <span class="sp"></span>
+  <a class="small" href="./" target="_blank" rel="noopener">Website dekho ↗</a>
+  <span class="small hide" id="who"></span>
+  <button class="btn sm ghost hide" id="logout" style="border-color:#444">Logout</button>
+</div></div>
+<nav class="tabs hide" id="tabs"><div class="wrap">
+  <button data-tab="orders" class="on">Orders<span class="badge hide" id="newCount">0</span></button>
+  <button data-tab="products">Products</button>
+  <button data-tab="settings">Settings / Offers</button>
+</div></nav>
+
+<main class="wrap">
+  <div id="boot" class="msg info">Load ho raha hai...</div>
+
+  <!-- LOGIN -->
+  <section id="login" class="login hide">
+    <div class="panel stack">
+      <h2>Admin login</h2>
+      <p class="muted small" style="margin:0">Sirf dukaan ke maalik ke liye. Apna email aur password daaliye.</p>
+      <label class="f">Email<input type="email" id="lEmail" autocomplete="username"></label>
+      <label class="f">Password<input type="password" id="lPass" autocomplete="current-password"></label>
+      <div id="lMsg"></div>
+      <button class="btn solid" id="lGo">Login</button>
+      <div class="row between small">
+        <button class="btn sm ghost" id="lNew">Pehli baar? Account banao</button>
+        <button class="btn sm ghost" id="lForgot">Password bhool gaye</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORDERS -->
+  <section id="orders" class="hide">
+    <div class="stats" id="stats"></div>
+    <div class="chips" id="ofilter"></div>
+    <div class="row" style="margin-bottom:14px"><input type="text" id="osearch" placeholder="Naam, mobile ya order number se dhoondho" style="max-width:420px"></div>
+    <div id="olist"></div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products" class="hide">
+    <div class="row between" style="margin-bottom:14px">
+      <h2>Products <span class="muted small" id="pcount"></span></h2>
+      <button class="btn solid" id="pNew">+ Naya product</button>
+    </div>
+    <div id="importBox" class="panel stack hide" style="margin-bottom:14px">
+      <b>Online abhi koi product nahi hai.</b>
+      <span class="muted">Website ke 12 products (photo, daam, Hindi naam ke saath) ek click mein yahan le aaiye. Phir yahin se badal sakte hain.</span>
+      <div><button class="btn dark" id="importBtn">12 products import karo</button></div>
+    </div>
+    <div class="plist" id="plist"></div>
+  </section>
+
+  <!-- PRODUCT EDIT -->
+  <section id="pedit" class="hide"></section>
+
+  <!-- SETTINGS -->
+  <section id="settings" class="hide"></section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="store-data.js"></script>
+<script>
+const CFG={apiKey:"AIzaSyDs02UCwfUIYyhcenCaA6QJSiN78ZJeSf0",authDomain:"aspire-app-9e294.firebaseapp.com",projectId:"aspire-app-9e294",storageBucket:"aspire-app-9e294.firebasestorage.app",messagingSenderId:"985120268812",appId:"1:985120268812:web:d9a10823c13fd6487d8429"};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const rs=n=>"₹"+Math.round(Number(n)||0).toLocaleString("en-IN");
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2600)}
+function show(id){["boot","login","orders","products","pedit","settings"].forEach(x=>$("#"+x).classList.toggle("hide",x!==id))}
+function errText(e){
+  const c=(e&&e.code)||"";
+  if(c.includes("permission")) return "Permission nahi mili. Firestore Rules paste karke Publish kiye hain? Aur kya aap maalik wale email se login hain?";
+  if(c.includes("invalid-credential")||c.includes("wrong-password")||c.includes("user-not-found")) return "Email ya password galat hai.";
+  if(c.includes("email-already-in-use")) return "Is email ka account pehle se hai. Seedha Login dabaiye.";
+  if(c.includes("weak-password")) return "Password kam se kam 6 akshar ka rakhiye.";
+  if(c.includes("invalid-email")) return "Email sahi likhiye.";
+  if(c.includes("network")||c.includes("unavailable")) return "Internet check kariye, phir dobara try kariye.";
+  return "Kuch gadbad hui: "+(e&&e.message||c||e);
+}
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=()=>no(new Error("load "+src));document.head.appendChild(s)})}
+
+let auth,db,user=null,ORD=[],PRD=[],SET=null,oFilter="new",unsub=[];
+const STATUSES=[["new","Naya"],["confirmed","Confirm"],["shipped","Bhej diya"],["delivered","Deliver ho gaya"],["cancelled","Cancel"]];
+const V="10.12.2",B="https://www.gstatic.com/firebasejs/"+V+"/";
+loadScript(B+"firebase-app-compat.js").then(()=>Promise.all([loadScript(B+"firebase-auth-compat.js"),loadScript(B+"firebase-firestore-compat.js")])).then(()=>{
+  firebase.initializeApp(CFG); auth=firebase.auth(); db=firebase.firestore();
+  auth.onAuthStateChanged(u=>{user=u; unsub.forEach(f=>f()); unsub=[];
+    $("#who").classList.toggle("hide",!u); $("#logout").classList.toggle("hide",!u); $("#tabs").classList.toggle("hide",!u);
+    if(!u){show("login");return}
+    $("#who").textContent=u.email; startData(); tab("orders");
+  });
+}).catch(()=>{$("#boot").className="msg bad";$("#boot").textContent="Firebase load nahi hua. Internet check karke page refresh kariye."});
+
+/* ---------- login ---------- */
+$("#lGo").onclick=async()=>{const m=$("#lMsg");m.className="";m.textContent="";
+  try{await auth.signInWithEmailAndPassword($("#lEmail").value.trim(),$("#lPass").value)}catch(e){m.className="msg bad";m.textContent=errText(e)}};
+$("#lPass").addEventListener("keydown",e=>{if(e.key==="Enter")$("#lGo").click()});
+$("#lNew").onclick=async()=>{const m=$("#lMsg");
+  try{await auth.createUserWithEmailAndPassword($("#lEmail").value.trim(),$("#lPass").value)}catch(e){m.className="msg bad";m.textContent=errText(e)}};
+$("#lForgot").onclick=async()=>{const m=$("#lMsg");const em=$("#lEmail").value.trim();
+  if(!em){m.className="msg bad";m.textContent="Pehle upar email likhiye.";return}
+  try{await auth.sendPasswordResetEmail(em);m.className="msg ok";m.textContent="Password badalne ka link "+em+" par bhej diya."}catch(e){m.className="msg bad";m.textContent=errText(e)}};
+$("#logout").onclick=()=>auth.signOut();
+
+/* ---------- tabs ---------- */
+function tab(n){document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===n));show(n);
+  if(n==="orders")renderOrders(); if(n==="products")renderProducts(); if(n==="settings")renderSettings(); scrollTo(0,0)}
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+
+function startData(){
+  unsub.push(db.collection("store_orders").orderBy("createdAt","desc").limit(300).onSnapshot(s=>{
+    ORD=s.docs.map(d=>({...d.data(),_id:d.id})); renderOrders(); const n=ORD.filter(o=>o.status==="new").length;
+    $("#newCount").textContent=n; $("#newCount").classList.toggle("hide",!n);
+  },e=>{$("#olist").innerHTML=`<div class="msg bad">${esc(errText(e))}</div>`}));
+  unsub.push(db.collection("store_products").onSnapshot(s=>{
+    PRD=s.docs.map(d=>({...d.data(),id:d.id})).sort((a,b)=>(a.order??999)-(b.order??999)); if(!$("#products").classList.contains("hide"))renderProducts();
+  },e=>{$("#plist").innerHTML=`<div class="msg bad">${esc(errText(e))}</div>`}));
+  unsub.push(db.collection("store_settings").doc("main").onSnapshot(d=>{SET=d.exists?d.data():null; if(!$("#settings").classList.contains("hide")&&!settingsDirty)renderSettings()},()=>{}));
+}
+
+/* ---------- ORDERS ---------- */
+const fmtDate=v=>{const d=v&&v.toDate?v.toDate():new Date(v);return isNaN(d)?"":d.toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})};
+const dayKey=v=>{const d=v&&v.toDate?v.toDate():new Date(v);return d.toDateString()};
+function renderOrders(){
+  if($("#orders").classList.contains("hide")) return;
+  const today=new Date().toDateString();
+  const live=ORD.filter(o=>o.status!=="cancelled");
+  const tOrders=live.filter(o=>dayKey(o.createdAt)===today);
+  const month=live.filter(o=>{const d=o.createdAt&&o.createdAt.toDate?o.createdAt.toDate():new Date(o.createdAt);const n=new Date();return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear()});
+  $("#stats").innerHTML=[["Naye orders",ORD.filter(o=>o.status==="new").length],["Aaj ke orders",tOrders.length],["Aaj ki bikri",rs(tOrders.reduce((a,o)=>a+(o.total||0),0))],["Is mahine ki bikri",rs(month.reduce((a,o)=>a+(o.total||0),0))]]
+    .map(([l,v])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("");
+  $("#ofilter").innerHTML=[["all","Sab"],...STATUSES].map(([k,l])=>`<button class="chip ${oFilter===k?"on":""}" data-of="${k}">${l} (${k==="all"?ORD.length:ORD.filter(o=>o.status===k).length})</button>`).join("");
+  const q=$("#osearch").value.trim().toLowerCase();
+  const list=ORD.filter(o=>(oFilter==="all"||o.status===oFilter)&&(!q||[o.name,o.phone,o.orderNo,o.city].join(" ").toLowerCase().includes(q)));
+  $("#olist").innerHTML=list.length?list.map(orderCard).join(""):`<div class="panel muted">${ORD.length?"Is list mein koi order nahi.":"Abhi tak koi order nahi aaya. Jab customer website se order karega, woh yahan turant dikhega."}</div>`;
+}
+function orderCard(o){
+  const wa=`https://wa.me/91${String(o.phone||"").replace(/\D/g,"").slice(-10)}?text=${encodeURIComponent(`Namaste ${o.name}, Aspire Enterprises se. Aapka order ${o.orderNo} (${rs(o.total)}) mil gaya hai.`)}`;
+  return `<article class="ord" data-s="${esc(o.status)}">
+  <div class="row between"><div class="row"><span class="no">${esc(o.orderNo||o._id)}</span><span class="pill ${o.status==="new"?"new":""}">${esc((STATUSES.find(s=>s[0]===o.status)||[0,o.status])[1])}</span></div><span class="muted small">${fmtDate(o.createdAt)}</span></div>
+  <div class="grid2">
+    <div><h3>${esc(o.name)}</h3><div class="small">${esc(o.phone)}</div><div class="small muted">${esc(o.address)}, ${esc(o.city)} - ${esc(o.pin)}</div>${o.gstin?`<div class="small">GSTIN: <b>${esc(o.gstin)}</b></div>`:""}<div class="small">Payment: <b>${esc(o.pay)}</b></div></div>
+    <table>${(o.items||[]).map(i=>`<tr><td>${esc(i.name)}<div class="small muted">${[i.colour,i.size].filter(Boolean).map(esc).join(" · ")} · Qty ${i.qty}</div></td><td class="r">${rs(i.price*i.qty)}</td></tr>`).join("")}
+      ${o.couponAmt?`<tr><td>Coupon ${esc(o.coupon)}</td><td class="r">− ${rs(o.couponAmt)}</td></tr>`:""}
+      <tr><td>Delivery</td><td class="r">${o.ship?rs(o.ship):"Free"}</td></tr><tr><td><b>Total</b></td><td class="r"><b>${rs(o.total)}</b></td></tr></table>
+  </div>
+  <div class="row">
+    <select data-ost="${o._id}" style="width:auto">${STATUSES.map(([k,l])=>`<option value="${k}" ${o.status===k?"selected":""}>${l}</option>`).join("")}</select>
+    <a class="btn sm" href="tel:${esc(o.phone)}">Call</a>
+    <a class="btn sm" href="${wa}" target="_blank" rel="noopener" style="border-color:#1E9E55;color:#1E9E55">WhatsApp</a>
+    <button class="btn sm ghost" data-ocopy="${o._id}">Copy</button>
+    <span class="sp" style="flex:1"></span>
+    <button class="btn sm danger" data-odel="${o._id}">Delete</button>
+  </div></article>`;
+}
+$("#osearch").addEventListener("input",renderOrders);
+document.addEventListener("change",async e=>{
+  if(e.target.dataset.ost){try{await db.collection("store_orders").doc(e.target.dataset.ost).update({status:e.target.value});toast("Status badal diya")}catch(x){toast(errText(x))}}
+});
+
+/* ---------- PRODUCTS ---------- */
+function thumbOf(p){const im=(p.images||[])[0];return im?(im.t||im.f):""}
+function renderProducts(){
+  $("#pcount").textContent=PRD.length?`(${PRD.length})`:"";
+  $("#importBox").classList.toggle("hide",PRD.length>0);
+  $("#plist").innerHTML=PRD.map(p=>`<div class="pitem ${p.active===false?"off":""}">
+    ${thumbOf(p)?`<img src="${esc(thumbOf(p))}" alt="">`:`<div class="noimg">No photo</div>`}
+    <div style="min-width:0"><h3>${esc(p.name)}</h3><div class="small muted">${esc(p.type)} · <b style="color:var(--ink)">${rs(p.price)}</b> <s>${rs(p.mrp)}</s>${p.active===false?" · <b>Website par chhupa hai</b>":""}</div></div>
+    <div class="row acts"><button class="btn sm" data-pedit="${p.id}">Badlo</button><button class="btn sm ghost" data-ptog="${p.id}">${p.active===false?"Dikhao":"Chhupao"}</button></div></div>`).join("");
+}
+$("#importBtn").onclick=async()=>{
+  const b=$("#importBtn");b.disabled=true;b.textContent="Import ho raha hai...";
+  try{
+    const batch=db.batch();
+    PRODUCTS.forEach((p,i)=>{
+      const imgs=[p.photo,...(p.more_photos||[])].filter(Boolean).map(f=>({t:f.replace("photos/","photos/sm/"),f}));
+      const d={cat:p.cat,type:p.type,name:p.name,name_hi:p.name_hi||"",price:p.price,mrp:p.mrp,tag:p.tag||"",images:imgs,colours:(p.colours||[]).map(c=>({n:c[0],c:c[1]})),sizes:p.sizes||[],
+        points:p.points||[],points_hi:p.points_hi||[],size_guide:p.size_guide?{cols:p.size_guide.cols,rows:p.size_guide.rows.map(r=>r.join(" | "))}:null,reviews:p.reviews||[],art:p.art||"",order:i,active:true};
+      batch.set(db.collection("store_products").doc(p.id),d);
+    });
+    if(!SET) batch.set(db.collection("store_settings").doc("main"),settingsFromFile());
+    await batch.commit(); toast("12 products import ho gaye");
+  }catch(e){toast(errText(e));b.disabled=false;b.textContent="12 products import karo"}
+};
+function settingsFromFile(){return {phone:STORE.phone,whatsapp:STORE.whatsapp,email:STORE.email||"",address:STORE.address,hours_en:STORE.hours_en,hours_hi:STORE.hours_hi,freeShipAbove:STORE.freeShipAbove,shipping:STORE.shipping,returnDays:STORE.returnDays,dispatchDays:STORE.dispatchDays,deliveryDays:STORE.deliveryDays,coupons:COUPONS.map(c=>({...c}))}}
+
+let ED=null; // product being edited
+const TYPES=["Laptop bags","Hand bags","Washing machine covers","AC covers","Kitchen appliance covers"];
+function newProduct(){return {id:"",cat:"bags",type:"Laptop bags",name:"",name_hi:"",price:0,mrp:0,tag:"",images:[],colours:[{n:"Black",c:"#1A1A1A"}],sizes:[],points:[],points_hi:[],size_guide:null,reviews:[],art:"",order:PRD.length,active:true}}
+function openEdit(p){ED=JSON.parse(JSON.stringify(p));ED._new=!p.id;renderEdit();show("pedit");scrollTo(0,0)}
+function renderEdit(){
+  const p=ED;
+  const sg=p.size_guide?[p.size_guide.cols.join(" | "),...p.size_guide.rows].join("\n"):"";
+  $("#pedit").innerHTML=`<div class="row between" style="margin-bottom:14px"><button class="btn sm ghost" id="eBack">← Products</button><h2>${p._new?"Naya product":"Product badlo"}</h2></div>
+  <div class="stack">
+  <div class="panel stack"><h3>Photos</h3><span class="muted small">Pehli photo main photo hai (narangi border). Square, saaf photo sabse achhi dikhti hai. Photo apne aap chhoti karke save hoti hai.</span>
+    <div class="photos" id="ePhotos">${p.images.map((im,i)=>`<div class="ph ${i===0?"main":""}"><img src="${esc(im.t||im.f)}" alt=""><div class="row">${i>0?`<button class="btn sm ghost" data-imain="${i}">Main</button>`:""}<button class="btn sm danger" data-idel="${i}">Hatao</button></div></div>`).join("")}
+      <label class="addph" id="addPh"><input type="file" accept="image/*" multiple id="ePhotoIn" class="hide">+ Photo jodo<br><span class="small">(phone/PC se)</span></label></div>
+    <div id="phMsg"></div></div>
+  <div class="panel stack"><h3>Naam aur daam</h3>
+    <div class="grid2"><label class="f">Naam (English)<input type="text" id="eName" value="${esc(p.name)}"></label><label class="f">Naam (Hindi)<input type="text" id="eNameHi" value="${esc(p.name_hi)}"></label></div>
+    <div class="grid3"><label class="f">Bechne ka daam (₹)<input type="number" id="ePrice" min="0" value="${p.price||""}"></label><label class="f">MRP (₹) <span class="h">kata hua daam</span><input type="number" id="eMrp" min="0" value="${p.mrp||""}"></label><label class="f">Label <span class="h">jaise Bestseller, New</span><input type="text" id="eTag" value="${esc(p.tag)}"></label></div>
+    <div class="grid3"><label class="f">Category<select id="eCat"><option value="bags" ${p.cat==="bags"?"selected":""}>Bags</option><option value="covers" ${p.cat==="covers"?"selected":""}>Appliance covers</option></select></label>
+      <label class="f">Type<select id="eType">${TYPES.map(x=>`<option ${p.type===x?"selected":""}>${x}</option>`).join("")}</select></label>
+      <label class="f">List mein number <span class="h">chhota number = pehle</span><input type="number" id="eOrder" value="${p.order??0}"></label></div>
+    <label class="row small"><input type="checkbox" id="eActive" ${p.active!==false?"checked":""}> Website par dikhao</label></div>
+  <div class="panel stack"><h3>Rang</h3><div class="stack" id="eCols">${p.colours.map((c,i)=>`<div class="crow"><input type="text" data-cn="${i}" value="${esc(c.n)}" placeholder="Rang ka naam (Black, Grey...)"><input type="color" data-cc="${i}" value="${esc(c.c||"#1A1A1A")}"><button class="btn sm danger" data-cdel="${i}">Hatao</button></div>`).join("")}</div>
+    <div><button class="btn sm" id="eColAdd">+ Rang jodo</button></div></div>
+  <div class="panel stack"><h3>Size</h3><label class="f">Saare size, comma laga kar <span class="h">jaise: 6-6.5 kg, 7-7.5 kg, 8-9 kg. Size na ho to khali chhodiye.</span><input type="text" id="eSizes" value="${esc((p.sizes||[]).join(", "))}"></label>
+    <label class="f">Size guide table <span class="h">Pehli line mein heading, phir har size ki ek line. Khane | se alag karein. Jaise:<br>Size | Height | Width<br>6-6.5 kg | 85-90 | 52-54</span><textarea id="eSG" rows="5">${esc(sg)}</textarea></label></div>
+  <div class="panel stack"><h3>Khaas baatein</h3><div class="grid2"><label class="f">English <span class="h">har line ek point</span><textarea id="ePts" rows="5">${esc((p.points||[]).join("\n"))}</textarea></label><label class="f">Hindi <span class="h">har line ek point</span><textarea id="ePtsHi" rows="5">${esc((p.points_hi||[]).join("\n"))}</textarea></label></div></div>
+  <div class="panel stack"><h3>Customer reviews</h3><span class="muted small">Sirf asli reviews daaliye. Har line: Naam | Stars (1-5) | Tareekh | Review</span>
+    <textarea id="eRev" rows="4" placeholder="Rahul, Delhi | 5 | Dec 2026 | Bag achha hai, delivery jaldi aayi">${esc((p.reviews||[]).map(r=>[r.name,r.stars,r.date,r.text].join(" | ")).join("\n"))}</textarea></div>
+  <div id="eMsg"></div>
+  <div class="sticky-save"><button class="btn solid" id="eSave">Save karo</button><button class="btn ghost" id="eCancel">Wapas</button><span style="flex:1"></span>${p._new?"":`<button class="btn danger" id="eDel">Product delete karo</button>`}</div>
+  </div>`;
+}
+function readEdit(){
+  const p=ED; const v=id=>$("#"+id).value;
+  p.name=v("eName").trim(); p.name_hi=v("eNameHi").trim(); p.price=Math.round(Number(v("ePrice"))||0); p.mrp=Math.round(Number(v("eMrp"))||0); p.tag=v("eTag").trim();
+  p.cat=v("eCat"); p.type=v("eType"); p.order=Number(v("eOrder"))||0; p.active=$("#eActive").checked;
+  p.colours=[...document.querySelectorAll("[data-cn]")].map(el=>({n:el.value.trim(),c:document.querySelector(`[data-cc="${el.dataset.cn}"]`).value})).filter(c=>c.n);
+  p.sizes=v("eSizes").split(",").map(x=>x.trim()).filter(Boolean);
+  const sgl=v("eSG").split("\n").map(x=>x.trim()).filter(Boolean);
+  p.size_guide=sgl.length>1?{cols:sgl[0].split("|").map(x=>x.trim()),rows:sgl.slice(1)}:null;
+  p.points=v("ePts").split("\n").map(x=>x.trim()).filter(Boolean); p.points_hi=v("ePtsHi").split("\n").map(x=>x.trim()).filter(Boolean);
+  p.reviews=v("eRev").split("\n").map(x=>x.split("|").map(y=>y.trim())).filter(a=>a[0]&&a[3]).map(a=>({name:a[0],stars:Math.min(5,Math.max(1,Number(a[1])||5)),date:a[2]||"",text:a.slice(3).join(" | ")}));
+}
+const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40)||"product";
+async function saveEdit(){
+  readEdit(); const p=ED; const m=$("#eMsg");
+  const errs=[]; if(!p.name)errs.push("Naam likhiye"); if(!p.price)errs.push("Bechne ka daam likhiye"); if(p.mrp&&p.mrp<p.price)errs.push("MRP bechne ke daam se kam nahi ho sakta");
+  if(errs.length){m.className="msg bad";m.textContent=errs.join(". ")+".";return}
+  if(!p.mrp) p.mrp=p.price;
+  let id=p.id; if(!id){id=slug(p.name); if(PRD.some(x=>x.id===id)) id+="-"+Math.random().toString(36).slice(2,6)}
+  const d={...p}; delete d.id; delete d._new;
+  const b=$("#eSave"); b.disabled=true; b.textContent="Save ho raha hai...";
+  try{await db.collection("store_products").doc(id).set(d); toast("Save ho gaya. Website par dikhne laga."); tab("products")}
+  catch(e){m.className="msg bad";m.textContent=errText(e);b.disabled=false;b.textContent="Save karo"}
+}
+/* photo: square, cream background, big + small copy; big copy stored in store_photos (free plan, no Storage needed) */
+function loadImg(file){return new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=URL.createObjectURL(file)})}
+function squareJpeg(img,size,q){const c=document.createElement("canvas");c.width=c.height=size;const x=c.getContext("2d");x.fillStyle="#F6F2EA";x.fillRect(0,0,size,size);
+  const k=Math.min(size/img.width,size/img.height);const w=img.width*k,h=img.height*k;x.drawImage(img,(size-w)/2,(size-h)/2,w,h);return c.toDataURL("image/jpeg",q)}
+async function addPhotos(files){
+  const m=$("#phMsg"); m.className="msg info";
+  readEdit();
+  for(const f of files){
+    if(ED.images.length>=6){m.className="msg bad";m.textContent="Ek product mein zyada se zyada 6 photo.";break}
+    m.textContent="Photo save ho rahi hai: "+f.name;
+    try{
+      const img=await loadImg(f); const side=Math.min(1000,Math.max(img.width,img.height));
+      let big=squareJpeg(img,side,0.85); if(big.length>650000) big=squareJpeg(img,side,0.7); if(big.length>650000) big=squareJpeg(img,800,0.7);
+      const small=squareJpeg(img,420,0.8);
+      const ref=await db.collection("store_photos").add({d:big});
+      ED.images.push({t:small,f:"ph:"+ref.id});
+    }catch(e){m.className="msg bad";m.textContent="Photo save nahi hui: "+errText(e);return}
+  }
+  renderEdit(); toast("Photo jud gayi. Ab Save karo dabaiye.");
+}
+async function delPhotoDoc(im){if(im&&im.f&&im.f.startsWith("ph:"))try{await db.collection("store_photos").doc(im.f.slice(3)).delete()}catch(e){}}
+let delArm=null;
+document.addEventListener("click",async e=>{
+  const el=e.target.closest("button,a"); if(!el) return;
+  if(el.dataset.of){oFilter=el.dataset.of;renderOrders();return}
+  if(el.dataset.ocopy){const o=ORD.find(x=>x._id===el.dataset.ocopy);const txt=`Order ${o.orderNo}\n${(o.items||[]).map(i=>`${i.name} ${[i.colour,i.size].filter(Boolean).join(" ")} x${i.qty} = ${rs(i.price*i.qty)}`).join("\n")}\nTotal ${rs(o.total)} (${o.pay})\n${o.name}, ${o.phone}\n${o.address}, ${o.city} - ${o.pin}`;
+    navigator.clipboard?.writeText(txt).then(()=>toast("Copy ho gaya")).catch(()=>toast("Copy nahi hua"));return}
+  if(el.dataset.odel){ if(delArm!==el){delArm=el;el.textContent="Pakka? Phir dabaiye";setTimeout(()=>{if(delArm===el){delArm=null;el.textContent="Delete"}},4000);return}
+    try{await db.collection("store_orders").doc(el.dataset.odel).delete();toast("Order delete ho gaya")}catch(x){toast(errText(x))}return}
+  if(el.id==="pNew"){openEdit(newProduct());return}
+  if(el.dataset.pedit){openEdit(PRD.find(p=>p.id===el.dataset.pedit));return}
+  if(el.dataset.ptog){const p=PRD.find(x=>x.id===el.dataset.ptog);try{await db.collection("store_products").doc(p.id).update({active:p.active===false});toast(p.active===false?"Website par dikhne laga":"Website se chhup gaya")}catch(x){toast(errText(x))}return}
+  if(el.id==="eBack"||el.id==="eCancel"){tab("products");return}
+  if(el.id==="eSave"){saveEdit();return}
+  if(el.id==="eColAdd"){readEdit();ED.colours.push({n:"",c:"#7A7F86"});renderEdit();return}
+  if(el.dataset.cdel){readEdit();ED.colours.splice(+el.dataset.cdel,1);renderEdit();return}
+  if(el.dataset.imain){readEdit();const i=+el.dataset.imain;ED.images.unshift(ED.images.splice(i,1)[0]);renderEdit();return}
+  if(el.dataset.idel){readEdit();const im=ED.images.splice(+el.dataset.idel,1)[0];renderEdit();if(ED.id)delPhotoDoc(im);return}
+  if(el.id==="eDel"){ if(delArm!==el){delArm=el;el.textContent="Pakka delete? Phir dabaiye";return}
+    try{await db.collection("store_products").doc(ED.id).delete();(ED.images||[]).forEach(delPhotoDoc);toast("Product delete ho gaya");tab("products")}catch(x){toast(errText(x))}return}
+  if(el.id==="sSave"){saveSettings();return}
+  if(el.id==="cpAdd"){readSettings();SDRAFT.coupons.push({code:"",type:"pct",value:10,max:0,min:0,en:"",hi:""});renderSettings(true);return}
+  if(el.dataset.cpdel){readSettings();SDRAFT.coupons.splice(+el.dataset.cpdel,1);renderSettings(true);return}
+});
+document.addEventListener("change",e=>{if(e.target.id==="ePhotoIn"&&e.target.files.length)addPhotos([...e.target.files])});
+
+/* ---------- SETTINGS ---------- */
+let SDRAFT=null, settingsDirty=false;
+function renderSettings(keep){
+  if(!keep){SDRAFT=JSON.parse(JSON.stringify(SET||settingsFromFile())); SDRAFT.coupons=SDRAFT.coupons||[]; settingsDirty=false}
+  const s=SDRAFT;
+  const f=(id,l,v,type="text",h="")=>`<label class="f">${l}${h?` <span class="h">${h}</span>`:""}<input type="${type}" id="${id}" value="${esc(v??"")}"></label>`;
+  $("#settings").innerHTML=`<div class="stack">
+  ${SET?"":`<div class="msg info">Abhi website file wali settings use kar rahi hai. Yahan Save karte hi aapki settings online ho jaayengi.</div>`}
+  <div class="panel stack"><h3>Dukaan ki jaankari</h3>
+    <div class="grid2">${f("sPhone","Phone (dikhane ke liye)",s.phone)}${f("sWa","WhatsApp number",s.whatsapp,"tel","91 + number, bina + ke. Jaise 919990602827")}</div>
+    <div class="grid2">${f("sEmail","Email",s.email,"email")}${f("sHoursEn","Timing (English)",s.hours_en)}</div>
+    ${f("sHoursHi","Timing (Hindi)",s.hours_hi)}
+    <label class="f">Address<textarea id="sAddr" rows="2">${esc(s.address)}</textarea></label></div>
+  <div class="panel stack"><h3>Delivery aur return</h3>
+    <div class="grid3">${f("sFree","Free delivery kitne ₹ se",s.freeShipAbove,"number")}${f("sShip","Delivery charge (₹)",s.shipping,"number")}${f("sRet","Return ke din",s.returnDays,"number")}</div>
+    <div class="grid2">${f("sDisp","Dispatch kitne din mein",s.dispatchDays,"text","jaise 1-2")}${f("sDel","Delivery kitne din mein",s.deliveryDays,"text","jaise 3-7")}</div></div>
+  <div class="panel stack"><h3>Coupon / Offer</h3><span class="muted small">Pehla coupon website ke upar aur home page par dikhta hai. Type: % chhoot ya seedhe ₹ chhoot.</span>
+    ${s.coupons.map((c,i)=>`<div class="stack" style="border-top:1px solid var(--line);padding-top:12px"><div class="cprow">
+      <label class="f">Code<input type="text" data-cp="code" data-i="${i}" value="${esc(c.code)}" style="text-transform:uppercase"></label>
+      <label class="f">Type<select data-cp="type" data-i="${i}"><option value="pct" ${c.type==="pct"?"selected":""}>% chhoot</option><option value="flat" ${c.type==="flat"?"selected":""}>₹ chhoot</option></select></label>
+      <label class="f">Kitni<input type="number" data-cp="value" data-i="${i}" value="${c.value??""}"></label>
+      <label class="f">Max ₹ <span class="h">(% ke liye)</span><input type="number" data-cp="max" data-i="${i}" value="${c.max??""}"></label>
+      <label class="f">Min order ₹<input type="number" data-cp="min" data-i="${i}" value="${c.min??""}"></label>
+      <button class="btn sm danger" data-cpdel="${i}">Hatao</button></div>
+      <div class="grid2"><label class="f">Offer ka text (English)<input type="text" data-cp="en" data-i="${i}" value="${esc(c.en)}"></label><label class="f">Offer ka text (Hindi)<input type="text" data-cp="hi" data-i="${i}" value="${esc(c.hi)}"></label></div></div>`).join("")}
+    <div><button class="btn sm" id="cpAdd">+ Coupon jodo</button></div></div>
+  <div id="sMsg"></div>
+  <div class="sticky-save"><button class="btn solid" id="sSave">Settings save karo</button></div></div>`;
+  $("#settings").oninput=()=>{settingsDirty=true};
+}
+function readSettings(){
+  const v=id=>$("#"+id).value.trim(), n=id=>Number($("#"+id).value)||0;
+  Object.assign(SDRAFT,{phone:v("sPhone"),whatsapp:v("sWa").replace(/\D/g,""),email:v("sEmail"),hours_en:v("sHoursEn"),hours_hi:v("sHoursHi"),address:v("sAddr"),
+    freeShipAbove:n("sFree"),shipping:n("sShip"),returnDays:n("sRet"),dispatchDays:v("sDisp"),deliveryDays:v("sDel")});
+  document.querySelectorAll("[data-cp]").forEach(el=>{const c=SDRAFT.coupons[+el.dataset.i];const k=el.dataset.cp;c[k]=["value","max","min"].includes(k)?(Number(el.value)||0):(k==="code"?el.value.trim().toUpperCase():el.value.trim())});
+}
+async function saveSettings(){
+  readSettings(); const m=$("#sMsg");
+  if(SDRAFT.whatsapp&&!/^91\d{10}$/.test(SDRAFT.whatsapp)){m.className="msg bad";m.textContent="WhatsApp number 91 ke saath 12 ankon ka hona chahiye, jaise 919990602827.";return}
+  SDRAFT.coupons=SDRAFT.coupons.filter(c=>c.code);
+  try{await db.collection("store_settings").doc("main").set(SDRAFT);settingsDirty=false;toast("Settings save ho gayi. Website par lag gayi.");m.className="msg ok";m.textContent="Save ho gaya. Website par turant lag gaya."}catch(e){m.className="msg bad";m.textContent=errText(e)}
+}
+</script>
+</body>
+</html>
