@@ -142,7 +142,24 @@ button.del:hover{color:var(--bad);background:var(--bad-soft)}
 /* product sheet */
 .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table{border-collapse:collapse;width:100%}
-table.prod{min-width:1160px}
+table.prod{min-width:1250px}
+.phead{position:sticky;top:var(--toph,108px);z-index:4;height:0}
+.phead>div{position:absolute;left:0;right:0;top:0;overflow:hidden;display:none;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.phead table.prod thead th{position:static}
+.phead table.prod thead th:first-child{position:sticky;left:0}
+table.prod thead th{position:sticky;top:0;z-index:2;box-shadow:inset 0 -1px 0 var(--line)}
+table.prod th:first-child,table.prod td:first-child{position:sticky;left:0;z-index:1;background:var(--surface);box-shadow:inset -1px 0 0 var(--line)}
+table.prod thead th:first-child{z-index:3;background:var(--field)}
+table.prod tfoot td{position:sticky;bottom:0;z-index:2;box-shadow:inset 0 1px 0 var(--line)}
+table.prod tfoot td:first-child{z-index:3;background:var(--field)}
+@media(max-width:640px){table.prod td.name input{min-width:120px;width:120px}}
+/* wide screens: the table fits, so it scrolls with the page and its header sticks under the top bar */
+@media(min-width:1300px){
+  #v-products>.card{width:min(1420px,calc(100vw - 48px));align-self:center}
+  .pscroll{overflow:visible}
+  table.prod thead th{top:var(--toph,108px)}
+  table.prod tfoot td{position:static}
+}
 th{font-size:.7rem;font-weight:600;color:var(--muted);text-align:right;padding:10px 6px;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:bottom;background:var(--field)}
 th:first-child,td:first-child{padding-left:16px}
 th:last-child,td:last-child{padding-right:12px}
@@ -500,23 +517,24 @@ img{max-width:100%}
   <!-- PRODUCTS -->
   <div class="view" id="v-products" hidden>
     <div class="view-head">
-      <div><h2>Products</h2><p>Saare ₹ ek piece ke hisaab se. Blue columns khud calculate hote hain.</p></div>
+      <div><h2>Products</h2><p>Factory ₹ hamesha ek piece ka. Sell ₹, fees, shipping aur packing ek pack (ek order) ke. Pack mein 1 likha ho to sab ek piece ka hi hai. Rang wale columns khud calculate hote hain.</p></div>
     </div>
     <div class="card">
-      <div class="tscroll">
+      <div class="tscroll pscroll">
         <table class="prod">
           <thead><tr>
             <th class="l">Product</th>
             <th>GST<small>HSN rate</small></th>
-            <th class="grp">Factory ₹<small>aap dete ho</small></th>
-            <th>Sell ₹<small>customer price</small></th>
+            <th>Pack mein pcs<small>ek order mein kitne</small></th>
+            <th class="grp">Factory ₹<small>ek piece ka</small></th>
+            <th>Sell ₹<small>ek pack ka daam</small></th>
             <th class="grp">Comm %</th>
             <th>Fixed fee ₹</th>
             <th>Ship ₹</th>
             <th>Pack ₹</th>
             <th>Return %</th>
-            <th class="grp">Qty</th>
-            <th class="out grp">Profit / pc</th>
+            <th class="grp">Qty<small>kitne pack</small></th>
+            <th class="out grp">Profit<small>ek pack par</small></th>
             <th class="out">Margin</th>
             <th class="out">Min price<small>₹0 profit</small></th>
             <th class="out">Batch profit</th>
@@ -524,7 +542,7 @@ img{max-width:100%}
           </tr></thead>
           <tbody id="prod-body"></tbody>
           <tfoot><tr>
-            <td style="text-align:left">Total</td><td colspan="8"></td>
+            <td style="text-align:left">Total</td><td colspan="9"></td>
             <td class="grp" id="f-qty">0</td><td class="grp"></td><td id="f-mar"></td><td></td><td id="f-profit">₹0</td><td></td>
           </tr></tfoot>
         </table>
@@ -603,7 +621,7 @@ img{max-width:100%}
       </div>
     </div>
     <div class="banner" id="k-status" data-tone="info">Khata load ho raha hai…</div>
-    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 12</div>
+    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 13</div>
     <div class="banner" id="k-note" data-tone="info" hidden></div>
     <div class="card" id="k-rpanel" style="padding:18px 20px" hidden>
       <h3 style="margin:0 0 6px">Backup se restore</h3>
@@ -772,6 +790,22 @@ img{max-width:100%}
   }
   window.addEventListener("hashchange",function(){ show(); window.scrollTo(0,0); });
   show();
+  function topH(){ var t=document.querySelector(".top"); if(t) document.documentElement.style.setProperty("--toph",t.offsetHeight+"px"); }
+  topH(); window.addEventListener("resize",topH); window.addEventListener("load",topH);
+  // narrow screens: the table scrolls sideways in its own box, so a copy of the header row follows the page instead
+  (function(){
+    var sc=document.querySelector(".pscroll"), tb=sc.querySelector("table.prod"), ph=document.createElement("div"), box=document.createElement("div");
+    ph.className="phead"; ph.setAttribute("aria-hidden","true"); box.innerHTML='<table class="prod"><thead>'+tb.tHead.innerHTML+'</thead></table>'; ph.appendChild(box); sc.parentNode.insertBefore(ph,sc);
+    function sync(){
+      if(window.innerWidth>=1300||$("v-products").hidden){ box.style.display="none"; return; }
+      var th=document.querySelector(".top").offsetHeight, r=tb.tHead.getBoundingClientRect(), end=tb.tBodies[0].getBoundingClientRect().bottom, on=r.top<th&&end>th+r.height;
+      box.style.display=on?"block":"none"; if(!on) return;
+      var a=tb.tHead.rows[0].cells, b=box.querySelector("tr").cells; box.firstChild.style.width=tb.offsetWidth+"px"; box.firstChild.style.minWidth="0";
+      for(var i=0;i<a.length;i++){ var w=a[i].getBoundingClientRect().width+"px"; b[i].style.width=w; b[i].style.minWidth=w; b[i].style.maxWidth=w; b[i].style.boxSizing="border-box"; }
+      box.scrollLeft=sc.scrollLeft;
+    }
+    window.addEventListener("scroll",sync,{passive:true}); sc.addEventListener("scroll",sync,{passive:true}); window.addEventListener("resize",sync); window.addEventListener("hashchange",function(){ setTimeout(sync,0); });
+  })();
 
   // [name, gst%, factory₹, sell₹, comm%, fixed₹, ship₹, pack₹, return%, qty]
   var DEF_PROD=[
@@ -803,11 +837,12 @@ img{max-width:100%}
     var tg=cell(); var g=document.createElement("select"); g.setAttribute("aria-label","GST rate");
     [0,5,12,18,28,40].forEach(function(r){ var o=document.createElement("option"); o.value=r; o.textContent=r+"%"; g.appendChild(o); });
     g.value=String(p[1]); if(g.value==="") g.value="18"; tg.appendChild(g); I.gst=g;
+    var tp=cell(); var ps=document.createElement("input"); ps.type="number"; ps.min=1; ps.step=1; ps.inputMode="numeric"; ps.value=p[10]>0?p[10]:1; ps.setAttribute("aria-label","Pack mein kitne piece"); tp.appendChild(ps); I.ps=ps;
     var keys=[["fac","Factory price","grp"],["sell","Selling price"],["comm","Commission %","grp"],["fixed","Fixed fee"],["ship","Shipping"],["pack","Packaging"],["ret","Return %"],["qty","Quantity","grp"]];
     keys.forEach(function(k,i){ var t=cell(k[2]); var inp=document.createElement("input"); inp.type="number"; inp.min=0; inp.inputMode="decimal"; inp.value=p[i+2]; inp.setAttribute("aria-label",k[1]); t.appendChild(inp); I[k[0]]=inp; });
     var O={unit:cell("o grp"), mar:cell(), minp:cell("o"), tot:cell("o")};
     var td=cell(); var d=document.createElement("button"); d.type="button"; d.className="del"; d.textContent="×"; d.setAttribute("aria-label","Product hatao");
-    d.addEventListener("click",function(){ var nx=tr.nextSibling; var row=[I.name.value,parseFloat(I.gst.value)||0,num(I.fac),num(I.sell),num(I.comm),num(I.fixed),num(I.ship),num(I.pack),num(I.ret),num(I.qty)], bid=binAdd("prod","Product: "+(I.name.value||""),row); tr.remove(); recalc(); save(); window.aspToast("Product hata diya: "+(I.name.value||""),"Wapas lao",function(){ binDrop(bid); prodBody.insertBefore(tr,nx&&nx.parentNode===prodBody?nx:null); recalc(); save(); }); }); td.appendChild(d);
+    d.addEventListener("click",function(){ var nx=tr.nextSibling; var row=[I.name.value,parseFloat(I.gst.value)||0,num(I.fac),num(I.sell),num(I.comm),num(I.fixed),num(I.ship),num(I.pack),num(I.ret),num(I.qty),Math.max(1,num(I.ps))], bid=binAdd("prod","Product: "+(I.name.value||""),row); tr.remove(); recalc(); save(); window.aspToast("Product hata diya: "+(I.name.value||""),"Wapas lao",function(){ binDrop(bid); prodBody.insertBefore(tr,nx&&nx.parentNode===prodBody?nx:null); recalc(); save(); }); }); td.appendChild(d);
     tr._I=I; tr._O=O; return tr;
   }
 
@@ -870,7 +905,7 @@ img{max-width:100%}
     var rows=[];
     prodBody.querySelectorAll("tr").forEach(function(tr){
       var I=tr._I, O=tr._O;
-      var p={gst:parseFloat(I.gst.value)||0,fac:num(I.fac),sell:num(I.sell),comm:num(I.comm),fixed:num(I.fixed),ship:num(I.ship),pack:num(I.pack),ret:num(I.ret),qty:num(I.qty)};
+      var p={gst:parseFloat(I.gst.value)||0,fac:num(I.fac)*Math.max(1,num(I.ps)),sell:num(I.sell),comm:num(I.comm),fixed:num(I.fixed),ship:num(I.ship),pack:num(I.pack),ret:num(I.ret),qty:num(I.qty)};
       var r=calcProduct(p,S);
       O.unit.textContent=inr(r.unit); O.unit.className="o grp "+(r.unit<0?"neg":"");
       O.mar.innerHTML='<span class="chip '+chipClass(r.margin)+'">'+pct(r.margin)+'</span>';
@@ -960,7 +995,7 @@ img{max-width:100%}
 
   function serialize(){
     var prods=[]; prodBody.querySelectorAll("tr").forEach(function(tr){ var I=tr._I;
-      prods.push([I.name.value,parseFloat(I.gst.value)||0,num(I.fac),num(I.sell),num(I.comm),num(I.fixed),num(I.ship),num(I.pack),num(I.ret),num(I.qty)]); });
+      prods.push([I.name.value,parseFloat(I.gst.value)||0,num(I.fac),num(I.sell),num(I.comm),num(I.fixed),num(I.ship),num(I.pack),num(I.ret),num(I.qty),Math.max(1,num(I.ps))]); });
     var budget=[]; budgetList.querySelectorAll(".brow").forEach(function(r){ var i=r.querySelectorAll("input"); budget.push([i[0].value,num(i[1])]); });
     return {prods:prods,budget:budget,set:settings()};
   }
@@ -980,7 +1015,7 @@ img{max-width:100%}
   document.addEventListener("change",function(e){ if(e.target.tagName==="SELECT"){ recalc(); save(); } });
   $("bill-yes").addEventListener("click",function(){ setBill(true); recalc(); save(); });
   $("bill-no").addEventListener("click",function(){ setBill(false); recalc(); save(); });
-  $("add-prod").addEventListener("click",function(){ prodBody.appendChild(makeProdRow(["Naya product",18,0,0,15,20,40,10,8,0])); recalc(); save(); });
+  $("add-prod").addEventListener("click",function(){ prodBody.appendChild(makeProdRow(["Naya product",18,0,0,15,20,40,10,8,0,1])); recalc(); save(); });
   $("add-budget").addEventListener("click",function(){ budgetList.appendChild(makeBudgetRow("Naya kharcha",0)); recalc(); save(); });
   var armed=false, rb=$("reset");
   rb.addEventListener("click",function(){
@@ -1504,7 +1539,7 @@ img{max-width:100%}
     function tbl(head,rows){ return '<table><thead><tr>'+head.map(function(x,i){ return '<th'+(i?'':' class="l"')+'>'+x+'</th>'; }).join("")+'</tr></thead><tbody>'+rows.map(function(r){ return '<tr>'+r.map(function(x,i){ return '<td'+(i?'':' class="l"')+'>'+esc(x)+'</td>'; }).join("")+'</tr>'; }).join("")+'</tbody></table>'; }
     h.push('<div class="kp">'+[["Net profit",T("k-net")],["Stock investment",T("k-cash")],["Sales",T("k-rev")],["ROI",T("k-roi")],["Net margin",T("k-mar")]].map(function(k){ return '<div><span>'+k[0]+'</span><b>'+esc(k[1])+'</b></div>'; }).join("")+'</div>');
     var calc=window.aspCalc?window.aspCalc.get():null;
-    if(calc&&calc.prods.length){ h.push('<h2>Products (batch plan)</h2>'+tbl(["Product","GST %","Cost ₹","Sell price ₹","Qty"],calc.prods.map(function(p){ return [p[0]||"—",p[1],inr(p[2]),inr(p[3]),p[9]]; }))); }
+    if(calc&&calc.prods.length){ h.push('<h2>Products (batch plan)</h2>'+tbl(["Product","GST %","Pack (pcs)","Cost ₹ / pc","Sell price ₹ / pack","Qty (pack)"],calc.prods.map(function(p){ return [p[0]||"—",p[1],p[10]>0?p[10]:1,inr(p[2]),inr(p[3]),p[9]]; }))); }
     var led=[]; document.querySelectorAll("#ledger .lrow").forEach(function(r){ var a=r.querySelector(".lab"), b=r.querySelector(".val"); if(a&&b) led.push([a.textContent.trim(),b.textContent.trim()]); });
     if(led.length) h.push('<h2>Profit ka hisaab (is batch ka)</h2>'+tbl(["Item","Amount"],led));
     if(D.parties.length){
@@ -1751,7 +1786,7 @@ img{max-width:100%}
   });
 
   // ---------- boot ----------
-  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 12 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
+  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 13 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
   buildForm(); renderAll(); diag();
   var use=window.claude&&window.claude.use;
   if(!use){ status("Online khata yahan nahi chal raha. Is page ko Claude mein sign in karke kholo."); return; }
