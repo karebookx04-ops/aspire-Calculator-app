@@ -394,6 +394,7 @@ table.stk{min-width:820px}
 #stk-det table{min-width:0;width:100%}
 #stk-det td.l,#stk-det th.l{text-align:left}
 #stk-det{scroll-margin-top:84px}
+table.stk td.l,table.stk th.l{text-align:left}
 @media(max-width:899px){
   .detk{grid-template-columns:repeat(3,minmax(0,1fr))}
   .det-2{grid-template-columns:1fr}
@@ -474,7 +475,7 @@ table.stk{min-width:820px}
   <div class="view" id="v-actual" hidden>
     <div class="view-head">
       <div><h2>Calculator</h2><p>Aapki kharid aur bikri ka poora hisaab. Entry karte hi ye apne aap badalta hai.</p></div>
-      <div class="btnrow" style="align-items:flex-end"><div><label class="fl" for="a-period">Kab ka hisaab</label><select id="a-period" style="min-width:170px"><option value="all">Shuru se ab tak</option><option value="m0">Is mahine</option><option value="m1">Pichhla mahina</option><option value="m3">Pichhle 3 mahine</option><option value="fy">Is saal (April se)</option></select></div><button class="btn" type="button" id="rep-dash">Business report download</button></div>
+      <div class="btnrow" style="align-items:flex-end"><div><label class="fl" for="a-period">Kab ka hisaab</label><select id="a-period" style="min-width:170px"><option value="all">Shuru se ab tak</option><option value="d0">Aaj</option><option value="d1">Kal</option><option value="w0">Is hafte</option><option value="m0">Is mahine</option><option value="m1">Pichhla mahina</option><option value="m3">Pichhle 3 mahine</option><option value="fy">Is saal (April se)</option><option value="cust">Apni date chuno</option></select></div><div id="a-cust" hidden style="display:none;gap:8px;align-items:flex-end"><div><label class="fl" for="a-from">Kab se</label><input type="date" id="a-from"></div><div><label class="fl" for="a-to">Kab tak</label><input type="date" id="a-to"></div></div><button class="btn" type="button" id="rep-dash">Business report download</button></div>
     </div>
     <div class="banner" id="a-empty" data-tone="info" hidden>Abhi koi entry nahi hai, isliye sab zero hai. Home par "Maal kharida" aur "Maal becha" se entry karo, yahan hisaab apne aap ban jayega.</div>
     <div class="kpis">
@@ -494,6 +495,14 @@ table.stk{min-width:820px}
       <div class="card-h"><h3>Har product par kitna kamaya</h3><span>&nbsp;</span></div>
       <div class="tscroll"><table class="stk"><thead><tr><th class="l">Product</th><th>Kharida</th><th>Bika</th><th>Stock abhi</th><th>Kharid rate<small>GST ke bina</small></th><th>Bikri rate<small>GST ke bina</small></th><th>Fees<small>ek piece par</small></th><th>Munafa<small>ek piece par</small></th><th>Kul munafa</th><th>Margin</th></tr></thead><tbody id="a-body"></tbody></table></div>
       <div class="note">Munafa = bikri − GST − marketplace fees − bike hue maal ki kharid (GST ke bina). Ads, packing aur doosre kharche abhi isme nahi judte.</div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="card-h"><h3>Is dauran ki bikri</h3><span id="a-sl-t">&nbsp;</span></div>
+      <div class="tscroll"><table class="stk" style="min-width:560px"><thead><tr><th class="l">Date</th><th class="l">Customer / marketplace</th><th class="l">Product</th><th>Piece</th><th>Amount<small>GST sahit</small></th></tr></thead><tbody id="a-sl"></tbody></table></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="card-h"><h3>Is dauran ki kharid</h3><span id="a-pl-t">&nbsp;</span></div>
+      <div class="tscroll"><table class="stk" style="min-width:560px"><thead><tr><th class="l">Date</th><th class="l">Party</th><th class="l">Product</th><th>Piece</th><th>Rate<small>GST ke bina</small></th><th>Amount<small>GST sahit</small></th></tr></thead><tbody id="a-pl"></tbody></table></div>
     </div>
   </div>
 
@@ -644,7 +653,7 @@ table.stk{min-width:820px}
       </div>
     </div>
     <div class="banner" id="k-status" data-tone="info">Khata load ho raha hai…</div>
-    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 22</div>
+    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 23</div>
     <div class="banner" id="k-note" data-tone="info" hidden></div>
     <div class="card" id="k-rpanel" style="padding:18px 20px" hidden>
       <h3 style="margin:0 0 6px">Backup se restore</h3>
@@ -769,7 +778,7 @@ table.stk{min-width:820px}
 
   <!-- SETTINGS -->
   <div class="view" id="v-more" hidden>
-    <div class="view-head"><div><h2>Settings</h2><p>Firm ki details jo bill par chhapti hain, aur aapke data ka backup.</p></div></div>
+    <div class="view-head"><div><h2>Settings</h2><p>Firm ki details jo bill par chhapti hain, aur aapke data ka backup.</p></div><div data-keep><label class="fl" id="lang-l">Bhasha / Language</label><div class="seg" id="lang-seg" role="group" aria-labelledby="lang-l" style="min-width:220px"><button type="button" data-lang="hi">Hinglish</button><button type="button" data-lang="en">English</button></div></div></div>
     <div class="b-grid" style="grid-template-columns:repeat(2,minmax(0,1fr))" id="more-grid">
       <div class="stack" id="more-firm"></div>
       <div class="stack"><div class="card"><div class="card-h"><h3>Backup aur report</h3><span>data hamesha online save rehta hai</span></div><div class="card-b" id="more-tools" style="display:flex;flex-direction:column;gap:12px"></div></div></div>
@@ -811,6 +820,105 @@ table.stk{min-width:820px}
 </main>
 
 <div id="toast" hidden role="status"><span id="toast-text"></span><button type="button" id="toast-btn"></button></div>
+<script>
+(function(){
+  var L="hi"; try{ L=localStorage.getItem("aspire_lang")||"hi"; }catch(e){}
+  if(L!=="en") L="hi";
+  window.aspLang=L;
+  if(L!=="en") return;
+  document.documentElement.lang="en";
+  var EX={
+"+ Ek aur product":"+ Add another product","+ Maal becha (naya bill)":"+ Sold goods (new bill)","+ Maal kharida":"+ Bought goods","+ Naya marketplace (Amazon, Flipkart…)":"+ New marketplace (Amazon, Flipkart…)","+ Nayi party add karo":"+ Add new party","+ Party add karo":"+ Add party",
+"(0 = time fix nahi)":"(0 = no fixed time)","15 akshar ka number":"15-character number",
+"Aaj":"Today","Kal":"Yesterday","Is hafte":"This week","Is mahine":"This month","Pichhla mahina":"Last month","Pichhle 3 mahine":"Last 3 months","Is saal (April se)":"This year (from April)","Shuru se ab tak":"From start till now","Apni date chuno":"Choose dates","Kab se":"From","Kab tak":"To","Kab ka hisaab":"Period",
+"Aaj tak ka stock":"Stock till today","Aakhri 5 entry":"Last 5 entries","Aana tha":"Was due","Sab dekho":"See all","Stock kholo":"Open Stock",
+"Aapki kharid aur bikri ka poora hisaab. Entry karte hi ye apne aap badalta hai.":"Full account of your purchases and sales. It updates by itself as you make entries.",
+"Abhi kitna paisa diya ₹ (udhaar hai to 0)":"Paid now ₹ (0 if on credit)","Abhi kitna paisa mila ₹":"Received now ₹","Abhi stock":"Stock now","Asli stock":"Actual stock",
+"Abhi ye andaza hai. Apna asli kharcha likh kar Save karo. Seedha dukaan se bechte ho to sab 0 kar do.":"This is an estimate for now. Enter your real costs and press Save. If you sell directly from the shop, set all to 0.",
+"Address":"Address","Agla number":"Next number","Agle 7 din mein dena":"Due in next 7 days","Amount":"Amount","Amount ₹":"Amount ₹",
+"Asli munafa":"Real profit","Asli munafa / piece":"Real profit / piece",
+"Asli munafa = bechne ka daam − GST − kharid rate − marketplace fees − shipping − packing. Jahan \"andaza\" likha hai wahan kharcha abhi andaze se hai (shipping ₹40, packing ₹5). Us par click karke apna asli kharcha likh do.":"Real profit = selling price − GST − purchase rate − marketplace fees − shipping − packing. Where it says \"estimate\", the cost is a guess for now (shipping ₹40, packing ₹5). Click it and enter your real costs.",
+"Auto backups":"Auto backups","Baaki":"Balance","Backup aur report":"Backup and report","Backup file download":"Download backup file","Backup se restore":"Restore from backup","Band karo":"Close",
+"Bane hue bills":"Bills made","Bane hue saare GST bill. Kabhi bhi dobara download ya cancel kar sakte ho.":"All GST bills made so far. You can download again or cancel any time.",
+"Bank / UPI details (bill par)":"Bank / UPI details (on bill)","Bank, A/c no, IFSC ya UPI ID":"Bank, A/c no, IFSC or UPI ID",
+"Bas yahan ek baar likho. Stock apne aap badhega aur party ke khate mein chadh jayega.":"Enter it here just once. Stock goes up by itself and it is added to the party's ledger.",
+"Bas yahan ek baar likho. Stock apne aap ghatega, khate mein chadhega aur GST bill ban jayega.":"Enter it here just once. Stock goes down by itself, the ledger is updated and the GST bill is made.",
+"Bechne ka daam":"Selling price","Bechne ka daam baaki":"Selling price missing","Bika":"Sold","Bike hue maal ki kharid (GST ke bina)":"Cost of goods sold (excl. GST)","Bikri":"Sales","Bikri (customer ne diya, GST sahit)":"Sales (paid by customer, incl. GST)","Bikri (is mahine)":"Sales (this month)","Bikri GST ke bina":"Sales excl. GST","Bikri par GST (dena hai)":"GST on sales (payable)","Bikri rate":"Selling rate","Bill no. ka shuru":"Bill no. prefix",
+"Business report download":"Download business report","Customer / marketplace se lena hai":"To receive from customers / marketplaces","Customer GSTIN (ho to)":"Customer GSTIN (if any)","Customer ka address (ho to)":"Customer address (if any)","Customer ka naam":"Customer name","Customer ka naam likho.":"Enter the customer name.","Customer ka state":"Customer state","Customer ka state chuno.":"Choose the customer's state.","Customer se baaki lena hai":"Still to receive from customer","Customer se wapas aaya":"Returned by customer","Customer se wapas":"Customer return",
+"Deleted items":"Deleted items","Details save karo":"Save details","Diya":"Paid","Ek aur entry":"Another entry","Ek piece bechne ka kharcha":"Cost of selling one piece","Ek piece par munafa":"Profit per piece","Entry hatao":"Delete entry","Entry type":"Entry type","Excel (CSV) download":"Download Excel (CSV)","Fees kat ke payout aana hai":"Payout due after fees",
+"File nahi khul rahi? Backup ka poora text yahan paste karo:":"File not opening? Paste the full backup text here:","Firm ka naam":"Firm name","Firm ki details jo bill par chhapti hain, aur aapke data ka backup.":"Firm details printed on bills, and the backup of your data.",
+"GST bill bhi banao (print / PDF)":"Also make a GST bill (print / PDF)","GST jo sarkar ko jayega":"GST payable to government","GST ke bina":"excl. GST","GST sahit":"incl. GST","GST rate, HSN aur filing apne CA se confirm karo.":"Confirm GST rate, HSN and filing with your CA.",
+"Haan, sab hatao":"Yes, delete all","Har party ka hisaab: kis ko kitna dena hai, kis se kitna lena hai.":"Account of every party: how much to pay and how much to receive.","Har product par kitna kamaya":"Profit on each product","Hatao?":"Delete?","Pakka hatao?":"Really delete?",
+"ITC bacha hai (aage kaam aayega)":"ITC left over (carry forward)","Is dauran ki bikri":"Sales in this period","Is dauran ki kharid":"Purchases in this period","Is dauran koi bikri nahi hai.":"No sales in this period.","Is dauran koi kharid nahi hai.":"No purchases in this period.","Is dauran koi kharid ya bikri nahi hai.":"No purchases or sales in this period.","Is mahine bikri":"Sales this month","Is naam ka koi product nahi mila.":"No product found with this name.","Is text se restore":"Restore from this text","Is waqt pe wapas jao":"Go back to this point",
+"Isse sirf stock badalta hai. Party ka hisaab aur purani entries waise hi rehti hain. Save se pehle backup apne aap banta hai.":"This changes only the stock. Party accounts and old entries stay as they are. A backup is made automatically before saving.",
+"Jo maal nahi bika aur party ko lauta diya, wo yahan likho. Stock ghatega aur party ko dena utna kam ho jayega. GST bhi apne aap ghat jayega.":"Enter goods that did not sell and were returned to the party. Stock goes down and the amount you owe the party reduces. GST reduces by itself too.",
+"Kaise":"How","Kam se kam ek line mein product, qty aur rate bharo.":"Fill product, qty and rate in at least one line.","Kharcha":"Costs","Kharcha / piece":"Cost / piece","Kharcha save ho gaya":"Costs saved","Kharid par GST (wapas milta hai, ITC)":"GST on purchases (comes back, ITC)","Kharid rate":"Purchase rate","Kharida":"Bought","Khata":"Ledger",
+"Kis ko paisa dena / lena hai":"Money to pay / receive","Kis party ko wapas kiya":"Returned to which party","Kis party se liya":"Bought from which party","Kisko becha":"Sold to",
+"Kitna maal pada hai aur ek piece bechne par asli munafa kitna hai. Product ke naam par click karo to uski poori history khulegi.":"How much stock you have and the real profit on selling one piece. Click a product name to open its full history.",
+"Koi farak nahi hai, kuch badla nahi.":"No difference, nothing changed.","Kul munafa":"Total profit","Kul piece":"Total pieces","Kya deti hai":"What it supplies","Kya hua":"What happened","Late ho gaya":"Overdue","Line hatao":"Remove line",
+"Maal (GST ke bina)":"Goods (excl. GST)","Maal aaya":"Goods in","Maal becha":"Sold goods","Maal ka bill":"Goods bill","Maal kharida":"Bought goods","Maal ki kharid ya bikri Home se likho:":"Enter purchases and sales from Home:","Maal wapas":"Goods return","Maal wapas kiya":"Goods returned","Maal wapas aaya":"Goods came back",
+"Marketplace fees":"Marketplace fees","Marketplace ne kitni fees kaati ₹ (commission, shipping, GST)":"Fees charged by marketplace ₹ (commission, shipping, GST)","Marketplace se aana hai":"To receive from marketplaces","Marketplace · Seedhe customer ko bill se bikri":"Marketplace · Direct sale to customer with bill",
+"Meri firm ki details":"My firm details","Mila":"Received","Munafa":"Profit",
+"Munafa = bikri − GST − marketplace fees − bike hue maal ki kharid (GST ke bina). Ads, packing aur doosre kharche abhi isme nahi judte.":"Profit = sales − GST − marketplace fees − cost of goods sold (excl. GST). Ads, packing and other expenses are not included yet.",
+"Munafe ka hisaab":"Profit breakdown","Naam par click karo: history aur kharcha":"Click a name: history and costs","Naya khata shuru":"Start fresh ledger","Naye marketplace ka naam":"New marketplace name","Nayi party ka naam":"New party name","Nayi party ka naam likho.":"Enter the new party name.","Note / debit note no. (ho to)":"Note / debit note no. (if any)",
+"Paisa diya / mila":"Paid / received","Paisa lena / dena":"Money to receive / pay","Parties ko dena hai":"To pay to parties","Party ka bill no. (ho to)":"Party's bill no. (if any)","Party ka naam":"Party name","Party ko baaki dena hai":"Still to pay to party","Party ko dena hai":"To pay to parties","Party ko wapas kiya":"Returned to party","Party ko wapas":"Returned to party","Party ne kitna paisa wapas diya ₹ (nahi diya to 0)":"Money refunded by party ₹ (0 if none)",
+"Payment ya nayi party":"Payment or new party","Payout aane par \"Paisa diya / mila\" se likh dena.":"When the payout arrives, enter it with \"Paid / received\".","Payout mila":"Payout received","Payment diya":"Payment made","Paisa wapas diya":"Money refunded","Paisa wapas mila":"Refund received","Stock ginti":"Stock count",
+"Pehle neeche list mein is product ka \"Bechne ka daam\" likho, phir munafa yahan dikhega.":"First enter this product's \"Selling price\" in the list below, then the profit will show here.",
+"Poora":"Full","Poora de diya":"Paid in full","Poora mil gaya":"Received in full","Poora udhaar":"All on credit","Poori history":"Full history","Product dhundo":"Search product","Qty (piece)":"Qty (pieces)","Rate mein GST shamil hai":"Rate includes GST","Rate ₹ (1 piece)":"Rate ₹ (1 piece)",
+"Saari entries":"All entries","Saari entries dikhao":"Show all entries","Sab product par yahi lagao":"Apply this to all products","Sab product par ye kharcha lag gaya":"These costs were applied to all products","Sab zero karo":"Set all to zero","Sarkar ko dena banta hai":"Payable to government","Save karo":"Save","Save karo aur bill banao":"Save and make bill","Seedha customer (GST bill)":"Direct customer (GST bill)",
+"State chuno":"Choose state","Stock abhi":"Stock now","Stock bacha":"Stock left","Stock ginti / reset":"Stock count / reset","Stock ginti theek karo":"Correct stock count","Stock kam hai":"Low stock","Stock ki value":"Stock value","Stock mein laga paisa":"Money tied up in stock","Supplier (maal deti hai)":"Supplier (gives goods)",
+"Udhaar ka time fix nahi":"No fixed credit period","udhaar ka time fix nahi":"no fixed credit period","Udhaar ke din":"Credit days","Udhaar kitne din (0 = koi time fix nahi)":"Credit days (0 = no fixed time)","Wapsi ka type":"Return type","Wapsi save karo":"Save return",
+"Wo file chuno jo \"Backup file download\" se bani thi (naam aspire-backup-….json). File chunte hi aage confirm poochha jaayega, tab tak kuch nahi badlega.":"Choose the file made by \"Download backup file\" (named aspire-backup-….json). After choosing, you will be asked to confirm. Nothing changes until then.",
+"Yahan wo entries aati hain jo aapne hatayi hain. Abhi khali hai.":"Entries you delete come here. It is empty now.","Ye andaazan hai. GST return CA se bharwao.":"This is approximate. Get your GST return filed by a CA.","Ye is product ka apna kharcha hai.":"These are this product's own costs.",
+"aaj tak":"till today","aana hai":"to receive","abhi koi bikri nahi":"no sales yet","abhi stock mein":"in stock now","andaza":"estimate","asli stock bharo, farak apne aap entry ban jaayega":"enter actual stock, the difference becomes an entry by itself","becha":"sold","card pe click karo, poora khata dikhega":"click a card to see the full ledger","customer se wapas":"customer returns","daam likhoge to munafa dikhega":"enter a price to see profit","data hamesha online save rehta hai":"data is always saved online","dena hai":"to pay","dena hai.":"to pay.","ek piece par":"per piece","ek piece, GST sahit":"one piece, incl. GST","galti se hataya? yahan se wapas lao":"deleted by mistake? bring it back from here","is dauran ka":"for this period","itne ya kam par batao":"alert at this or less","jaise Amazon":"e.g. Amazon","jaise Rahul Traders":"e.g. Rahul Traders","jaise Sharma Bag Factory":"e.g. Sharma Bag Factory","jaise laptop bags":"e.g. laptop bags","kam":"low","kam hai":"low","kharid rate par, GST ke bina":"at purchase rate, excl. GST","kharida":"bought","khatam":"finished","koi kharid nahi":"no purchases","koi sale nahi":"no sales","is mahine koi sale nahi":"no sales this month","likho":"enter","party ko wapas":"returned to party","product ka naam":"product name","sab mil gaya":"all received","hisaab barabar":"settled","advance diya hua":"advance paid","sale − fees − mila hua payout":"sale − fees − payout received","udhaar ki due date ke hisaab se":"as per credit due dates","wapas":"return","Wapas lao":"Undo","kisi ka baaki nahi":"nothing due","Kisi ka baaki nahi":"Nothing due","baaki hai":"pending","Sab time pe hai":"All on time","kisi party ka time fix nahi":"no party has a fixed time","stock khali hai":"stock is empty","GST, fees aur maal ka rate ghata ke":"after GST, fees and cost of goods","marketplace / customer":"marketplace / customer","Kisi ko dena ya kisi se lena baaki nahi hai.":"Nothing to pay or receive.","Abhi koi entry nahi hai.":"No entries yet.",
+"udhaar hai, baad mein \"Paisa diya / mila\" se payment likhna.":"is on credit; enter the payment later with \"Paid / received\".","mil gaya, khate mein likh diya.":"received and entered in the ledger.","payout aana hai, khate mein chadh gaya.":"payout is due and has been added to the ledger.","ka maal chadh gaya.":"worth of goods added.","badh gaye.":"added.","ghat gaye.":"removed.","wapas aa gaye.":"came back.","Stock mein":"Stock:","Stock se":"Stock:","ban gaya. Neeche ke button se download ya print karo.":"is ready. Download or print it with the button below.","payment bhi likh diya.":"payment also recorded.","Bill download / print karo":"Download / print bill","GST ke liye party se debit note / credit note le lena aur CA ko dena.":"For GST, take a debit note / credit note from the party and give it to your CA.","Agar is maal ka GST bill bana tha to CA ko batana, uska credit note banta hai.":"If a GST bill was made for these goods, tell your CA; a credit note is needed.","ki bikri hisaab se hat gayi.":"of sales removed from the accounts.","kam ho gaya (GST sahit).":"reduced (incl. GST).","kam ho gaya.":"reduced.","dena baaki hai.":"still to pay.",
+"✓ Bikri save ho gayi":"✓ Sale saved","✓ Kharid save ho gayi":"✓ Purchase saved","✓ Wapsi save ho gayi":"✓ Return saved","✓ Save ho gaya":"✓ Saved","✓ Download ho gaya":"✓ Downloaded","✓ bhari hui hain":"✓ filled in","Save ho raha hai…":"Saving…","Save nahi hua, network check karke dobara try karo.":"Not saved. Check your network and try again.","Save nahi hua, dobara try karo":"Not saved, please try again","Save nahi hua, dobara try karo.":"Not saved, please try again.","Online save abhi available nahi hai. Page reload karke dobara try karo.":"Online save is not available right now. Reload the page and try again.","Online save abhi available nahi hai.":"Online save is not available right now.",
+"Amount bharo.":"Enter the amount.","Bill no. likho.":"Enter the bill no.","Customer ka GSTIN sahi nahi lag raha. Khali chhod do ya sahi number daalo.":"Customer GSTIN does not look right. Leave it empty or enter the correct number.","Form khali ho gaya.":"Form cleared.","Is naam ki party pehle se hai.":"A party with this name already exists.","Party ka naam likho.":"Enter the party name.","Product, qty aur rate bharo.":"Fill product, qty and rate.","Marketplace chuno.":"Choose a marketplace.","Party chuno.":"Choose a party.","Address aur state bharo.":"Fill address and state.","Firm ka naam likho.":"Enter the firm name.","GSTIN sahi nahi lag raha. 15 akshar ka hota hai, jaise 09ABCDE1234F1Z5.":"GSTIN does not look right. It has 15 characters, e.g. 09ABCDE1234F1Z5.","Abhi koi stock nahi hai.":"No stock yet.","Bechne ka daam save ho gaya":"Selling price saved","Udhaar ka time hata diya":"Credit period removed","Khata naya ho gaya.":"Ledger started fresh.",
+"Abhi koi supplier party nahi hai. Pehle \"Maal kharida\" se kharid likho.":"There is no supplier yet. First enter a purchase with \"Bought goods\".","Bill ke liye pehle Settings mein \"Meri firm ki details\" bhar ke save karo.":"For a bill, first fill and save \"My firm details\" in Settings.",
+"Khata se connection toot gaya. Page dobara kholo.":"Connection to the ledger was lost. Open the page again.","Khata tak pahunch nahi ho pa rahi. Internet check karo, data aate hi yahan dikhega.":"Cannot reach the ledger. Check your internet; data will show here as soon as it arrives.",
+"Abhi khata mein koi entry nahi hai, isliye neeche sab zero dikhega. Upar ke button se pehli entry karo: pehle \"Maal kharida\", phir \"Maal becha\". Baaki sab apne aap hoga.":"There are no entries yet, so everything below shows zero. Make your first entry with the buttons above: first \"Bought goods\", then \"Sold goods\". The rest happens by itself.",
+"Abhi koi entry nahi hai, isliye sab zero hai. Home par \"Maal kharida\" aur \"Maal becha\" se entry karo, yahan hisaab apne aap ban jayega.":"There are no entries yet, so everything is zero. Make entries on Home with \"Bought goods\" and \"Sold goods\" and the accounts will build here by themselves.",
+"Abhi stock khali hai. \"Maal kharida\" se pehli kharid likho, yahan apne aap dikhega.":"Stock is empty. Enter your first purchase with \"Bought goods\" and it will show here.","Is party ki abhi koi entry nahi hai.":"This party has no entries yet.","Is product ki koi entry nahi hai.":"This product has no entries.","Party hatao":"Delete party",
+"Login karo":"Log in","Naya account banao":"Create new account","Password bhool gaye?":"Forgot password?","Account banao":"Create account","Pehle se account hai? Login":"Already have an account? Log in","Stock, khata aur bill":"Stock, ledger and bills","Bhasha":"Language",
+"Demo mode: abhi data sirf isi browser mein save ho raha hai. Online login chalu hone ke baad har device par milega.":"Demo mode: data is saved only in this browser for now. After online login it will be on every device.",
+"Stock reset ya restore se pehle backup apne aap yahan banta hai.":"A backup is made here automatically before a stock reset or restore.","Abhi koi bill nahi bana. Bill save karte hi yahan dikhega, aur kabhi bhi dobara download kar sakte ho.":"No bills made yet. A bill shows here as soon as it is saved, and you can download it again any time.","party se maal aaya":"goods came from a party","bikri aur GST bill":"sale and GST bill","payment likho":"enter a payment","lautaya hua maal":"returned goods","Party":"Party","Parties":"Parties","Views":"Views","last 5":"last 5","piece":"pieces","Piece":"Pieces","Kharid":"Purchases"
+  };
+  var RX=[
+[/^(\d[\d.,]*) piece pade hain$/,"$1 pieces in stock"],[/^(-?[\d.]+) piece$/,"$1 pieces"],[/^(\d[\d.,]*) piece bache hain · GST ke bina$/,"$1 pieces left · excl. GST"],[/^(\d+) piece bike$/,"$1 pieces sold"],
+[/^(\d+) sale · (-?[\d.]+) pcs$/,"$1 sales · $2 pcs"],[/^(\d+) sale · (-?[\d.]+) piece · GST sahit$/,"$1 sales · $2 pieces · incl. GST"],[/^(\d+) kharid · GST sahit$/,"$1 purchases · incl. GST"],
+[/^(\d+) entry · (-?[\d.]+) piece · total (.*)$/,"$1 entries · $2 pieces · total $3"],[/^(\d+) product$/,"$1 products"],[/^(\d+) party ka baaki$/,"$1 parties to pay"],[/^(\d+) party ki due date nikal gayi$/,"$1 parties past due date"],
+[/^(\d+) din udhaar$/,"$1 days credit"],[/^(\d+) entries, nayi upar$/,"$1 entries, newest first"],[/^(.+) se baaki hai$/,"pending since $1"],
+[/^(.+) late ho gaya, (.+) 7 din mein$/,"$1 overdue, $2 in 7 days"],[/^(.+) late ho gaya$/,"$1 overdue"],[/^(.+) late$/,"$1 overdue"],[/^(.+) aaj dena hai, (.+) agle 7 din mein$/,"$1 due today, $2 in next 7 days"],[/^(.+) aaj dena hai$/,"$1 due today"],[/^(.+) agle 7 din mein dena hai$/,"$1 due in next 7 days"],
+[/^Stock mein abhi (-?[\d.]+) pcs$/,"In stock now: $1 pcs"],[/^Stock mein sirf (-?[\d.]+) pcs hain$/,"Only $1 pcs in stock"],[/^(.+) ka khata$/,"$1's ledger"],[/^(.+) ke khate mein$/,"Added to $1's ledger:"],[/^(.+) ke khate se$/,"From $1's ledger:"],[/^(.+) ko abhi$/,"To $1 now"],[/^(.+) se$/,"From $1:"],
+[/^Margin (.+) \(bikri par, GST ke bina\)$/,"Margin $1 (on sales, excl. GST)"],[/^(\d+) sale ka kharid rate nahi mila, munafa zyada dikh sakta hai$/,"Purchase rate not found for $1 sales, profit may look too high"],
+[/^(\d+) sale ke maal ki kharid entry nahi mili, unki laagat 0 maani hai\. Us maal ko "Maal kharida" se chadhao\.$/,"No purchase entry found for the goods of $1 sales, so their cost is taken as 0. Add those goods with \"Bought goods\"."],
+[/^Sab product ka stock (.+) se zyada hai\.$/,"All products have more than $1 in stock."],[/^(.+) piece se zyada hai$/,"more than $1 pieces"],[/^aur (\d+) Khata tab mein$/,"$1 more in the Ledger tab"],
+[/^Udhaar (\d+) din save ho gaya$/,"Credit of $1 days saved"],[/^Paisa total se zyada likha hai\. Total (.+) hai\.$/,"Amount is more than the total. Total is $1."],[/^Hata diya: (.*)$/,"Deleted: $1"],
+[/^✓ Bikri save ho gayi, bill (.+) ban gaya$/,"✓ Sale saved, bill $1 made"],[/^Bill number (.+) pehle se bana hai\. Settings mein "Agla number" theek karo\.$/,"Bill number $1 already exists. Correct \"Next number\" in Settings."],
+[/^Version (\d+) update se pehle \(apne aap\)$/,"Before Version $1 update (automatic)"],[/^(Version \d+) · Khata: (.*)$/,"$1 · Ledger: $2"],[/^GST (.+)% jo sarkar ko jayega$/,"GST $1% payable to government"],[/^Kharid rate \(kharid entry nahi mili\)$/,"Purchase rate (no purchase entry found)"],
+[/^Saari (\d+) entries \(maal aaya, sale, payment, stock ginti\) hat ke Deleted items mein chali jaayengi\. Stock aur sab parties ka baaki zero ho jaayega\. Parties ke naam rahenge\. Pehle backup apne aap banega, to wapas la sakte ho\.$/,"All $1 entries (goods in, sales, payments, stock counts) will move to Deleted items. Stock and all party balances become zero. Party names stay. A backup is made first, so you can bring it back."]
+  ];
+  var FR=[["chalu ✓","on ✓"],["· munafa","· profit"]];
+  function tr(s){
+    var m=/^(\s*)([\s\S]*?)(\s*)$/.exec(s), c=m[2]; if(!c||!/[A-Za-z]/.test(c)) return s;
+    var k=c.replace(/\s+/g," "); if(Object.prototype.hasOwnProperty.call(EX,k)) return m[1]+EX[k]+m[3];
+    var o=k, i; for(i=0;i<RX.length;i++){ if(RX[i][0].test(o)){ o=o.replace(RX[i][0],RX[i][1]); break; } }
+    for(i=0;i<FR.length;i++){ if(o.indexOf(FR[i][0])>=0) o=o.split(FR[i][0]).join(FR[i][1]); }
+    return o===k?s:m[1]+o+m[3];
+  }
+  var AT=["placeholder","aria-label","title"];
+  function el(e){ for(var i=0;i<AT.length;i++){ var v=e.getAttribute&&e.getAttribute(AT[i]); if(v){ var t=tr(v); if(t!==v) e.setAttribute(AT[i],t); } } }
+  function walk(n){
+    if(n.nodeType===3){ var p=n.parentNode; if(!p||/^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName)||(p.closest&&p.closest("[data-keep]"))) return; var t=tr(n.nodeValue); if(t!==n.nodeValue) n.nodeValue=t; return; }
+    if(n.nodeType!==1||/^(SCRIPT|STYLE|TEXTAREA)$/.test(n.nodeName)) return;
+    el(n); for(var c=n.firstChild;c;c=c.nextSibling) walk(c);
+  }
+  window.aspTr=tr;
+  function start(){ if(document.body) walk(document.body); }
+  new MutationObserver(function(ms){ ms.forEach(function(m){ if(m.type==="childList") m.addedNodes.forEach(walk); else if(m.type==="characterData") walk(m.target); else el(m.target); }); }).observe(document.documentElement,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:AT});
+  start(); document.addEventListener("DOMContentLoaded",start);
+})();
+</script>
 <script>window.addEventListener("error",function(e){ window.__aspErr=String(e.message||"").slice(0,80); });window.addEventListener("unhandledrejection",function(e){ var r=e.reason; window.__aspErr=String(r&&(r.message||r.code)||r||"").slice(0,80); });</script>
 <script>
 (function(){
@@ -2119,7 +2227,7 @@ table.stk{min-width:820px}
   function safeBackup(){
     var done=false; try{ done=localStorage.getItem(BK)==="1"; }catch(e){}
     if(done||bkBusy||!db||dead) return; var s=snapshotAll(); if(!countAll(s)){ try{ localStorage.setItem(BK,"1"); }catch(e){} return; }
-    bkBusy=true; autoBackup("Version 22 update se pehle (apne aap)").then(function(){ try{ localStorage.setItem(BK,"1"); }catch(e){} },function(){}).then(function(){ bkBusy=false; });
+    bkBusy=true; autoBackup("Version 23 update se pehle (apne aap)").then(function(){ try{ localStorage.setItem(BK,"1"); }catch(e){} },function(){}).then(function(){ bkBusy=false; });
   }
   document.addEventListener("click",function(e){ var b=e.target.closest&&e.target.closest("[data-qgo]"); if(!b) return; location.hash="#home"; var m=b.dataset.qgo; setTimeout(function(){ qOpen(m); },60); });
   document.getElementById("prod-body").addEventListener("input",function(e){ if(e.target.closest("td.name")) prodStock(); });
@@ -2130,6 +2238,11 @@ table.stk{min-width:820px}
   function aRange(){
     var v=$("a-period").value, d=new Date(), y=d.getFullYear(), m=d.getMonth();
     function first(yy,mm){ return iso(new Date(yy,mm,1)); }
+    var t=today();
+    if(v==="d0") return [t,t];
+    if(v==="d1") return [addDays(t,-1),addDays(t,-1)];
+    if(v==="w0") return [addDays(t,-((d.getDay()+6)%7)),"9999"];
+    if(v==="cust"){ var f=$("a-from").value||"", e=$("a-to").value||"9999"; if(f&&e<f){ var x=f; f=e; e=x; } return [f,e]; }
     if(v==="m0") return [first(y,m),"9999"];
     if(v==="m1") return [first(y,m-1),addDays(first(y,m),-1)];
     if(v==="m3") return [first(y,m-2),"9999"];
@@ -2167,8 +2280,28 @@ table.stk{min-width:820px}
       var o=info[key(x.name)], cost=o&&o.q?o.v/o.q:null, pr=x.net-x.fees-x.cogs, left=st[key(x.name)], q=x.sq;
       return '<tr><td class="l">'+esc(x.name)+'</td><td>'+(x.bq||"—")+'</td><td>'+(q||"—")+'</td><td>'+(left==null?"—":Math.round(left*100)/100)+'</td><td>'+(cost==null?"—":inr(cost))+'</td><td>'+(q?inr(x.net/q):"—")+'</td><td>'+(q?inr(x.fees/q):"—")+'</td><td class="'+(q&&pr<0?"neg":"")+'">'+(q?inr(pr/q):"—")+'</td><td class="'+(q?(pr<0?"neg":"pos"):"")+'" style="font-weight:700">'+(q?inr(pr):"—")+'</td><td>'+(q&&x.net>0?(pr/x.net*100).toFixed(1)+"%":"—")+(x.unk?" *":"")+'</td></tr>';
     }).join("") : '<tr><td class="l" colspan="10" style="color:var(--muted)">Is dauran koi kharid ya bikri nahi hai.</td></tr>';
+    var cu=$("a-period").value==="cust"; $("a-cust").hidden=!cu; $("a-cust").style.display=cu?"flex":"none";
+    function byD(a,b){ return a.date<b.date?1:a.date>b.date?-1:(String(a.createdAt||"")<String(b.createdAt||"")?1:-1); }
+    var wp=' <span class="tag">wapas</span>';
+    var SL=D.sales.filter(function(x){ return inR(x.date); }).sort(byD), PL=D.purchases.filter(function(x){ return inR(x.date); }).sort(byD);
+    $("a-sl").innerHTML=SL.length? SL.map(function(x){ return '<tr><td class="l">'+fd(x.date)+'</td><td class="l">'+esc(pname(x.partyId))+'</td><td class="l">'+esc(x.product||"")+(n(x.qty)<0?wp:"")+'</td><td>'+n(x.qty)+'</td><td class="o">'+inr(x.amount)+'</td></tr>'; }).join("") : '<tr><td class="l" colspan="5" style="color:var(--muted)">Is dauran koi bikri nahi hai.</td></tr>';
+    $("a-pl").innerHTML=PL.length? PL.map(function(x){ return '<tr><td class="l">'+fd(x.date)+'</td><td class="l">'+esc(pname(x.partyId))+'</td><td class="l">'+esc(x.product||"")+(n(x.qty)<0?wp:"")+'</td><td>'+n(x.qty)+'</td><td>'+inr(x.rate)+'</td><td class="o">'+inr(pTotal(x))+'</td></tr>'; }).join("") : '<tr><td class="l" colspan="6" style="color:var(--muted)">Is dauran koi kharid nahi hai.</td></tr>';
+    $("a-sl-t").textContent=SL.length?SL.length+" entry · "+T.pcs+" piece · total "+inr(T.rev):"";
+    var bp=0; PL.forEach(function(x){ bp+=n(x.qty); });
+    $("a-pl-t").textContent=PL.length?PL.length+" entry · "+bp+" piece · total "+inr(T.buy):"";
   }
+  ["a-from","a-to"].forEach(function(i){ $(i).addEventListener("change",renderActual); });
   $("a-period").addEventListener("change",renderActual);
+  // ---------- bhasha / language ----------
+  var LANG=window.aspLang==="en"?"en":"hi";
+  document.querySelectorAll("#lang-seg button").forEach(function(b){ b.setAttribute("aria-pressed",b.dataset.lang===LANG?"true":"false"); });
+  function langSet(v,remote){
+    if((v!=="en"&&v!=="hi")||v===LANG) return; var ok=false; try{ localStorage.setItem("aspire_lang",v); ok=localStorage.getItem("aspire_lang")===v; }catch(e){}
+    if(!ok) return; LANG=v; var done=false; function go(){ if(!done){ done=true; setTimeout(function(){ location.reload(); },350); } }
+    if(remote||!db){ go(); return; }
+    try{ db.doc("settings/ui").set({lang:v}).then(go,go); }catch(e){} setTimeout(go,1500);
+  }
+  $("lang-seg").addEventListener("click",function(e){ var b=e.target.closest("button[data-lang]"); if(b) langSet(b.dataset.lang); });
   // ---------- v21: asli kharcha, product history, search ----------
   var COSTDEF={comm:0,fixed:0,ship:40,pack:5}, detName="";
   function costCfg(){ var c=null; try{ c=window.aspCalc.get().cost; }catch(e){} c=c||{}; var d={}; Object.keys(COSTDEF).forEach(function(k){ d[k]=(c.def&&c.def[k]!=null)?n(c.def[k]):COSTDEF[k]; }); return {def:d,own:c.own||{}}; }
@@ -2263,7 +2396,7 @@ table.stk{min-width:820px}
   })();
 
   // ---------- boot ----------
-  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 22 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
+  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 23 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
   buildForm(); renderAll(); diag();
   var use=window.claude&&window.claude.use;
   if(!use){ status("Online khata yahan nahi chal raha. Is page ko Claude mein sign in karke kholo."); return; }
@@ -2271,6 +2404,7 @@ table.stk{min-width:820px}
   use("db").then(function(x){
     if(!x){ clearTimeout(timer); status("Online khata is view mein available nahi hai. Sign in karke apne Claude account se kholo."); return; }
     db=x;
+    try{ db.doc("settings/ui").onSnapshot(function(sn){ if(sn&&sn.exists){ var l=(sn.data()||{}).lang; if(l) langSet(l,true); } },function(){}); }catch(e){}
     try{ db.doc("settings/seller").onSnapshot(function(sn){ sellerGot=true; if(sn.exists){ var d=sn.data()||{}; Object.keys(SF).forEach(function(k){ if(d[k]!=null&&!(d[k]===""&&/^(gstin|addr|state|phone)$/.test(k))) seller[k]=d[k]; }); } fillSeller(); qSync(); },function(){}); }catch(err){}
     COLS.forEach(function(c){
       db.collection(c).onSnapshot(function(snap){
