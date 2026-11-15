@@ -12,7 +12,7 @@ const W=(p,t=200)=>p.waitForTimeout(t);
 {const ctx=await b.newContext({viewport:{width:1280,height:900},acceptDownloads:true});const p=await ctx.newPage();p.on('pageerror',e=>errs.push('demo '+e.message));
 await p.goto(url);await W(p,500);
 ok('demo: no login, banner',!(await p.isVisible('#auth'))&&await p.isVisible('#demo-note'));
-ok('demo: dashboard',await p.textContent('#k-net')==='−₹5,628');
+ok('demo: dashboard',await p.textContent('#k-net')==='−₹5,628'&&await p.isVisible('#v-home'));
 await p.click('.tabs a[data-v=khata]');await W(p);ok('demo: khata online',(await p.textContent('#k-diag')).includes('online')&&(await p.textContent('#k-diag')).includes('chalu'),await p.textContent('#k-diag'));
 await p.click('#entry-card .seg button[data-t=party]');await p.fill('#e-name','Sharma');await p.click('#e-save');await W(p);
 await p.click('#entry-card .seg button[data-t=purchase]');await p.fill('#e-product','Bag');await p.fill('#e-qty','10');await p.fill('#e-rate','100');await p.click('#e-save');await W(p);

@@ -207,6 +207,23 @@ details.card[open]>summary{border-bottom:1px solid var(--line-2)}
 table.cnt{min-width:420px}
 table.cnt td input{max-width:110px}
 /* khata + stock */
+.h-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+@media(max-width:860px){.h-grid{grid-template-columns:1fr}}
+.qrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media(max-width:640px){.qrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.qrow button{font:700 .92rem var(--f-body);cursor:pointer;border:1px solid var(--line);border-radius:12px;padding:14px 10px;background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.qrow button:hover{border-color:var(--accent)}
+.qrow button b{color:var(--accent);margin-right:4px}
+.hrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line-2);font-size:.88rem}
+.hrow:last-child{border-bottom:0}
+.hrow .a{min-width:0;display:flex;flex-direction:column}
+.hrow .a span{font-size:.76rem;color:var(--muted)}
+.hrow .b{font-weight:700;white-space:nowrap;text-align:right}
+.hrow .b small{display:block;font-weight:600;font-size:.74rem}
+.red{color:var(--bad)} .grn{color:var(--good)} .amb{color:var(--warn)}
+.h-chart svg{width:100%;height:auto;display:block}
+.h-leg{display:flex;gap:16px;font-size:.78rem;color:var(--muted);margin-top:6px}
+.h-leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 .sumrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 @media(max-width:900px){.sumrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .banner{font-size:.86rem;padding:12px 14px;border-radius:10px;background:var(--warn-soft);color:var(--warn)}
@@ -396,6 +413,7 @@ img{max-width:100%}
   </div></div>
   <div class="tabrow"><div class="in">
     <nav class="tabs" aria-label="Views">
+      <a href="#home" data-v="home">Home</a>
       <a href="#dashboard" data-v="dashboard">Calculator</a>
       <a href="#products" data-v="products">Products</a>
       <a href="#khata" data-v="khata">Khata</a>
@@ -412,8 +430,36 @@ img{max-width:100%}
 <script>if(typeof window.ASPIRE_FIREBASE==="undefined") document.getElementById("old-note").hidden=false;</script>
 <main class="in">
 
+  <!-- HOME -->
+  <div class="view" id="v-home">
+    <div class="view-head">
+      <div><h2>Home</h2><p>Aapke asli business ka haal: Khata, Stock aur Bill ki entries se apne aap banta hai.</p></div>
+      <div><label class="fl" for="h-month">Mahina</label><select id="h-month" style="min-width:150px"></select></div>
+    </div>
+    <div class="qrow" id="h-quick">
+      <button type="button" data-q="sale"><b>+</b> Sale</button>
+      <button type="button" data-q="purchase"><b>+</b> Maal aaya</button>
+      <button type="button" data-q="payment"><b>+</b> Payment</button>
+      <button type="button" data-q="bill"><b>+</b> Bill</button>
+    </div>
+    <div class="banner" id="h-empty" data-tone="info" hidden>Abhi khata mein koi entry nahi hai, isliye neeche sab zero dikhega. Upar ke button se pehli entry karo: pehle "+ Maal aaya" (maal ki kharid), phir "+ Sale" ya "+ Bill".</div>
+    <div class="sumrow">
+      <div class="card kpi"><div class="l">Bikri</div><div class="v" id="h-sale">—</div><div class="s" id="h-sale-s">&nbsp;</div></div>
+      <div class="card kpi"><div class="l">Kharid</div><div class="v" id="h-buy">—</div><div class="s" id="h-buy-s">&nbsp;</div></div>
+      <div class="card kpi"><div class="l">Andaazan munafa</div><div class="v" id="h-prof">—</div><div class="s" id="h-prof-s">&nbsp;</div></div>
+      <div class="card kpi"><div class="l">Parties ko dena hai</div><div class="v" id="h-owe">—</div><div class="s" id="h-owe-s">&nbsp;</div></div>
+    </div>
+    <div class="h-grid">
+      <div class="card"><div class="card-h"><h3>Paisa dene / lene ki yaad</h3><span>late sabse upar</span></div><div class="card-b" id="h-due"></div></div>
+      <div class="card"><div class="card-h"><h3>Stock kam hai</h3><span><label for="h-low" style="font-weight:400">itne ya kam par batao</label> <input type="number" id="h-low" min="0" step="1" style="width:64px;padding:3px 6px" inputmode="numeric"></span></div><div class="card-b" id="h-stock"></div></div>
+      <div class="card"><div class="card-h"><h3>Pichhle 6 mahine</h3><span>bikri aur munafa</span></div><div class="card-b h-chart" id="h-chart"></div></div>
+      <div class="card"><div class="card-h"><h3>Sabse zyada bikne wale</h3><span>pichhle 6 mahine</span></div><div class="card-b" id="h-top"></div></div>
+    </div>
+    <div class="help">Munafa andaza hai: bikri mein se GST, marketplace fees aur bike hue maal ki kharid ka rate (GST ke bina) ghata ke. Ads, packaging aur doosre kharche isme nahi hain.</div>
+  </div>
+
   <!-- DASHBOARD -->
-  <div class="view" id="v-dashboard">
+  <div class="view" id="v-dashboard" hidden>
     <div class="view-head">
       <div><h2>Batch dashboard</h2><p>Ek baar jitna stock mangwa rahe ho, uska poora hisaab: GST, marketplace fees, returns aur ads ke baad.</p></div>
       <div class="btnrow"><button class="btn" type="button" id="rep-dash">Business report download</button></div>
@@ -557,7 +603,7 @@ img{max-width:100%}
       </div>
     </div>
     <div class="banner" id="k-status" data-tone="info">Khata load ho raha hai…</div>
-    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 11</div>
+    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 12</div>
     <div class="banner" id="k-note" data-tone="info" hidden></div>
     <div class="card" id="k-rpanel" style="padding:18px 20px" hidden>
       <h3 style="margin:0 0 6px">Backup se restore</h3>
@@ -718,9 +764,9 @@ img{max-width:100%}
   function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
 
   // ---------- views ----------
-  var VIEWS=["dashboard","products","khata","stock","bill","assumptions","plan"];
+  var VIEWS=["home","dashboard","products","khata","stock","bill","assumptions","plan"];
   function show(){
-    var v=(location.hash||"").slice(1); if(VIEWS.indexOf(v)<0) v="dashboard";
+    var v=(location.hash||"").slice(1); if(VIEWS.indexOf(v)<0) v="home";
     VIEWS.forEach(function(x){ $("v-"+x).hidden=(x!==v); });
     document.querySelectorAll(".tabs a").forEach(function(a){ if(a.dataset.v===v) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   }
@@ -1156,7 +1202,7 @@ img{max-width:100%}
     }).join("")||'<tr><td colspan="9" style="text-align:left;color:var(--muted)">Khata mein "Maal aaya" entry daaloge to yahan stock dikhega.</td></tr>';
   }
 
-  function renderAll(){ renderSummary(); renderParties(); renderLedger(); renderStock(); renderBin(); renderBills(); }
+  function renderAll(){ renderSummary(); renderParties(); renderLedger(); renderStock(); renderBin(); renderBills(); renderHome(); }
 
   // ---------- entry form ----------
   function opts(list,pick){ return list.map(function(p){ return '<option value="'+esc(p.id)+'"'+(p.id===pick?" selected":"")+'>'+esc(p.name)+'</option>'; }).join(""); }
@@ -1646,8 +1692,66 @@ img{max-width:100%}
     }
   });
 
+  // ---------- home: real numbers from khata ----------
+  var LOWKEY="aspire_low_stock";
+  function lowAt(){ var v=10; try{ var x=localStorage.getItem(LOWKEY); if(x!==null&&x!=="") v=n(x); }catch(e){} return v; }
+  function mkey(d){ return String(d||"").slice(0,7); }
+  function months6(){ var d=new Date(), out=[]; d.setDate(1); for(var i=0;i<6;i++){ out.unshift(d.getFullYear()+"-"+pad(d.getMonth()+1)); d.setMonth(d.getMonth()-1); } return out; }
+  function mlabel(k){ var p=k.split("-"); return MON[+p[1]-1]+" "+p[0]; }
+  function prodInfo(){ var m={}; D.purchases.forEach(function(p){ var k=key(p.product); if(!k) return; var o=m[k]||(m[k]={q:0,v:0,g:0,d:""}); o.q+=n(p.qty); o.v+=n(p.qty)*n(p.rate); if(String(p.date)>=o.d){ o.d=String(p.date); o.g=n(p.gst); } }); return m; }
+  function saleProfit(x,info){ var o=info[key(x.product)], g=o?o.g:0, cost=o&&o.q?o.v/o.q:0; return {p:n(x.amount)/(1+g/100)-n(x.fees)-n(x.qty)*cost, known:!!(o&&o.q)}; }
+  function renderHome(){
+    if(!$("v-home")) return;
+    var ms=months6(), sel=$("h-month"), cur=sel.value||ms[5];
+    if(sel.options.length!==6||sel.options[5].value!==ms[5]){ sel.innerHTML=ms.slice().reverse().map(function(k,i){ return '<option value="'+k+'">'+(i===0?"Is mahine ("+mlabel(k)+")":mlabel(k))+'</option>'; }).join(""); if(ms.indexOf(cur)<0) cur=ms[5]; sel.value=cur; }
+    var info=prodInfo(), agg={}; ms.forEach(function(k){ agg[k]={sale:0,buy:0,prof:0,ns:0,nb:0,pcs:0,unk:0}; });
+    D.sales.forEach(function(x){ var a=agg[mkey(x.date)]; if(!a) return; var r=saleProfit(x,info); a.sale+=n(x.amount); a.prof+=r.p; a.ns++; a.pcs+=n(x.qty); if(!r.known) a.unk++; });
+    D.purchases.forEach(function(x){ var a=agg[mkey(x.date)]; if(!a) return; a.buy+=pTotal(x); a.nb++; });
+    var A=agg[cur];
+    $("h-empty").hidden=!!(D.sales.length||D.purchases.length||D.payments.length);
+    $("h-sale").textContent=inr(A.sale); $("h-sale-s").textContent=A.ns? A.ns+" sale · "+A.pcs+" pcs" : "is mahine koi sale nahi";
+    $("h-buy").textContent=inr(A.buy); $("h-buy-s").textContent=A.nb? A.nb+" bill, GST sahit" : "is mahine koi kharid nahi";
+    var pe=$("h-prof"); pe.textContent=inr(A.prof); pe.className="v "+(A.prof<0?"red":(A.prof>0?"grn":""));
+    $("h-prof-s").textContent=A.unk? A.unk+" sale ka kharid rate nahi mila, munafa zyada dikh sakta hai" : "GST, fees aur maal ka rate ghata ke";
+    // dues
+    var owe=0, late=0, rows=[];
+    D.parties.forEach(function(p){ var s=partyStats(p); if(Math.abs(s.bal)<0.5) return;
+      if(isMkt(p)) rows.push({o:2,amt:s.bal,h:'<div class="hrow"><div class="a"><b>'+esc(p.name)+'</b><span>marketplace / customer</span></div><div class="b grn">'+inr(s.bal)+'<small>aana hai</small></div></div>'});
+      else { owe+=s.bal; late+=s.late; var t=s.late>0.5?'<small class="red">'+inr(s.late)+' late ho gaya</small>':(s.week>0.5?'<small class="amb">'+inr(s.week)+' agle 7 din mein</small>':'<small>abhi due nahi</small>');
+        rows.push({o:s.late>0.5?0:1,amt:s.late>0.5?s.late:s.bal,h:'<div class="hrow"><div class="a"><b>'+esc(p.name)+'</b><span>'+(n(p.terms)?n(p.terms)+" din udhaar":"turant payment")+'</span></div><div class="b'+(s.late>0.5?" red":"")+'">'+inr(s.bal)+t+'</div></div>'}); } });
+    rows.sort(function(a,b){ return a.o-b.o||b.amt-a.amt; });
+    $("h-owe").textContent=inr(owe); $("h-owe").className="v "+(late>0.5?"red":""); $("h-owe-s").textContent=late>0.5? inr(late)+" late ho gaya" : (owe>0.5?"sab time pe hai":"kisi ka baaki nahi");
+    $("h-due").innerHTML=rows.length? rows.slice(0,8).map(function(r){ return r.h; }).join("")+(rows.length>8?'<div class="help">aur '+(rows.length-8)+' Khata tab mein</div>':"") : '<div class="help">Kisi ko dena ya kisi se lena baaki nahi hai.</div>';
+    // low stock
+    var lim=lowAt(); if(document.activeElement!==$("h-low")) $("h-low").value=lim;
+    var low=stock().map(function(x){ return {name:x.name,left:x.inq-x.out+x.adj}; }).filter(function(x){ return x.left<=lim; }).sort(function(a,b){ return a.left-b.left; });
+    $("h-stock").innerHTML=low.length? low.slice(0,8).map(function(x){ return '<div class="hrow"><div class="a"><b>'+esc(x.name)+'</b></div><div class="b '+(x.left<=0?"red":"amb")+'">'+x.left+' pcs<small>'+(x.left<=0?"khatam":"kam hai")+'</small></div></div>'; }).join("") : '<div class="help">'+(stock().length?"Sab product ka stock "+lim+" se zyada hai.":"Abhi stock mein koi product nahi hai. \"+ Maal aaya\" se entry karo.")+'</div>';
+    // chart
+    var mx=1, mn=0; ms.forEach(function(k){ mx=Math.max(mx,agg[k].sale,agg[k].prof); mn=Math.min(mn,agg[k].prof); });
+    var W=600,H=210,top=18,bot=30,ph=H-top-bot,sc=ph/(mx-mn),zero=top+mx*sc,g='',bw=28,step=W/6;
+    function short(v){ var a=Math.abs(v); return (v<0?"−":"")+(a>=1e5?(a/1e5).toFixed(1)+"L":(a>=1e3?(a/1e3).toFixed(a>=1e4?0:1)+"k":Math.round(a))); }
+    ms.forEach(function(k,i){ var a=agg[k], x=i*step+step/2, hs=a.sale*sc, hp=Math.abs(a.prof)*sc;
+      g+='<rect x="'+(x-bw-2)+'" y="'+(zero-hs)+'" width="'+bw+'" height="'+Math.max(hs,0)+'" rx="3" style="fill:var(--ink)"/>';
+      g+='<rect x="'+(x+2)+'" y="'+(a.prof>=0?zero-hp:zero)+'" width="'+bw+'" height="'+hp+'" rx="3" style="fill:var('+(a.prof<0?"--bad":"--accent")+')"/>';
+      if(a.sale) g+='<text x="'+(x-bw/2-2)+'" y="'+(zero-hs-4)+'" text-anchor="middle" style="font:600 10px var(--f-body);fill:var(--muted)">'+short(a.sale)+'</text>';
+      g+='<text x="'+x+'" y="'+(H-8)+'" text-anchor="middle" style="font:600 11px var(--f-body);fill:var(--muted)'+(k===cur?";fill:var(--ink)":"")+'">'+MON[+k.split("-")[1]-1]+'</text>'; });
+    $("h-chart").innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Pichhle 6 mahine ki bikri aur munafa"><line x1="0" x2="'+W+'" y1="'+zero+'" y2="'+zero+'" style="stroke:var(--line)"/>'+g+'</svg><div class="h-leg"><span><i style="background:var(--ink)"></i>Bikri</span><span><i style="background:var(--accent)"></i>Munafa</span><span><i style="background:var(--bad)"></i>Nuksaan</span></div>';
+    // top sellers
+    var tp={}; D.sales.forEach(function(x){ if(!agg[mkey(x.date)]) return; var k=key(x.product); if(!k) return; var o=tp[k]||(tp[k]={name:String(x.product).trim(),q:0,a:0}); o.q+=n(x.qty); o.a+=n(x.amount); });
+    var tl=Object.keys(tp).map(function(k){ return tp[k]; }).sort(function(a,b){ return b.q-a.q||b.a-a.a; }).slice(0,5);
+    $("h-top").innerHTML=tl.length? tl.map(function(x,i){ return '<div class="hrow"><div class="a"><b>'+(i+1)+". "+esc(x.name)+'</b></div><div class="b">'+x.q+' pcs<small style="color:var(--muted)">'+inr(x.a)+'</small></div></div>'; }).join("") : '<div class="help">Sale ki entry hote hi yahan list banegi.</div>';
+  }
+  $("h-month").addEventListener("change",renderHome);
+  $("h-low").addEventListener("input",function(){ try{ localStorage.setItem(LOWKEY,this.value); }catch(e){} renderHome(); });
+  $("h-quick").addEventListener("click",function(e){
+    var b=e.target.closest("button[data-q]"); if(!b) return; var q=b.dataset.q;
+    if(q==="bill"){ location.hash="#bill"; setTimeout(function(){ var x=$("b-cname"); if(x) x.focus(); },60); return; }
+    type=q; msg(""); buildForm(); location.hash="#khata";
+    setTimeout(function(){ $("entry-card").scrollIntoView({block:"start"}); var x=$("entry-form").querySelector("input:not([type=date]),select,button"); if(x) try{ x.focus(); }catch(err){} },60);
+  });
+
   // ---------- boot ----------
-  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 11 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
+  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 12 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
   buildForm(); renderAll(); diag();
   var use=window.claude&&window.claude.use;
   if(!use){ status("Online khata yahan nahi chal raha. Is page ko Claude mein sign in karke kholo."); return; }
