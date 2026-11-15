@@ -526,7 +526,7 @@ small.pk{display:block;font-size:.72rem;font-weight:500;color:var(--muted)}
     <div class="dash">
       <div class="card"><div class="card-h"><h3>Munafe ka hisaab</h3><span id="a-units">&nbsp;</span></div><div class="card-b" id="a-ledger"></div></div>
       <div class="stack">
-        <div class="card"><div class="card-h"><h3>GST</h3><span>is dauran ka</span></div><div class="card-b" id="a-gst"></div></div>
+        <div class="card"><div class="card-h"><h3>GST</h3><span>is dauran ka</span></div><div class="card-b" id="a-gst"></div><div class="card-b" style="padding-top:0"><button class="btn ghost sm" type="button" id="a-gstx">GST Excel (CA ke liye)</button><div class="help" style="margin-top:6px">GSTR-1 aur GSTR-3B ka summary, upar chuni hui date ka.</div></div></div>
         <div class="card"><div class="card-h"><h3>Paisa lena / dena</h3><span>aaj tak</span></div><div class="card-b" id="a-cash"></div></div>
       </div>
     </div>
@@ -692,7 +692,7 @@ small.pk{display:block;font-size:.72rem;font-weight:500;color:var(--muted)}
       </div>
     </div>
     <div class="banner" id="k-status" data-tone="info">Khata load ho raha hai…</div>
-    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 25</div>
+    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 26</div>
     <div class="banner" id="k-note" data-tone="info" hidden></div>
     <div class="card" id="k-rpanel" style="padding:18px 20px" hidden>
       <h3 style="margin:0 0 6px">Backup se restore</h3>
@@ -750,7 +750,7 @@ small.pk{display:block;font-size:.72rem;font-weight:500;color:var(--muted)}
         <details class="card" id="bin-card">
           <summary><h3>Deleted items <span id="bin-count"></span></h3><span>galti se hataya? yahan se wapas lao</span></summary>
           <div class="card-b" id="bin-body"></div>
-          <div class="card-h" style="border-top:1px solid var(--line-2)"><h3>Auto backups</h3><span>last 5</span></div>
+          <div class="card-h" style="border-top:1px solid var(--line-2)"><h3>Auto backups</h3><span>roz ke 7 + khaas 5</span></div>
           <div class="card-b" id="bk-body"></div>
         </details>
       </div>
@@ -770,6 +770,18 @@ small.pk{display:block;font-size:.72rem;font-weight:500;color:var(--muted)}
           <div class="card-h"><h3>Bane hue bills</h3><span id="b-count">&nbsp;</span></div>
           <div class="card-b" id="b-list"></div>
         </div>
+        <details class="card" id="po-card">
+        <summary class="card-h" style="cursor:pointer"><h3>Purchase order (party ko order bhejo)</h3><span id="po-count">&nbsp;</span></summary>
+        <div class="card-b" style="display:flex;flex-direction:column;gap:12px">
+          <div class="help">Factory ya party ko maal ka order PDF mein bhejo. Isse stock ya khata nahi badalta, maal aane par "Maal kharida" se entry karo.</div>
+          <div class="form-grid"><div><label class="fl" for="po-party">Kis party ko</label><select id="po-party"></select></div><div><label class="fl" for="po-date">Date</label><input type="date" id="po-date"></div></div>
+          <div class="tscroll"><table class="bi" style="min-width:420px"><thead><tr><th class="l" style="text-align:left">Product</th><th>Qty (piece)</th><th>Rate ₹ (GST ke bina)</th><th></th></tr></thead><tbody id="po-items"></tbody></table></div>
+          <div class="btnrow"><button class="btn ghost" type="button" id="po-add">+ Ek aur product</button></div>
+          <div><label class="fl" for="po-note">Note (delivery date, colour, kuch bhi)</label><input type="text" id="po-note"></div>
+          <div class="btnrow"><button class="btn" type="button" id="po-save">Order save karo</button></div><div class="formmsg" id="po-msg" aria-live="polite"></div>
+          <div id="po-list"></div>
+        </div>
+        </details>
         <details class="card adv" id="b-form">
         <summary class="card-h" style="cursor:pointer"><h3>Alag se bill banao</h3><span id="b-kind">&nbsp;</span></summary>
         <div class="help" style="margin:12px 16px 0">Zyada tar is form ki zaroorat nahi. Ye sirf tab kaam aata hai jab bina stock ghataye bill banana ho ya bill number khud dena ho.</div>
@@ -821,7 +833,7 @@ small.pk{display:block;font-size:.72rem;font-weight:500;color:var(--muted)}
     <div class="view-head"><div><h2>Settings</h2><p>Firm ki details jo bill par chhapti hain, aur aapke data ka backup.</p></div><div data-keep><label class="fl" id="lang-l">Bhasha / Language</label><div class="seg" id="lang-seg" role="group" aria-labelledby="lang-l" style="min-width:220px"><button type="button" data-lang="hi">Hinglish</button><button type="button" data-lang="en">English</button></div></div></div>
     <div class="b-grid" style="grid-template-columns:repeat(2,minmax(0,1fr))" id="more-grid">
       <div class="stack" id="more-firm"></div>
-      <div class="stack"><div class="card"><div class="card-h"><h3>Backup aur report</h3><span>data hamesha online save rehta hai</span></div><div class="card-b" id="more-tools" style="display:flex;flex-direction:column;gap:12px"></div></div></div>
+      <div class="stack"><div class="card"><div class="card-h"><h3>Backup aur report</h3><span>data hamesha online save rehta hai</span></div><div class="card-b" id="more-tools" style="display:flex;flex-direction:column;gap:12px"><div class="help" id="bk-daily"></div></div></div></div>
     </div>
   </div>
 
@@ -868,6 +880,7 @@ small.pk{display:block;font-size:.72rem;font-weight:500;color:var(--muted)}
   if(L!=="en") return;
   document.documentElement.lang="en";
   var EX={
+"GST Excel (CA ke liye)":"GST Excel (for CA)","GSTR-1 aur GSTR-3B ka summary, upar chuni hui date ka.":"GSTR-1 and GSTR-3B summary for the period chosen above.","Purchase order (party ko order bhejo)":"Purchase order (send an order to a party)","Factory ya party ko maal ka order PDF mein bhejo. Isse stock ya khata nahi badalta, maal aane par \"Maal kharida\" se entry karo.":"Send a goods order to the factory or party as a PDF. It does not change stock or the ledger; when the goods arrive, enter them with \"Bought goods\".","Kis party ko":"To which party","Rate ₹ (GST ke bina)":"Rate ₹ (excl. GST)","Note (delivery date, colour, kuch bhi)":"Note (delivery date, colour, anything)","Order save karo":"Save order","roz ke 7 + khaas 5":"7 daily + 5 special","ho to":"if any","Roz ka backup (apne aap)":"Daily backup (automatic)",
 "Report PDF":"Report PDF","Pichhle 6 mahine":"Last 6 months","bikri aur munafa":"sales and profit","Kahan se kitni bikri":"Sales by channel","QR label":"QR labels","Scan":"Scan","Bill PDF":"Bill PDF","UPI ID (bill par pay karne ka QR banega)":"UPI ID (adds a pay QR on the bill)","Khali chhodoge to bill par QR nahi aayega.":"Leave empty and the bill will have no QR.","jaise naam@okhdfcbank":"e.g. name@okhdfcbank","UPI ID sahi nahi lag rahi. Aisi hoti hai: naam@bank":"UPI ID does not look right. It looks like: name@bank",
 "+ Ek aur product":"+ Add another product","+ Maal becha (naya bill)":"+ Sold goods (new bill)","+ Maal kharida":"+ Bought goods","+ Naya marketplace (Amazon, Flipkart…)":"+ New marketplace (Amazon, Flipkart…)","+ Nayi party add karo":"+ Add new party","+ Party add karo":"+ Add party",
 "(0 = time fix nahi)":"(0 = no fixed time)","15 akshar ka number":"15-character number",
@@ -3641,8 +3654,8 @@ var qrcode = function() {
   function fd(s){ if(!s) return "—"; var p=s.split("-"); return (+p[2])+" "+MON[+p[1]-1]+" "+p[0].slice(2); }
   function key(s){ return String(s||"").trim().toLowerCase().replace(/\s+/g," "); }
 
-  var COLS=["parties","purchases","payments","sales","adjustments","trash","backups","invoices"];
-  var D={parties:[],purchases:[],payments:[],sales:[],adjustments:[],trash:[],backups:[],invoices:[]}, got={}, db=null, dl=null;
+  var COLS=["parties","purchases","payments","sales","adjustments","trash","backups","invoices","orders"];
+  var D={parties:[],purchases:[],payments:[],sales:[],adjustments:[],trash:[],backups:[],invoices:[],orders:[]}, got={}, db=null, dl=null;
   var ADV=false; try{ ADV=localStorage.getItem("aspire_adv")==="1"; }catch(e){} if(ADV) document.documentElement.setAttribute("data-adv","1");
   var type=ADV?"purchase":"payment", sel=null, dead=false;
 
@@ -3755,7 +3768,7 @@ var qrcode = function() {
     if($("h-buy")){ $("h-buy").textContent=inr(tv); $("h-buy-s").textContent=pcs?pcs+" piece pade hain":"stock khali hai"; $("h-hero").textContent=inr(tv); }
   }
 
-  function renderAll(){ renderSummary(); renderParties(); renderLedger(); renderStock(); renderBin(); renderBills(); renderHome(); qSync(); prodStock(); renderActual(); }
+  function renderAll(){ renderSummary(); renderParties(); renderLedger(); renderStock(); renderBin(); renderBills(); renderHome(); qSync(); prodStock(); renderActual(); renderPO(); renderDaily(); }
 
   // ---------- entry form ----------
   function opts(list,pick){ return list.map(function(p){ return '<option value="'+esc(p.id)+'"'+(p.id===pick?" selected":"")+'>'+esc(p.name)+'</option>'; }).join(""); }
@@ -3947,12 +3960,12 @@ var qrcode = function() {
   }
   function snapshotAll(){ var s={}; DATA.forEach(function(c){ s[c]=D[c].map(function(o){ return Object.assign({},o); }); }); return s; }
   function countAll(s){ var k=0; DATA.forEach(function(c){ k+=(s[c]||[]).length; }); return k; }
-  function autoBackup(reason){
+  function autoBackup(reason,daily){
     var s=snapshotAll(), json=JSON.stringify(s);
     if(json.length>230000) return Promise.reject({code:"too_big"});
     var at=new Date().toISOString();
-    return db.collection("backups").doc("b"+Date.now()).set({at:at,reason:reason,count:countAll(s),json:json}).then(function(){
-      var old=D.backups.slice().sort(function(a,b){ return a.at<b.at?1:-1; }).slice(4);
+    return db.collection("backups").doc("b"+Date.now()).set(daily?{at:at,reason:reason,count:countAll(s),json:json,daily:true}:{at:at,reason:reason,count:countAll(s),json:json}).then(function(){
+      var old=D.backups.filter(function(b){ return !!b.daily===!!daily; }).sort(function(a,b){ return a.at<b.at?1:-1; }).slice(daily?6:4);
       return Promise.all(old.map(function(b){ return db.collection("backups").doc(b.id).delete(); }));
     });
   }
@@ -3979,7 +3992,7 @@ var qrcode = function() {
   $("k-ryes").addEventListener("click",function(){
     if(!pendingRestore) return; if(!db||dead){ $("k-rtext").textContent="Online khata abhi juda nahi hai, isliye restore nahi ho sakta. Page reload karke dobara try karo."; return; } var s=pendingRestore, b=$("k-ryes"); b.disabled=true; b.textContent="Restore ho raha hai…";
     autoBackup("Restore se pehle").then(function(){ return applySnapshot(s); }).then(function(){
-      var x=pendingExtra; if(x){ if(x.calc&&window.aspCalc) window.aspCalc.set(x.calc); if(x.plan&&window.aspPlan) window.aspPlan.set(x.plan); if(Array.isArray(x.invoices)) x.invoices.forEach(function(v){ if(v&&v.id&&!find("invoices",v.id)) db.collection("invoices").doc(v.id).set(strip(v)).catch(function(){}); }); if(x.seller&&x.seller.gstin&&!seller.gstin) db.doc("settings/seller").set(x.seller).catch(function(){}); }
+      var x=pendingExtra; if(x){ if(x.calc&&window.aspCalc) window.aspCalc.set(x.calc); if(x.plan&&window.aspPlan) window.aspPlan.set(x.plan); if(Array.isArray(x.invoices)) x.invoices.forEach(function(v){ if(v&&v.id&&!find("invoices",v.id)) db.collection("invoices").doc(v.id).set(strip(v)).catch(function(){}); }); if(Array.isArray(x.orders)) x.orders.forEach(function(v){ if(v&&v.id&&!find("orders",v.id)) db.collection("orders").doc(v.id).set(strip(v)).catch(function(){}); }); if(x.seller&&x.seller.gstin&&!seller.gstin) db.doc("settings/seller").set(x.seller).catch(function(){}); }
       $("k-rconfirm").hidden=true; toast(x?"Restore ho gaya: khata, calculator ke numbers aur launch plan.":"Restore ho gaya.");
     },function(){ $("k-rtext").textContent="Restore poora nahi hua. Internet check karke dobara try karo."; }).then(function(){ b.disabled=false; b.textContent="Haan, restore karo"; pendingRestore=null; pendingExtra=null; });
   });
@@ -3992,11 +4005,11 @@ var qrcode = function() {
   $("k-bkp").addEventListener("click",function(){
     var calc=null, plan=null;
     try{ calc=JSON.parse(localStorage.getItem("aspire_seller_calc_v1")||"null"); plan=JSON.parse(localStorage.getItem("aspire_launch_plan_v1")||"null"); }catch(err){}
-    var body=JSON.stringify({app:"aspire-seller-calculator",version:1,at:new Date().toISOString(),khata:snapshotAll(),calculator:calc,plan:plan,invoices:D.invoices,seller:seller},null,1);
+    var body=JSON.stringify({app:"aspire-seller-calculator",version:1,at:new Date().toISOString(),khata:snapshotAll(),calculator:calc,plan:plan,invoices:D.invoices,orders:D.orders,seller:seller},null,1);
     offer($("k-bkp"),"Backup file download","Backup data","aspire-backup-"+today()+".json",body);
   });
   function readBackup(text){
-    try{ var o=JSON.parse(String(text)), s=o&&o.khata; if(o&&o.app==="aspire-seller-calculator"&&validSnap(s)){ $("k-rpanel").hidden=true; askRestore(s,"Is backup file"); pendingExtra={calc:o.calculator,plan:o.plan,invoices:o.invoices,seller:o.seller}; return; } }catch(err){}
+    try{ var o=JSON.parse(String(text)), s=o&&o.khata; if(o&&o.app==="aspire-seller-calculator"&&validSnap(s)){ $("k-rpanel").hidden=true; askRestore(s,"Is backup file"); pendingExtra={calc:o.calculator,plan:o.plan,invoices:o.invoices,orders:o.orders,seller:o.seller}; return; } }catch(err){}
     $("k-rmsg").textContent="Ye is calculator ka backup nahi hai. Wahi file chuno jo \"Backup file download\" se bani thi.";
   }
   $("k-rst").addEventListener("click",function(){ var p=$("k-rpanel"); p.hidden=!p.hidden; $("k-rmsg").textContent=""; $("k-file").value=""; if(!p.hidden) p.scrollIntoView({block:"center"}); });
@@ -4586,7 +4599,7 @@ var qrcode = function() {
   function safeBackup(){
     var done=false; try{ done=localStorage.getItem(BK)==="1"; }catch(e){}
     if(done||bkBusy||!db||dead) return; var s=snapshotAll(); if(!countAll(s)){ try{ localStorage.setItem(BK,"1"); }catch(e){} return; }
-    bkBusy=true; autoBackup("Version 25 update se pehle (apne aap)").then(function(){ try{ localStorage.setItem(BK,"1"); }catch(e){} },function(){}).then(function(){ bkBusy=false; });
+    bkBusy=true; autoBackup("Version 26 update se pehle (apne aap)").then(function(){ try{ localStorage.setItem(BK,"1"); }catch(e){} },function(){}).then(function(){ bkBusy=false; });
   }
   document.addEventListener("click",function(e){ var b=e.target.closest&&e.target.closest("[data-qgo]"); if(!b) return; location.hash="#home"; var m=b.dataset.qgo; setTimeout(function(){ qOpen(m); },60); });
   document.getElementById("prod-body").addEventListener("input",function(e){ if(e.target.closest("td.name")) prodStock(); });
@@ -4852,6 +4865,140 @@ var qrcode = function() {
     },function(){ scanSay(T2("Camera nahi khula. Browser mein is site ko camera ki permission do, phir dobara dabao.","Camera did not open. Allow camera for this site in the browser, then try again.")); });
   }
   document.addEventListener("click",function(e){ var t=e.target; if(t&&t.id==="q-scan") scanOpen(); });
+  // ---------- v26: GST Excel, purchase order, roz ka backup ----------
+  var CRCT=null;
+  function crc32(u){ if(!CRCT){ CRCT=[]; for(var i=0;i<256;i++){ var c=i; for(var k=0;k<8;k++) c=c&1?(0xEDB88320^(c>>>1)):(c>>>1); CRCT[i]=c>>>0; } } var r=0xFFFFFFFF; for(var j=0;j<u.length;j++) r=CRCT[(r^u[j])&255]^(r>>>8); return (r^0xFFFFFFFF)>>>0; }
+  function zipStore(files){ // tiny zip writer, no compression
+    var enc=new TextEncoder(), parts=[], cen=[], off=0;
+    function le(v,k){ var a=[]; for(var i=0;i<k;i++) a.push((v>>>(8*i))&255); return a; }
+    files.forEach(function(f){ var nm=enc.encode(f[0]), dat=enc.encode(f[1]), crc=crc32(dat);
+      var head=[].concat([0x50,0x4b,3,4],le(20,2),le(0x0800,2),le(0,2),le(0,2),le(0x21,2),le(crc,4),le(dat.length,4),le(dat.length,4),le(nm.length,2),le(0,2));
+      parts.push(new Uint8Array(head),nm,dat);
+      cen.push({h:[].concat([0x50,0x4b,1,2],le(20,2),le(20,2),le(0x0800,2),le(0,2),le(0,2),le(0x21,2),le(crc,4),le(dat.length,4),le(dat.length,4),le(nm.length,2),le(0,2),le(0,2),le(0,2),le(0,2),le(0,4),le(off,4)),n:nm});
+      off+=head.length+nm.length+dat.length; });
+    var cs=0; cen.forEach(function(c){ parts.push(new Uint8Array(c.h),c.n); cs+=c.h.length+c.n.length; });
+    parts.push(new Uint8Array([].concat([0x50,0x4b,5,6],le(0,2),le(0,2),le(files.length,2),le(files.length,2),le(cs,4),le(off,4),le(0,2))));
+    return new Blob(parts,{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+  }
+  function xesc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,""); }
+  function colName(i){ var s=""; i++; while(i>0){ var m=(i-1)%26; s=String.fromCharCode(65+m)+s; i=Math.floor((i-1)/26); } return s; }
+  function xlsx(sheets){ // sheets: [{name, rows, bold:[row indexes]}]
+    var X='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n', files=[];
+    files.push(["[Content_Types].xml",X+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'+sheets.map(function(s,i){ return '<Override PartName="/xl/worksheets/sheet'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'; }).join("")+'</Types>']);
+    files.push(["_rels/.rels",X+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>']);
+    files.push(["xl/workbook.xml",X+'<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'+sheets.map(function(s,i){ return '<sheet name="'+xesc(String(s.name).slice(0,31))+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>'; }).join("")+'</sheets></workbook>']);
+    files.push(["xl/_rels/workbook.xml.rels",X+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+sheets.map(function(s,i){ return '<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>'; }).join("")+'<Relationship Id="rId'+(sheets.length+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>']);
+    files.push(["xl/styles.xml",X+'<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0.00"/></numFmts><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="4"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/><xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="164" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1" applyNumberFormat="1"/></cellXfs></styleSheet>']);
+    sheets.forEach(function(s,i){
+      var w=[], body=s.rows.map(function(r,ri){ var b=(s.bold||[0]).indexOf(ri)>=0;
+        return '<row r="'+(ri+1)+'">'+r.map(function(v,ci){ var ref=colName(ci)+(ri+1); w[ci]=Math.max(w[ci]||8,Math.min(48,String(v==null?"":v).length+2));
+          if(v===""||v==null) return "";
+          if(typeof v==="number"&&isFinite(v)) return '<c r="'+ref+'" s="'+(Math.round(v)===v?(b?1:0):(b?3:2))+'"><v>'+v+'</v></c>';
+          return '<c r="'+ref+'" t="inlineStr"'+(b?' s="1"':'')+'><is><t xml:space="preserve">'+xesc(v)+'</t></is></c>'; }).join("")+'</row>'; }).join("");
+      files.push(["xl/worksheets/sheet"+(i+1)+".xml",X+'<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><cols>'+w.map(function(x,ci){ return '<col min="'+(ci+1)+'" max="'+(ci+1)+'" width="'+(x||10)+'" customWidth="1"/>'; }).join("")+'</cols><sheetData>'+body+'</sheetData></worksheet>']);
+    });
+    return zipStore(files);
+  }
+  function gstBook(R){
+    var info=prodInfo(), my=String(seller.state||""), f2=function(x){ return Math.round((x+1e-9)*100)/100; };
+    function inR(d){ d=String(d||""); return d>=R[0]&&d<=R[1]; }
+    function posName(c){ return c?c+"-"+stName(c):""; }
+    var b2b={}, b2c={}, hsn={}, all=[], O={tx:0,i:0,c:0,s:0}, guess=0;
+    D.sales.forEach(function(s){ if(!inR(s.date)) return;
+      var v=s.invoiceId?find("invoices",s.invoiceId):null; if(v&&v.status==="cancelled") return;
+      var ln=null; if(v) (v.lines||[]).forEach(function(l){ if(!ln&&key(l.desc)===key(s.product)) ln=l; });
+      var g=ln?n(ln.gst):gstOf(s.product,info), amt=n(s.amount), tx=amt/(1+g/100), tax=amt-tx, cust=v&&v.cust||{}, pos=String(cust.state||"")||my, intra=pos===my; if(!(v&&cust.state)) guess++;
+      var ig=intra?0:tax, cg=intra?tax/2:0, sg=intra?tax/2:0, h=ln&&ln.hsn?String(ln.hsn):"", ch=saleCh(s), p=party(s.partyId);
+      O.tx+=tx; O.i+=ig; O.c+=cg; O.s+=sg;
+      all.push([s.date,p?p.name:"",chLabel(ch),v?v.no:(s.billNo||""),cust.gstin||"",posName(pos),s.product||"",h,n(s.qty),g,f2(tx),f2(ig),f2(cg),f2(sg),f2(amt),f2(n(s.fees))]);
+      if(v&&cust.gstin){ var k=v.id+"|"+g, o=b2b[k]||(b2b[k]={gstin:cust.gstin,name:cust.name||"",no:v.no,date:v.date,val:n(v.total),pos:pos,g:g,tx:0,i:0,c:0,s:0}); o.tx+=tx; o.i+=ig; o.c+=cg; o.s+=sg; }
+      else { var typ=ch==="direct"||ch==="other"&&!(p&&p.kind==="marketplace")?"Direct (OE)":"E-commerce: "+(p?p.name:""), k2=typ+"|"+pos+"|"+g, q=b2c[k2]||(b2c[k2]={typ:typ,pos:pos,g:g,tx:0,i:0,c:0,s:0}); q.tx+=tx; q.i+=ig; q.c+=cg; q.s+=sg; }
+      var hk=(h||"-")+"|"+g, hh=hsn[hk]||(hsn[hk]={h:h,d:s.product||"",g:g,q:0,val:0,tx:0,i:0,c:0,s:0}); hh.q+=n(s.qty); hh.val+=amt; hh.tx+=tx; hh.i+=ig; hh.c+=cg; hh.s+=sg;
+    });
+    var I={tx:0,i:0,c:0,s:0}, pur=[];
+    D.purchases.forEach(function(p){ if(!inR(p.date)) return; var pt=party(p.partyId)||{}, gs=String(pt.gstin||""), st=/^\d{2}/.test(gs)?gs.slice(0,2):my, intra=st===my, tx=n(p.qty)*n(p.rate), tax=tx*n(p.gst)/100;
+      I.tx+=tx; if(intra){ I.c+=tax/2; I.s+=tax/2; } else I.i+=tax;
+      pur.push([p.date,pt.name||"",gs,p.billNo||"",p.product||"",n(p.qty),f2(n(p.rate)),f2(tx),n(p.gst),f2(intra?0:tax),f2(intra?tax/2:0),f2(intra?tax/2:0),f2(tx+tax)]); });
+    function vals(o){ return Object.keys(o).map(function(k){ return o[k]; }); }
+    function by(a,b){ return a[0]<b[0]?-1:a[0]>b[0]?1:0; }
+    all.sort(by); pur.sort(by);
+    var inv=D.invoices.filter(function(v){ return inR(v.date); }).sort(function(a,b){ return String(a.no)<String(b.no)?-1:1; }), can=inv.filter(function(v){ return v.status==="cancelled"; }).length;
+    var period=(R[0]?fd(R[0]):"shuru")+" se "+fd(R[1]==="9999"?today():R[1]), net=(O.i+O.c+O.s)-(I.i+I.c+I.s);
+    var s3=[["GSTR-3B summary (andaazan)","","","",""],[seller.name||"","GSTIN "+(seller.gstin||""),"Period: "+period,"",""],[],["Section","Taxable value","IGST","CGST","SGST"],
+      ["3.1(a) Outward taxable supplies",f2(O.tx),f2(O.i),f2(O.c),f2(O.s)],["4(A) ITC available (purchases)",f2(I.tx),f2(I.i),f2(I.c),f2(I.s)],["Output tax minus ITC","",f2(O.i-I.i),f2(O.c-I.c),f2(O.s-I.s)],[],
+      [net>=0?"Net GST payable (approx)":"ITC carried forward (approx)",f2(Math.abs(net))],[],["Notes"],
+      ["1. Ye summary app ki entries se bani hai. Return bharne se pehle CA se check karwao."],["2. Marketplace ki bikri mein customer ka state pata nahi hota, isliye "+guess+" sale apne state ("+posName(my)+") mein maani gayi hain. Sahi state marketplace ki GST report se lo."],["3. Party ka GSTIN likha ho to uske state se IGST / CGST+SGST tay hota hai, warna apna state maana hai."],["4. ITC cross-utilisation (IGST se CGST/SGST) yahan nahi lagaya."]];
+    var sB=[["GSTIN of recipient","Receiver name","Invoice no","Invoice date","Invoice value","Place of supply","Rate %","Taxable value","IGST","CGST","SGST"]].concat(vals(b2b).map(function(o){ return [o.gstin,o.name,o.no,o.date,f2(o.val),posName(o.pos),o.g,f2(o.tx),f2(o.i),f2(o.c),f2(o.s)]; }));
+    var sC=[["Type","Place of supply","Rate %","Taxable value","IGST","CGST","SGST"]].concat(vals(b2c).map(function(o){ return [o.typ,posName(o.pos),o.g,f2(o.tx),f2(o.i),f2(o.c),f2(o.s)]; }));
+    var sH=[["HSN","Description","Total qty","Total value","Rate %","Taxable value","IGST","CGST","SGST"]].concat(vals(hsn).map(function(o){ return [o.h||"(HSN nahi likha)",o.d,o.q,f2(o.val),o.g,f2(o.tx),f2(o.i),f2(o.c),f2(o.s)]; }));
+    var sD=[["Document","From","To","Total","Cancelled"],["Invoices for outward supply",inv.length?inv[0].no:"",inv.length?inv[inv.length-1].no:"",inv.length,can]];
+    var sS=[["Date","Party","Channel","Bill no","Customer GSTIN","Place of supply","Product","HSN","Qty","GST %","Taxable","IGST","CGST","SGST","Total","Marketplace fees"]].concat(all);
+    var sP=[["Date","Party","Party GSTIN","Bill no","Product","Qty","Rate","Taxable","GST %","IGST","CGST","SGST","Total"]].concat(pur);
+    return {sheets:[{name:"GSTR-3B summary",rows:s3,bold:[0,3,8,10]},{name:"GSTR-1 B2B",rows:sB},{name:"GSTR-1 B2C",rows:sC},{name:"GSTR-1 HSN",rows:sH},{name:"GSTR-1 Docs",rows:sD},{name:"Sales",rows:sS},{name:"Purchases",rows:sP}],out:O,itc:I,n:all.length};
+  }
+  window.__aspGst=function(){ return gstBook(aRange()); };
+  $("a-gstx").addEventListener("click",function(){
+    var b=$("a-gstx"), R=aRange(), bk=gstBook(R), name="aspire-gst-"+(R[0]||"all")+"-to-"+(R[1]==="9999"?today():R[1])+".xlsx";
+    if(b.dataset.busy) return; b.dataset.busy="1";
+    saveBlob(xlsx(bk.sheets),name).then(function(){ b.textContent=T2("✓ Excel download ho gayi","✓ Excel downloaded"); },function(){ note(T2("Download nahi hua, dobara dabao.","Download failed, try again.")); }).then(function(){ delete b.dataset.busy; setTimeout(function(){ b.textContent=T2("GST Excel (CA ke liye)","GST Excel (for CA)"); },2500); });
+  });
+
+  // ----- purchase order -----
+  function poNo(){ var mx=0; (D.orders||[]).forEach(function(o){ var m=/(\d+)\s*$/.exec(String(o.no||"")); if(m) mx=Math.max(mx,+m[1]); }); var k=String(mx+1); while(k.length<3) k="0"+k; return "PO"+k; }
+  function poRow(){ var tr=document.createElement("tr"); tr.innerHTML='<td><input type="text" class="po-d" style="min-width:160px;width:100%" list="k-products-b" aria-label="Product" placeholder="product ka naam"></td><td><input type="number" class="po-q" min="0" step="any" style="width:80px" aria-label="Qty" inputmode="decimal"></td><td><input type="number" class="po-r" min="0" step="any" style="width:96px" aria-label="Rate" inputmode="decimal" placeholder="ho to"></td><td><button class="del" type="button" aria-label="Line hatao">×</button></td>'; $("po-items").appendChild(tr); return tr; }
+  function poHtml(o){
+    var pt=party(o.partyId)||{}, tot=0, q=0, any=false, rows=o.lines.map(function(l,i){ var a=n(l.qty)*n(l.rate); tot+=a; q+=n(l.qty); if(n(l.rate)>0) any=true; return [i+1+". "+l.desc,n(l.qty),n(l.rate)>0?m2(n(l.rate)):"—",n(l.rate)>0?m2(a):"—"]; });
+    var b='<div class="two" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0"><div class="box" style="border:1px solid #e5ded1;border-radius:8px;padding:10px 12px"><span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6f695f">Order from</span><br><b>'+esc(seller.name||"")+'</b><br>'+esc(seller.addr||"")+'<br>GSTIN: '+esc(seller.gstin||"—")+(seller.phone?'<br>Phone: '+esc(seller.phone):'')+'</div><div class="box" style="border:1px solid #e5ded1;border-radius:8px;padding:10px 12px"><span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6f695f">Order to</span><br><b>'+esc(o.partyName||pt.name||"")+'</b>'+(pt.gstin?'<br>GSTIN: '+esc(pt.gstin):'')+(pt.phone?'<br>Phone: '+esc(pt.phone):'')+'</div></div>';
+    b+=tbl(["Product","Qty",any?"Rate (ex GST)":"Rate",any?"Amount (ex GST)":"Amount"],rows,["Total",q,"",any?m2(tot):"—"]);
+    if(o.note) b+='<p style="margin:14px 0 0"><b>Note:</b> '+esc(o.note)+'</p>';
+    b+='<div class="sig" style="display:flex;justify-content:flex-end;margin-top:40px;font-size:12px"><div style="text-align:right">For '+esc(seller.name||"")+'<i style="display:block;height:46px"></i>Authorised Signatory</div></div>';
+    return docHtml("Purchase Order",o.no+" · "+fd(o.date),b,"GST extra as applicable. Please confirm the delivery date.");
+  }
+  window.__aspPo=poHtml;
+  function poMsg(o){ var q=0; o.lines.forEach(function(l){ q+=n(l.qty); }); return T2((seller.name||"")+" ka purchase order "+o.no+", date "+fd(o.date)+": "+o.lines.length+" product, kul "+q+" piece. PDF saath mein hai.","Purchase order "+o.no+" from "+(seller.name||"")+", dated "+fd(o.date)+": "+o.lines.length+" products, "+q+" pieces in total. PDF attached."); }
+  function poSay(t,c){ var m=$("po-msg"); m.textContent=t||""; m.className="formmsg "+(c||""); }
+  function poSync(){
+    var s=$("po-party"), cur=s.value, L=D.parties.filter(function(p){ return !isMkt(p); });
+    s.innerHTML=L.map(function(p){ return '<option value="'+esc(p.id)+'">'+esc(p.name)+'</option>'; }).join(""); if(cur&&party(cur)) s.value=cur;
+    if(!$("po-date").value) $("po-date").value=today(); if(!$("po-items").children.length) poRow();
+  }
+  function renderPO(){
+    if(!$("po-list")) return; poSync();
+    var L=(D.orders||[]).slice().sort(function(a,b){ return String(a.createdAt||"")<String(b.createdAt||"")?1:-1; });
+    $("po-count").textContent=L.length?L.length+" order":"";
+    $("po-list").innerHTML=L.length?L.map(function(o){ var q=0; (o.lines||[]).forEach(function(l){ q+=n(l.qty); }); return '<div class="brow2"><div class="bl"><b>'+esc(o.no)+" · "+esc(o.partyName||pname(o.partyId))+'</b><span>'+fd(o.date)+" · "+(o.lines||[]).length+" product · "+q+' piece</span></div><div class="btnrow"><button class="btn ghost sm" type="button" data-po="'+esc(o.id)+'">PDF</button><button class="btn ghost sm" type="button" data-powa="'+esc(o.id)+'">WhatsApp</button></div></div>'; }).join(""):"";
+  }
+  $("po-card").addEventListener("input",function(){ if($("po-msg").classList.contains("err")) poSay(""); });
+  $("po-add").addEventListener("click",function(){ poRow().querySelector("input").focus(); });
+  $("po-items").addEventListener("click",function(e){ var b=e.target.closest("button.del"); if(!b) return; if($("po-items").children.length>1) b.closest("tr").remove(); else b.closest("tr").querySelectorAll("input").forEach(function(i){ i.value=""; }); });
+  $("po-items").addEventListener("change",function(e){ var t=e.target; if(!t.classList.contains("po-d")) return; var tr=t.closest("tr"), r=tr.querySelector(".po-r"), o=prodInfo()[key(t.value)]; if(o&&o.q&&!r.value) r.value=Math.round(o.v/o.q*100)/100; });
+  $("po-save").addEventListener("click",function(){
+    var b=$("po-save"), pid=$("po-party").value, lines=[];
+    $("po-items").querySelectorAll("tr").forEach(function(tr){ var d=tr.querySelector(".po-d").value.trim(), q=n(tr.querySelector(".po-q").value), r=n(tr.querySelector(".po-r").value); if(d&&q>0) lines.push({desc:d,qty:q,rate:r>0?r:0}); });
+    if(!pid||!party(pid)){ poSay(T2("Party chuno. Party nahi hai to pehle \"Maal kharida\" se ya Khata mein party banao.","Choose a party. If there is none, first add one from \"Bought goods\" or the Ledger."),"err"); return; }
+    if(!lines.length){ poSay(T2("Kam se kam ek product aur uski qty likho.","Enter at least one product and its qty."),"err"); return; }
+    if(!db||dead){ poSay(T2("Online save abhi available nahi hai. Page reload karke dobara try karo.","Online save is not available right now. Reload the page and try again."),"err"); return; }
+    if(b.disabled) return; b.disabled=true; poSay(T2("Save ho raha hai…","Saving…"));
+    var o={no:poNo(),date:$("po-date").value||today(),partyId:pid,partyName:pname(pid),lines:lines,note:$("po-note").value.trim(),createdAt:new Date().toISOString()};
+    db.collection("orders").add(o).then(function(){ b.disabled=false; $("po-items").innerHTML=""; poRow(); $("po-note").value=""; poSay(T2("✓ "+o.no+" save ho gaya. Neeche list mein PDF ya WhatsApp dabao.","✓ "+o.no+" saved. Press PDF or WhatsApp in the list below."),"ok"); },function(){ b.disabled=false; poSay(T2("Save nahi hua, network check karke dobara try karo.","Not saved. Check the network and try again."),"err"); });
+  });
+  $("po-list").addEventListener("click",function(e){ var b=e.target.closest("button"); if(!b) return; var id=b.dataset.po||b.dataset.powa, o=id&&find("orders",id); if(!o) return;
+    pdfGo(b,b.dataset.po?"PDF":"WhatsApp","Purchase order "+o.no,"purchase-order-"+o.no+".pdf",poHtml(o),!b.dataset.po,poMsg(o)); });
+
+  // ----- roz ka backup -----
+  function dailyBackup(){
+    if(bkBusy||!db||dead) return; var t=today(); try{ if(localStorage.getItem("aspire_daily")===t) return; }catch(e){}
+    function mark(){ try{ localStorage.setItem("aspire_daily",t); }catch(e){} }
+    if(D.backups.some(function(b){ return b.daily&&iso(new Date(b.at))===t; })){ mark(); return; }
+    if(!countAll(snapshotAll())) return;
+    bkBusy=true; autoBackup("Roz ka backup (apne aap)",true).then(mark,function(e){ if(e&&e.code==="too_big"){ mark(); window.__bkBig=1; renderDaily(); } }).then(function(){ bkBusy=false; });
+  }
+  function renderDaily(){
+    var e=$("bk-daily"); if(!e) return; var L=D.backups.filter(function(b){ return b.daily; }).sort(function(a,b){ return a.at<b.at?1:-1; });
+    if(window.__bkBig){ e.textContent=T2("Data bada ho gaya hai, isliye roz ka online backup nahi ban paaya. \"Backup file download\" se file apne paas rakho.","Your data has grown large, so the daily online backup could not be made. Keep a file with \"Backup file download\"."); return; }
+    if(!L.length){ e.textContent=T2("Roz ka backup apne aap banta hai (din mein pehli baar app kholne par). Pichhle 7 din ke backup rehte hain.","A backup is made by itself every day (the first time you open the app). The last 7 days are kept."); return; }
+    var d=new Date(L[0].at); e.textContent=T2("✓ Roz ka backup apne aap ban raha hai. Aakhri: ","✓ Daily backup is running by itself. Last: ")+fd(iso(d))+", "+pad(d.getHours())+":"+pad(d.getMinutes())+T2(" · "+L.length+" din ke backup rakhe hain"," · "+L.length+" daily backups kept");
+  }
   // ---------- bhasha / language ----------
   var LANG=window.aspLang==="en"?"en":"hi";
   document.querySelectorAll("#lang-seg button").forEach(function(b){ b.setAttribute("aria-pressed",b.dataset.lang===LANG?"true":"false"); });
@@ -4983,7 +5130,7 @@ var qrcode = function() {
   })();
 
   // ---------- boot ----------
-  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 25 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
+  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 26 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
   buildForm(); renderAll(); diag();
   var use=window.claude&&window.claude.use;
   if(!use){ status("Online khata yahan nahi chal raha. Is page ko Claude mein sign in karke kholo."); return; }
@@ -4997,7 +5144,7 @@ var qrcode = function() {
       db.collection(c).onSnapshot(function(snap){
         D[c]=snap.docs.map(function(d){ var o=Object.assign({},d.data()); o.id=d.id; return o; });
         if(!snap.metadata.fromCache) got[c]=1;
-        if(Object.keys(got).length===COLS.length){ clearTimeout(timer); status(""); safeBackup(); }
+        if(Object.keys(got).length===COLS.length){ clearTimeout(timer); status(""); safeBackup(); dailyBackup(); }
                 renderAll(); var sig=D.parties.map(function(p){ return p.id+p.name+p.kind; }).join("|"); if(sig!==formSig){ formSig=sig; refreshForm(); } else calcLine(); diag();
       },function(){ dead=true; clearTimeout(timer); status("Khata se connection toot gaya. Page dobara kholo."); diag(); });
     });
