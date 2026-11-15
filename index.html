@@ -231,6 +231,14 @@ table.cnt td input{max-width:110px}
 .qrow button{font:700 .92rem var(--f-body);cursor:pointer;border:1px solid var(--line);border-radius:12px;padding:14px 10px;background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
 .qrow button:hover{border-color:var(--accent)}
 .qrow button b{color:var(--accent);margin-right:4px}
+.qrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,.62fr)}
+.qrow button.big{padding:18px 16px;font-size:1.08rem;text-align:left;border-left:6px solid var(--good)}
+.qrow button.big.sell{border-left-color:var(--accent)}
+.qrow button small{display:block;font-weight:400;font-size:.78rem;color:var(--muted);margin-top:4px}
+.qrow button[aria-pressed="true"]{border-color:var(--accent);background:var(--field)}
+@media(max-width:640px){.qrow{grid-template-columns:repeat(2,minmax(0,1fr))}.qrow button:not(.big){grid-column:1/-1}}
+.qi-s{font-size:.72rem;color:var(--muted);margin-top:2px;min-height:1.1em}.qi-s.bad{color:var(--bad);font-weight:600}
+.q-done{display:flex;flex-direction:column;gap:10px}.q-done h4{margin:0;font:800 1.1rem var(--f-head);color:var(--good)}.q-done ul{margin:0;padding-left:18px;font-size:.9rem;line-height:1.6}
 .hrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line-2);font-size:.88rem}
 .hrow:last-child{border-bottom:0}
 .hrow .a{min-width:0;display:flex;flex-direction:column}
@@ -450,16 +458,16 @@ img{max-width:100%}
   <!-- HOME -->
   <div class="view" id="v-home">
     <div class="view-head">
-      <div><h2>Home</h2><p>Aapke asli business ka haal: Khata, Stock aur Bill ki entries se apne aap banta hai.</p></div>
+      <div><h2>Home</h2><p>Saari entry yahin se karo: "Maal kharida" ya "Maal becha". Stock, Khata aur Bill apne aap ban jaate hain.</p></div>
       <div><label class="fl" for="h-month">Mahina</label><select id="h-month" style="min-width:150px"></select></div>
     </div>
     <div class="qrow" id="h-quick">
-      <button type="button" data-q="sale"><b>+</b> Sale</button>
-      <button type="button" data-q="purchase"><b>+</b> Maal aaya</button>
-      <button type="button" data-q="payment"><b>+</b> Payment</button>
-      <button type="button" data-q="bill"><b>+</b> Bill</button>
+      <button type="button" class="big buy" data-q="buy">Maal kharida<small>stock badhega, party ka khata chadhega</small></button>
+      <button type="button" class="big sell" data-q="sell">Maal becha<small>stock ghatega, khata chadhega, GST bill banega</small></button>
+      <button type="button" data-q="payment">Paisa diya / mila<small>baad ki payment</small></button>
     </div>
-    <div class="banner" id="h-empty" data-tone="info" hidden>Abhi khata mein koi entry nahi hai, isliye neeche sab zero dikhega. Upar ke button se pehli entry karo: pehle "+ Maal aaya" (maal ki kharid), phir "+ Sale" ya "+ Bill".</div>
+    <div class="card" id="q-card" hidden></div>
+    <div class="banner" id="h-empty" data-tone="info" hidden>Abhi khata mein koi entry nahi hai, isliye neeche sab zero dikhega. Upar ke button se pehli entry karo: pehle "Maal kharida", phir "Maal becha". Baaki sab apne aap hoga.</div>
     <div class="sumrow">
       <div class="card kpi"><div class="l">Bikri</div><div class="v" id="h-sale">—</div><div class="s" id="h-sale-s">&nbsp;</div></div>
       <div class="card kpi"><div class="l">Kharid</div><div class="v" id="h-buy">—</div><div class="s" id="h-buy-s">&nbsp;</div></div>
@@ -621,7 +629,7 @@ img{max-width:100%}
       </div>
     </div>
     <div class="banner" id="k-status" data-tone="info">Khata load ho raha hai…</div>
-    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 13</div>
+    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 14</div>
     <div class="banner" id="k-note" data-tone="info" hidden></div>
     <div class="card" id="k-rpanel" style="padding:18px 20px" hidden>
       <h3 style="margin:0 0 6px">Backup se restore</h3>
@@ -1149,7 +1157,7 @@ img{max-width:100%}
   function pTotal(p){ return n(p.qty)*n(p.rate)*(1+n(p.gst)/100); }
   function party(id){ for(var i=0;i<D.parties.length;i++) if(D.parties[i].id===id) return D.parties[i]; return null; }
   function pname(id){ var p=party(id); return p?p.name:"(party hata di)"; }
-  function isMkt(p){ return p && p.kind==="marketplace"; }
+  function isMkt(p){ return p && (p.kind==="marketplace"||p.kind==="customer"); }
 
   // ---------- derived numbers ----------
   function partyStats(p){
@@ -1197,7 +1205,7 @@ img{max-width:100%}
       var s=partyStats(p), m=isMkt(p);
       var lab= m ? (s.bal>0.5?"aana hai":"sab mil gaya") : (s.bal>0.5?"dena hai":(s.bal<-0.5?"advance diya hua":"hisaab barabar"));
       var chip= (!m && s.late>0.5) ? '<span class="chip c-bad">'+inr(s.late)+' late</span>' : "";
-      var terms= m ? "Marketplace" : (n(p.terms)>0? n(p.terms)+" din udhaar" : "Turant payment");
+      var terms= m ? (p.kind==="customer"?"Customer":"Marketplace") : (n(p.terms)>0? n(p.terms)+" din udhaar" : "Turant payment");
       return '<button type="button" class="pcard" data-id="'+esc(p.id)+'" aria-pressed="'+(sel===p.id)+'"><span class="pn">'+esc(p.name)+'</span><span class="pt">'+esc(terms)+(p.supplies?" · "+esc(p.supplies):"")+'</span><span class="pb '+(!m&&s.bal>0.5?"neg":(m&&s.bal>0.5?"pos":""))+'">'+inr(Math.abs(s.bal))+'</span><span class="pl">'+lab+' '+chip+'</span></button>';
     }).join("");
   }
@@ -1237,7 +1245,7 @@ img{max-width:100%}
     }).join("")||'<tr><td colspan="9" style="text-align:left;color:var(--muted)">Khata mein "Maal aaya" entry daaloge to yahan stock dikhega.</td></tr>';
   }
 
-  function renderAll(){ renderSummary(); renderParties(); renderLedger(); renderStock(); renderBin(); renderBills(); renderHome(); }
+  function renderAll(){ renderSummary(); renderParties(); renderLedger(); renderStock(); renderBin(); renderBills(); renderHome(); qSync(); }
 
   // ---------- entry form ----------
   function opts(list,pick){ return list.map(function(p){ return '<option value="'+esc(p.id)+'"'+(p.id===pick?" selected":"")+'>'+esc(p.name)+'</option>'; }).join(""); }
@@ -1573,7 +1581,7 @@ img{max-width:100%}
   var STATES=[["01","Jammu & Kashmir"],["02","Himachal Pradesh"],["03","Punjab"],["04","Chandigarh"],["05","Uttarakhand"],["06","Haryana"],["07","Delhi"],["08","Rajasthan"],["09","Uttar Pradesh"],["10","Bihar"],["11","Sikkim"],["12","Arunachal Pradesh"],["13","Nagaland"],["14","Manipur"],["15","Mizoram"],["16","Tripura"],["17","Meghalaya"],["18","Assam"],["19","West Bengal"],["20","Jharkhand"],["21","Odisha"],["22","Chhattisgarh"],["23","Madhya Pradesh"],["24","Gujarat"],["26","Dadra & Nagar Haveli and Daman & Diu"],["27","Maharashtra"],["29","Karnataka"],["30","Goa"],["31","Lakshadweep"],["32","Kerala"],["33","Tamil Nadu"],["34","Puducherry"],["35","Andaman & Nicobar"],["36","Telangana"],["37","Andhra Pradesh"],["38","Ladakh"]];
   var GSTRE=/^\d{2}[A-Z]{5}\d{4}[A-Z][A-Z\d]Z[A-Z\d]$/;
   function fy(){ var d=new Date(), y=d.getFullYear()%100, a=d.getMonth()>=3?y:y-1; return pad(a)+"-"+pad((a+1)%100); }
-  var seller={name:"Aspire Enterprises",gstin:"",addr:"",state:"",phone:"",email:"",prefix:"AE",next:1,bank:""}, sellerDirty=false, sellerGot=false;
+  var seller={name:"Aspire Enterprises",gstin:"07BMCPH3880E1Z8",addr:"Secound Floor, A-3, KH NO 1ETC/30/2, Main Wazirabad Road, Brijpuri, New Delhi, North East Delhi - 110094",state:"07",phone:"9990602827",email:"",prefix:"AE",next:1,bank:""}, sellerDirty=false, sellerGot=false;
   var SF={name:"s-name",gstin:"s-gstin",addr:"s-addr",state:"s-state",phone:"s-phone",email:"s-email",prefix:"s-prefix",next:"s-next",bank:"s-bank"};
   function stName(c){ for(var i=0;i<STATES.length;i++) if(STATES[i][0]===c) return STATES[i][1]; return ""; }
   function stOpts(){ return '<option value="">State chuno</option>'+STATES.map(function(x){ return '<option value="'+x[0]+'">'+x[1]+" ("+x[0]+")</option>"; }).join(""); }
@@ -1695,24 +1703,32 @@ img{max-width:100%}
     if(!db||dead){ bmsg("Online save abhi available nahi hai. Page reload karke dobara try karo.","err"); return; }
     var v={no:no,date:$("b-date").value||today(),cust:{name:cn,addr:$("b-caddr").value.trim(),gstin:cg,state:$("b-cstate").value},seller:Object.assign({},seller),lines:o.lines,incl:o.incl,intra:o.intra,taxable:o.taxable,cgst:o.cgst,sgst:o.sgst,igst:o.igst,round:o.round,total:o.total,status:"ok",createdAt:new Date().toISOString()};
     b.disabled=true; bmsg("Save ho raha hai…");
-    var link=$("b-link").checked, paid=$("b-paid").checked, DIRECT="Direct customer (Bill)";
-    db.collection("invoices").add(v).then(function(ref){
-      if(!link) return;
-      var pt=null; D.parties.forEach(function(x){ if(key(x.name)===key(DIRECT)) pt=x; });
-      var first=pt?Promise.resolve(pt.id):db.collection("parties").add({name:DIRECT,kind:"marketplace",terms:0,phone:"",gstin:"",supplies:"Seedhe customer ko bill se bikri",createdAt:v.createdAt}).then(function(r){ return r.id; });
-      return first.then(function(pid){
-        var jobs=v.lines.map(function(l){ return db.collection("sales").add({date:v.date,partyId:pid,product:l.desc,qty:l.qty,amount:l.total,fees:0,billNo:v.no,invoiceId:ref.id,createdAt:v.createdAt}); });
-        if(paid) jobs.push(db.collection("payments").add({date:v.date,partyId:pid,amount:r2(v.taxable+v.cgst+v.sgst+v.igst),mode:"Bill",ref:v.no,invoiceId:ref.id,createdAt:v.createdAt}));
-        return Promise.all(jobs);
-      });
-    }).then(function(){
-      var bump=no===autoNo(); if(bump){ seller=Object.assign({},seller,{next:Math.round(n(seller.next)||1)+1}); if(!sellerDirty) $("s-next").value=seller.next; }
-      return bump?db.doc("settings/seller").set(seller):null;
-    }).then(function(){
+    var link=$("b-link").checked, paid=$("b-paid").checked;
+    postInvoice(v,link,paid?v.total:0,DIRECT,"marketplace","Bill").then(function(){
       bmsg("✓ Bill "+no+" save ho gaya"+(link?", Khata aur Stock mein bhi chadh gaya":"")+". Download ka box aa raha hai.","ok"); billReset();
       offer(b,"Bill save karo aur download","Bill "+no,billFile(v),invoiceHtml(v));
     },function(){ bmsg("Save nahi hua, network check karke dobara try karo.","err"); }).then(function(){ b.disabled=false; });
   });
+  var DIRECT="Direct customer (Bill)";
+  function findOrAdd(name,kind,supplies,at){
+    var pt=null; D.parties.forEach(function(x){ if(key(x.name)===key(name)&&isMkt(x)===(kind!=="supplier")) pt=x; });
+    return pt?Promise.resolve(pt.id):db.collection("parties").add({name:name,kind:kind,terms:0,phone:"",gstin:"",supplies:supplies||"",createdAt:at}).then(function(r){ return r.id; });
+  }
+  function postInvoice(v,link,paidAmt,pName,pKind,mode){
+    var bump=v.no===autoNo();
+    return db.collection("invoices").add(v).then(function(ref){
+      if(!link) return;
+      return findOrAdd(pName,pKind,pName===DIRECT?"Seedhe customer ko bill se bikri":"Customer",v.createdAt).then(function(pid){
+        var jobs=v.lines.map(function(l){ return db.collection("sales").add({date:v.date,partyId:pid,product:l.desc,qty:l.qty,amount:l.total,fees:0,billNo:v.no,invoiceId:ref.id,createdAt:v.createdAt}); });
+        var gross=r2(v.taxable+v.cgst+v.sgst+v.igst), pay=paidAmt>=v.total-0.5?gross:r2(paidAmt);
+        if(pay>0) jobs.push(db.collection("payments").add({date:v.date,partyId:pid,amount:pay,mode:mode||"Bill",ref:v.no,invoiceId:ref.id,createdAt:v.createdAt}));
+        return Promise.all(jobs);
+      });
+    }).then(function(){
+      if(bump){ seller=Object.assign({},seller,{next:Math.round(n(seller.next)||1)+1}); if(!sellerDirty) $("s-next").value=seller.next; }
+      return bump?db.doc("settings/seller").set(seller):null;
+    });
+  }
   $("b-list").addEventListener("click",function(e){
     var b=e.target.closest("button"); if(!b) return;
     if(b.dataset.dl){ var v=find("invoices",b.dataset.dl); if(v) offer(b,"Download","Bill "+v.no,billFile(v),invoiceHtml(v)); }
@@ -1780,13 +1796,192 @@ img{max-width:100%}
   $("h-low").addEventListener("input",function(){ try{ localStorage.setItem(LOWKEY,this.value); }catch(e){} renderHome(); });
   $("h-quick").addEventListener("click",function(e){
     var b=e.target.closest("button[data-q]"); if(!b) return; var q=b.dataset.q;
-    if(q==="bill"){ location.hash="#bill"; setTimeout(function(){ var x=$("b-cname"); if(x) x.focus(); },60); return; }
+    if(q==="buy"||q==="sell"){ qOpen(q); return; }
     type=q; msg(""); buildForm(); location.hash="#khata";
     setTimeout(function(){ $("entry-card").scrollIntoView({block:"start"}); var x=$("entry-form").querySelector("input:not([type=date]),select,button"); if(x) try{ x.focus(); }catch(err){} },60);
   });
 
+  // ---------- quick entry: ek jagah se kharid / bikri ----------
+  var qm="", qPaidEdited=false;
+  function qEl(id){ return document.getElementById(id); }
+  function calcProds(){ try{ return (window.aspCalc.get().prods)||[]; }catch(e){ return []; } }
+  function lastBuy(name){ var k=key(name), best=null; D.purchases.forEach(function(x){ if(key(x.product)===k&&(!best||String(x.createdAt||x.date||"")>String(best.createdAt||best.date||""))) best=x; }); return best; }
+  function hsnOf(name){ var k=key(name), h="", at=""; D.invoices.forEach(function(v){ (v.lines||[]).forEach(function(l){ if(key(l.desc)===k&&l.hsn&&String(v.createdAt||"")>=at){ h=l.hsn; at=String(v.createdAt||""); } }); }); return h; }
+  function availOf(name){ var k=key(name), a=null; stock().forEach(function(s){ if(key(s.name)===k) a=s.inq-s.out+s.adj; }); return a; }
+  function setSel(el,val){ for(var i=0;i<el.options.length;i++) if(el.options[i].value===String(val)){ el.value=String(val); return; } }
+  function qsay(t,c){ var m=qEl("q-msg"); if(m){ m.textContent=t||""; m.className="formmsg "+(c||""); } }
+  function qRow(){
+    var tr=document.createElement("tr");
+    tr.innerHTML='<td><input type="text" class="qi-d" style="min-width:160px;width:100%" list="q-prods" aria-label="Product" placeholder="product ka naam"><div class="qi-s"></div></td>'+(qm==="sell"?'<td><input type="text" class="qi-h" style="width:78px" aria-label="HSN" inputmode="numeric"></td>':'')+'<td><input type="number" class="qi-q" min="0" step="any" style="width:72px" aria-label="Qty" inputmode="decimal"></td><td><input type="number" class="qi-r" min="0" step="any" style="width:92px" aria-label="Rate" inputmode="decimal"></td><td><select class="qi-g" aria-label="GST %"><option>0</option><option selected>5</option><option>12</option><option>18</option><option>28</option></select></td><td class="qi-a" style="text-align:right;white-space:nowrap;font-weight:600">—</td><td><button class="del" type="button" aria-label="Line hatao">×</button></td>';
+    qEl("q-items").appendChild(tr); return tr;
+  }
+  function qFill(tr){
+    var d=tr.querySelector(".qi-d").value.trim(); if(!d) return;
+    var r=tr.querySelector(".qi-r"), g=tr.querySelector(".qi-g"), incl=qEl("q-incl").checked, cp=null, lp=lastBuy(d), free=!r.value||r.dataset.auto;
+    calcProds().forEach(function(p){ if(key(p[0])===key(d)) cp=p; });
+    if(qm==="buy"){
+      if(lp){ setSel(g,n(lp.gst)); if(free){ r.value=r2(incl? n(lp.rate)*(1+n(lp.gst)/100) : n(lp.rate)); r.dataset.auto="1"; } }
+      else if(cp) setSel(g,n(cp[1]));
+    } else {
+      if(cp){ setSel(g,n(cp[1])); var sp=n(cp[3])/Math.max(1,n(cp[10])||1); if(sp>0&&free){ r.value=r2(incl? sp : sp/(1+n(cp[1])/100)); r.dataset.auto="1"; } }
+      else if(lp) setSel(g,n(lp.gst));
+      var h=tr.querySelector(".qi-h"); if(h&&!h.value) h.value=hsnOf(d);
+    }
+  }
+  function qData(){
+    var incl=qEl("q-incl").checked, cs=qEl("q-cstate")?qEl("q-cstate").value:"", intra=!cs||!seller.state||cs===seller.state, o={lines:[],taxable:0,tax:0,intra:intra,incl:incl,over:0};
+    qEl("q-items").querySelectorAll("tr").forEach(function(tr){
+      var q=n(tr.querySelector(".qi-q").value), r=n(tr.querySelector(".qi-r").value), g=n(tr.querySelector(".qi-g").value), d=tr.querySelector(".qi-d").value.trim(), hh=tr.querySelector(".qi-h");
+      var tx=r2(incl? q*r/(1+g/100) : q*r), t=r2(incl? q*r-tx : tx*g/100);
+      tr.querySelector(".qi-a").textContent=q>0&&r>0?m2(tx+t):"—";
+      var s=tr.querySelector(".qi-s"), av=d?availOf(d):null, bad=qm==="sell"&&d&&(av==null||q>av);
+      s.textContent=!d?"":(av==null?(qm==="sell"?"Ye maal stock mein nahi hai":"Naya product, stock mein jud jayega"):(bad?"Stock mein sirf "+av+" pcs hain":"Stock mein abhi "+av+" pcs"));
+      s.className="qi-s"+(bad?" bad":"");
+      if(d&&q>0&&r>0){ if(bad) o.over++; o.lines.push({desc:d,hsn:hh?hh.value.trim():"",qty:q,rate:r2(tx/q),gst:g,taxable:tx,tax:t,total:r2(tx+t)}); o.taxable+=tx; o.tax+=t; }
+    });
+    o.taxable=r2(o.taxable); o.tax=r2(o.tax);
+    if(intra){ o.cgst=r2(o.tax/2); o.sgst=r2(o.tax-o.cgst); o.igst=0; } else { o.cgst=0; o.sgst=0; o.igst=o.tax; }
+    o.gross=r2(o.taxable+o.tax); o.total=Math.round(o.gross); o.round=r2(o.total-o.gross); return o;
+  }
+  function qKind(){ var pv=qEl("q-party").value; return qm==="buy"?"buy":(pv==="__direct"?"direct":"mkt"); }
+  function qCalc(){
+    if(!qEl("q-items")) return;
+    var o=qData(), k=qKind(), tot=k==="buy"?o.gross:o.total, h='<div><span>Maal (GST ke bina)</span><b>'+m2(o.taxable)+'</b></div><div><span>GST</span><b>'+m2(o.tax)+'</b></div>';
+    if(k!=="buy"&&o.round) h+='<div><span>Round off</span><b>'+m2(o.round)+'</b></div>';
+    h+='<div class="g"><span>Total</span><span>'+m2(tot)+'</span></div>';
+    var pd=qEl("q-paid");
+    if(k==="direct"&&!qPaidEdited) pd.value=o.lines.length?tot:"";
+    if(k==="mkt"){ h+='<div><span>Fees kat ke payout aana hai</span><b>'+m2(tot-n(qEl("q-fees").value))+'</b></div>'; }
+    else { var left=r2(tot-n(pd.value)); if(o.lines.length) h+='<div><span>'+(k==="buy"?"Party ko baaki dena hai":"Customer se baaki lena hai")+'</span><b>'+m2(Math.max(0,left))+'</b></div>'; }
+    qEl("q-tot").innerHTML=h;
+  }
+  function qMode(){
+    if(!qEl("q-party")) return;
+    var pv=qEl("q-party").value, k=qKind();
+    qEl("q-new-w").hidden=pv!=="__new";
+    if(qm==="sell"){ qEl("q-cust").hidden=k!=="direct"; qEl("q-fees-w").hidden=k!=="mkt"; qEl("q-mkbill-w").hidden=k!=="direct"; }
+    qEl("q-paid-w").hidden=k==="mkt";
+    qEl("q-save").textContent=k==="buy"?"Save karo":(k==="direct"&&qEl("q-mkbill").checked?"Save karo aur bill banao":"Save karo");
+  }
+  function qSync(){
+    var c=qEl("q-card"); if(!c||c.hidden||!qEl("q-party")) return;
+    var ps=qEl("q-party"), cur=ps.value, h="";
+    if(qm==="buy") h=opts(D.parties.filter(function(p){ return !isMkt(p); }),cur)+'<option value="__new">+ Nayi party add karo</option>';
+    else h='<option value="__direct">Seedha customer (GST bill)</option>'+opts(D.parties.filter(function(p){ return p.kind==="marketplace"&&key(p.name)!==key(DIRECT); }),cur)+'<option value="__new">+ Naya marketplace (Amazon, Flipkart…)</option>';
+    ps.innerHTML=h; if(cur) setSel(ps,cur);
+    var seen={}, out=[]; function add(x){ var k=key(x); if(k&&!seen[k]){ seen[k]=1; out.push(String(x).trim()); } }
+    D.purchases.forEach(function(p){ add(p.product); }); calcProds().forEach(function(p){ add(p[0]); });
+    qEl("q-prods").innerHTML=out.map(function(x){ return '<option value="'+esc(x)+'"></option>'; }).join("");
+    var cl=qEl("q-custs"); if(cl){ var s2={}, o2=[]; D.invoices.forEach(function(v){ var nm=(v.cust||{}).name, k=key(nm); if(k&&!s2[k]){ s2[k]=1; o2.push(nm); } }); cl.innerHTML=o2.map(function(x){ return '<option value="'+esc(x)+'"></option>'; }).join(""); }
+    var cs=qEl("q-cstate"); if(cs&&!cs.value&&!cs.dataset.touched&&seller.state) cs.value=seller.state;
+    qMode(); qCalc();
+  }
+  function qClose(){ qm=""; var c=qEl("q-card"); c.hidden=true; c.innerHTML=""; document.querySelectorAll("#h-quick button").forEach(function(b){ b.removeAttribute("aria-pressed"); }); }
+  function qOpen(mode){
+    qm=mode; qPaidEdited=false; var c=qEl("q-card"), buy=mode==="buy", h="";
+    document.querySelectorAll("#h-quick button").forEach(function(b){ if(b.dataset.q===mode) b.setAttribute("aria-pressed","true"); else b.removeAttribute("aria-pressed"); });
+    h+='<div class="card-h"><h3>'+(buy?"Maal kharida":"Maal becha")+'</h3><span><button class="btn ghost sm" type="button" id="q-close">Band karo</button></span></div><div class="card-b" id="q-body" style="display:flex;flex-direction:column;gap:14px">';
+    h+='<div class="help" style="margin:0">'+(buy?"Bas yahan ek baar likho. Stock apne aap badhega aur party ke khate mein chadh jayega.":"Bas yahan ek baar likho. Stock apne aap ghatega, khate mein chadhega aur GST bill ban jayega.")+'</div><div class="form-grid">';
+    h+=f("q-date","Date",'<input type="date" id="q-date" value="'+today()+'">');
+    h+=f("q-party",buy?"Kis party se liya":"Kisko becha",'<select id="q-party"></select>');
+    h+='<div class="full" id="q-new-w" hidden><label class="fl" for="q-new">'+(buy?"Nayi party ka naam":"Naye marketplace ka naam")+'</label><input type="text" id="q-new" placeholder="'+(buy?"jaise Sharma Bag Factory":"jaise Amazon")+'"></div>';
+    if(buy) h+=f("q-bill","Party ka bill no. (ho to)",'<input type="text" id="q-bill">',true);
+    else {
+      h+='<div class="full" id="q-cust"><div class="form-grid">'+f("q-cname","Customer ka naam",'<input type="text" id="q-cname" list="q-custs" placeholder="jaise Rahul Traders"><datalist id="q-custs"></datalist>',true)+f("q-cstate","Customer ka state",'<select id="q-cstate">'+stOpts()+'</select>')+f("q-cgstin","Customer GSTIN (ho to)",'<input type="text" id="q-cgstin" maxlength="15">')+f("q-caddr","Customer ka address (ho to)",'<input type="text" id="q-caddr">',true)+'</div></div>';
+      h+='<div class="full" id="q-fees-w" hidden><label class="fl" for="q-fees">Marketplace ne kitni fees kaati ₹ (commission, shipping, GST)</label><input type="number" id="q-fees" min="0" step="any" value="0" inputmode="decimal"></div>';
+    }
+    h+='</div><div class="tscroll"><table class="bi"><thead><tr><th class="l" style="text-align:left">Product</th>'+(buy?"":"<th>HSN</th>")+'<th>Qty (piece)</th><th>Rate ₹ (1 piece)</th><th>GST %</th><th>Amount</th><th></th></tr></thead><tbody id="q-items"></tbody></table></div><datalist id="q-prods"></datalist>';
+    h+='<div class="btnrow" style="align-items:center"><button class="btn ghost" type="button" id="q-add">+ Ek aur product</button><label style="display:flex;gap:8px;align-items:center;font-size:.86rem"><input type="checkbox" id="q-incl"'+(buy?"":" checked")+' style="width:16px;height:16px"> Rate mein GST shamil hai</label></div>';
+    h+='<div class="b-tot" id="q-tot"></div>';
+    h+='<div class="form-grid" id="q-paid-w"><div><label class="fl" for="q-paid">'+(buy?"Abhi kitna paisa diya ₹ (udhaar hai to 0)":"Abhi kitna paisa mila ₹")+'</label><input type="number" id="q-paid" min="0" step="any" inputmode="decimal"'+(buy?' placeholder="0"':"")+'></div><div><label class="fl" for="q-pmode">Kaise</label><select id="q-pmode"><option>UPI</option><option>Cash</option><option>Bank</option></select></div><div class="full btnrow"><button class="btn ghost sm" type="button" id="q-full">Poora '+(buy?"de diya":"mil gaya")+'</button><button class="btn ghost sm" type="button" id="q-zero">Poora udhaar</button></div></div>';
+    if(!buy) h+='<label id="q-mkbill-w" style="display:flex;gap:8px;align-items:center;font-size:.86rem"><input type="checkbox" id="q-mkbill" checked style="width:16px;height:16px;flex:none"> GST bill bhi banao (print / PDF)</label>';
+    h+='<div class="btnrow"><button class="btn" type="button" id="q-save">Save karo</button></div><div class="formmsg" id="q-msg" aria-live="polite"></div></div>';
+    c.innerHTML=h; c.hidden=false; qRow();
+    if(buy&&sel&&party(sel)&&!isMkt(party(sel))){ qSync(); setSel(qEl("q-party"),sel); }
+    qSync(); c.scrollIntoView({block:"nearest"});
+    setTimeout(function(){ var x=c.querySelector(".qi-d"); if(x) try{ x.focus(); }catch(e){} },60);
+  }
+  function qDone(title,list,inv){
+    var h='<div class="q-done"><h4>✓ '+esc(title)+'</h4><ul>'+list.map(function(x){ return "<li>"+x+"</li>"; }).join("")+'</ul><div class="btnrow">'+(inv?'<button class="btn" type="button" id="q-dl">Bill download / print karo</button>':"")+'<button class="btn'+(inv?" ghost":"")+'" type="button" id="q-again">Ek aur entry</button><button class="btn ghost" type="button" id="q-close2">Band karo</button></div></div>';
+    qEl("q-body").innerHTML=h; qEl("q-card")._inv=inv||null;
+    if(inv) offer(qEl("q-dl"),"Bill download / print karo","Bill "+inv.no,billFile(inv),invoiceHtml(inv));
+  }
+  function qSave(){
+    var b=qEl("q-save"), o=qData(), k=qKind(), buy=k==="buy", date=qEl("q-date").value||today(), now=new Date().toISOString(), pv=qEl("q-party").value, nn=qEl("q-new").value.trim(), paid=n(qEl("q-paid").value), mode=qEl("q-pmode").value, pcs=0;
+    if(!db||dead){ qsay("Online save abhi available nahi hai. Page reload karke dobara try karo.","err"); return; }
+    if(pv==="__new"&&!nn){ qsay(buy?"Nayi party ka naam likho.":"Marketplace ka naam likho.","err"); qEl("q-new").focus(); return; }
+    if(!o.lines.length){ qsay("Kam se kam ek line mein product, qty aur rate bharo.","err"); return; }
+    o.lines.forEach(function(l){ pcs+=l.qty; });
+    var tot=buy?o.gross:o.total, job, done;
+    if(k!=="mkt"&&paid>tot+0.5){ qsay("Paisa total se zyada likha hai. Total "+m2(tot)+" hai.","err"); return; }
+    if(buy){
+      job=(pv==="__new"?findOrAdd(nn,"supplier","",now):Promise.resolve(pv)).then(function(pid){
+        var jobs=o.lines.map(function(l){ return db.collection("purchases").add({date:date,partyId:pid,product:l.desc,qty:l.qty,rate:l.rate,gst:l.gst,billNo:qEl("q-bill").value.trim(),createdAt:now}); });
+        if(paid>0) jobs.push(db.collection("payments").add({date:date,partyId:pid,amount:r2(Math.min(paid,tot)),mode:mode,ref:qEl("q-bill").value.trim(),createdAt:now}));
+        sel=pid; return Promise.all(jobs);
+      });
+      var pn=pv==="__new"?nn:pname(pv), left=r2(tot-paid);
+      done=function(){ qDone("Kharid save ho gayi",["Stock mein <b>"+pcs+" piece</b> badh gaye.",esc(pn)+" ke khate mein <b>"+m2(tot)+"</b> ka maal chadh gaya.",paid>0?"<b>"+m2(Math.min(paid,tot))+"</b> payment bhi likh diya."+(left>0.5?" Baaki <b>"+m2(left)+"</b> dena hai.":""):"Poora <b>"+m2(tot)+"</b> udhaar hai, baad mein \"Paisa diya / mila\" se payment likhna."]); };
+    } else if(k==="direct"){
+      var cn=qEl("q-cname").value.trim(), cg=qEl("q-cgstin").value.trim(), cs=qEl("q-cstate").value, mk=qEl("q-mkbill").checked, udh=tot-paid>0.5, pN=udh?cn:DIRECT, pK=udh?"customer":"marketplace";
+      if(!cn){ qsay("Customer ka naam likho.","err"); qEl("q-cname").focus(); return; }
+      if(mk&&!cs){ qsay("Customer ka state chuno.","err"); return; }
+      if(cg&&!GSTRE.test(cg)){ qsay("Customer ka GSTIN sahi nahi lag raha. Khali chhod do ya sahi number daalo.","err"); return; }
+      var res=["Stock se <b>"+pcs+" piece</b> ghat gaye.",udh?esc(cn)+" ke khate mein <b>"+m2(r2(tot-paid))+"</b> lena baaki hai."+(paid>0?" <b>"+m2(paid)+"</b> mil gaya likh diya.":""):"Poora <b>"+m2(tot)+"</b> mil gaya, khate mein likh diya."];
+      if(mk){
+        if(!GSTRE.test(seller.gstin||"")||!seller.addr||!seller.state){ qsay("Bill ke liye pehle Bill tab mein \"Meri firm ki details\" bhar ke save karo.","err"); return; }
+        var no=autoNo(); if(D.invoices.some(function(x){ return key(x.no)===key(no); })){ qsay("Bill number "+no+" pehle se bana hai. Bill tab mein \"Agla number\" theek karo.","err"); return; }
+        var v={no:no,date:date,cust:{name:cn,addr:qEl("q-caddr").value.trim(),gstin:cg,state:cs},seller:Object.assign({},seller),lines:o.lines,incl:o.incl,intra:o.intra,taxable:o.taxable,cgst:o.cgst,sgst:o.sgst,igst:o.igst,round:o.round,total:o.total,status:"ok",createdAt:now};
+        job=postInvoice(v,true,paid,pN,pK,mode);
+        done=function(){ qDone("Bikri save ho gayi, bill "+no+" ban gaya",res.concat(["GST bill <b>"+esc(no)+"</b> ban gaya. Neeche ke button se download ya print karo."]),v); };
+      } else {
+        job=findOrAdd(pN,pK,pN===DIRECT?"Seedhe customer ko bill se bikri":"Customer",now).then(function(pid){
+          var jobs=o.lines.map(function(l){ return db.collection("sales").add({date:date,partyId:pid,product:l.desc,qty:l.qty,amount:l.total,fees:0,createdAt:now}); });
+          var pay=paid>=tot-0.5?o.gross:r2(paid); if(pay>0) jobs.push(db.collection("payments").add({date:date,partyId:pid,amount:pay,mode:mode,ref:"",createdAt:now}));
+          return Promise.all(jobs);
+        });
+        done=function(){ qDone("Bikri save ho gayi",res); };
+      }
+    } else {
+      var fees=n(qEl("q-fees").value), given=0;
+      job=(pv==="__new"?findOrAdd(nn,"marketplace","",now):Promise.resolve(pv)).then(function(pid){
+        return Promise.all(o.lines.map(function(l,i){ var fs=i===o.lines.length-1?r2(fees-given):r2(o.gross?fees*l.total/o.gross:0); given+=fs; return db.collection("sales").add({date:date,partyId:pid,product:l.desc,qty:l.qty,amount:l.total,fees:fs,createdAt:now}); }));
+      });
+      var mn=pv==="__new"?nn:pname(pv);
+      done=function(){ qDone("Bikri save ho gayi",["Stock se <b>"+pcs+" piece</b> ghat gaye.",esc(mn)+" se <b>"+m2(r2(o.gross-fees))+"</b> payout aana hai, khate mein chadh gaya.","Payout aane par \"Paisa diya / mila\" se likh dena."]); };
+    }
+    b.disabled=true; qsay("Save ho raha hai…");
+    job.then(done,function(){ b.disabled=false; qsay("Save nahi hua, network check karke dobara try karo.","err"); });
+  }
+  (function(){
+    var c=qEl("q-card"); if(!c) return;
+    c.addEventListener("click",function(e){
+      var t=e.target.closest("button"); if(!t) return;
+      if(t.id==="q-close"||t.id==="q-close2"){ qClose(); return; }
+      if(t.id==="q-again"){ qOpen(qm); return; }
+      if(t.id==="q-dl"){ var v=c._inv; if(v) offer(t,"Bill download / print karo","Bill "+v.no,billFile(v),invoiceHtml(v)); return; }
+      if(t.id==="q-add"){ qRow().querySelector("input").focus(); return; }
+      if(t.id==="q-full"){ var o=qData(); qPaidEdited=true; qEl("q-paid").value=qm==="buy"?o.gross:o.total; qCalc(); return; }
+      if(t.id==="q-zero"){ qPaidEdited=true; qEl("q-paid").value=0; qCalc(); return; }
+      if(t.id==="q-save"){ qSave(); return; }
+      if(t.classList.contains("del")&&t.closest("#q-items")){ if(qEl("q-items").children.length>1) t.closest("tr").remove(); else t.closest("tr").querySelectorAll("input").forEach(function(i){ i.value=""; }); qCalc(); }
+    });
+    ["input","change"].forEach(function(ev){ c.addEventListener(ev,function(e){
+      var t=e.target; if(!qEl("q-items")) return;
+      if(t.id==="q-paid") qPaidEdited=true;
+      if(t.id==="q-cstate") t.dataset.touched="1";
+      if(t.classList.contains("qi-r")&&ev==="input") delete t.dataset.auto;
+      if(t.id==="q-cgstin"){ t.value=t.value.toUpperCase().replace(/\s+/g,""); if(/^\d{2}/.test(t.value)&&stName(t.value.slice(0,2))){ qEl("q-cstate").value=t.value.slice(0,2); qEl("q-cstate").dataset.touched="1"; } }
+      if(t.id==="q-cname"){ var hit=null; D.invoices.forEach(function(v){ if(key((v.cust||{}).name)===key(t.value)&&(!hit||String(v.createdAt||"")>String(hit.createdAt||""))) hit=v; }); if(hit){ var cu=hit.cust; if(!qEl("q-caddr").value) qEl("q-caddr").value=cu.addr||""; if(!qEl("q-cgstin").value) qEl("q-cgstin").value=cu.gstin||""; if(cu.state){ qEl("q-cstate").value=cu.state; qEl("q-cstate").dataset.touched="1"; } } }
+      if(t.classList.contains("qi-d")) qFill(t.closest("tr"));
+      if(t.id==="q-incl") qEl("q-items").querySelectorAll("tr").forEach(function(tr){ if(tr.querySelector(".qi-r").dataset.auto){ tr.querySelector(".qi-r").value=""; qFill(tr); } });
+      if(t.id==="q-party"||t.id==="q-mkbill") qMode();
+      qCalc();
+    }); });
+  })();
+
   // ---------- boot ----------
-  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 13 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
+  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 14 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
   buildForm(); renderAll(); diag();
   var use=window.claude&&window.claude.use;
   if(!use){ status("Online khata yahan nahi chal raha. Is page ko Claude mein sign in karke kholo."); return; }
@@ -1794,7 +1989,7 @@ img{max-width:100%}
   use("db").then(function(x){
     if(!x){ clearTimeout(timer); status("Online khata is view mein available nahi hai. Sign in karke apne Claude account se kholo."); return; }
     db=x;
-    try{ db.doc("settings/seller").onSnapshot(function(sn){ sellerGot=true; if(sn.exists){ var d=sn.data()||{}; Object.keys(SF).forEach(function(k){ if(d[k]!=null) seller[k]=d[k]; }); } fillSeller(); },function(){}); }catch(err){}
+    try{ db.doc("settings/seller").onSnapshot(function(sn){ sellerGot=true; if(sn.exists){ var d=sn.data()||{}; Object.keys(SF).forEach(function(k){ if(d[k]!=null&&!(d[k]===""&&/^(gstin|addr|state|phone)$/.test(k))) seller[k]=d[k]; }); } fillSeller(); qSync(); },function(){}); }catch(err){}
     COLS.forEach(function(c){
       db.collection(c).onSnapshot(function(snap){
         D[c]=snap.docs.map(function(d){ var o=Object.assign({},d.data()); o.id=d.id; return o; });
