@@ -271,6 +271,8 @@ table.stk{min-width:720px}
   </div></div>
 </div>
 
+<div id="old-note" hidden style="background:var(--warn-soft);color:var(--warn);font-size:.86rem;padding:10px 16px;text-align:center">Ye purana calculator hai. Naya web app (login ke saath): <b>karebookx04-ops.github.io/aspire-Calculator-app</b>. Yahan ka data wahan le jaane ke liye: Khata tab mein "Backup file download" dabao, phir naye app ke Khata tab mein "Backup se restore" se wahi file chuno. Uske baad entries sirf naye app mein karo.</div>
+<script>if(typeof window.ASPIRE_FIREBASE==="undefined") document.getElementById("old-note").hidden=false;</script>
 <main class="in">
 
   <!-- DASHBOARD -->
@@ -418,7 +420,7 @@ table.stk{min-width:720px}
       </div>
     </div>
     <div class="banner" id="k-status" data-tone="info">Khata load ho raha hai…</div>
-    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 10</div>
+    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 11</div>
     <div class="banner" id="k-note" data-tone="info" hidden></div>
     <div class="card" id="k-rpanel" style="padding:18px 20px" hidden>
       <h3 style="margin:0 0 6px">Backup se restore</h3>
@@ -1508,7 +1510,7 @@ table.stk{min-width:720px}
   });
 
   // ---------- boot ----------
-  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 10 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
+  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 11 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
   buildForm(); renderAll(); diag();
   var use=window.claude&&window.claude.use;
   if(!use){ status("Online khata yahan nahi chal raha. Is page ko Claude mein sign in karke kholo."); return; }

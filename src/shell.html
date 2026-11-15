@@ -121,7 +121,9 @@ img{max-width:100%}
         var sp=document.createElement("span"); sp.textContent=u.email||""; var bt=document.createElement("button"); bt.type="button"; bt.textContent="Logout";
         bt.addEventListener("click",function(){ try{ ["aspire_seller_calc_v1","aspire_launch_plan_v1","aspire_calc_bin_v1"].forEach(function(k){ localStorage.removeItem(k); }); }catch(e){} auth.signOut(); }); box.appendChild(sp); box.appendChild(bt); if(bar&&!$("app-user")) bar.appendChild(box);
         if(!given){ given=true; var root=fs.collection("users").doc(u.uid);
-          var db={collection:function(c){ return root.collection(c); },doc:function(p){ var a=p.split("/"); return root.collection(a[0]).doc(a[1]); }};
+          // includeMetadataChanges: without it Firestore stays silent when the server copy equals the
+          // cached copy, and the app would wait forever for a "loaded from server" signal.
+          var db={collection:function(c){ var r=root.collection(c); return { onSnapshot:function(fn,er){ return r.onSnapshot({includeMetadataChanges:true},fn,er); }, add:function(d){ return r.add(d); }, doc:function(id){ return id?r.doc(id):r.doc(); } }; },doc:function(p){ var a=p.split("/"); return root.collection(a[0]).doc(a[1]); }};
           giveDb(db); syncCalc(db); }
       });
       $("auth-mode").addEventListener("click",function(){ signup=!signup; $("auth-title").textContent=signup?"Naya account banao":"Login karo"; $("auth-go").textContent=signup?"Account banao":"Login"; $("auth-mode").textContent=signup?"Pehle se account hai? Login":"Naya account banao"; $("auth-pass").autocomplete=signup?"new-password":"current-password"; say(""); });

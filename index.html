@@ -369,7 +369,9 @@ img{max-width:100%}
         var sp=document.createElement("span"); sp.textContent=u.email||""; var bt=document.createElement("button"); bt.type="button"; bt.textContent="Logout";
         bt.addEventListener("click",function(){ try{ ["aspire_seller_calc_v1","aspire_launch_plan_v1","aspire_calc_bin_v1"].forEach(function(k){ localStorage.removeItem(k); }); }catch(e){} auth.signOut(); }); box.appendChild(sp); box.appendChild(bt); if(bar&&!$("app-user")) bar.appendChild(box);
         if(!given){ given=true; var root=fs.collection("users").doc(u.uid);
-          var db={collection:function(c){ return root.collection(c); },doc:function(p){ var a=p.split("/"); return root.collection(a[0]).doc(a[1]); }};
+          // includeMetadataChanges: without it Firestore stays silent when the server copy equals the
+          // cached copy, and the app would wait forever for a "loaded from server" signal.
+          var db={collection:function(c){ var r=root.collection(c); return { onSnapshot:function(fn,er){ return r.onSnapshot({includeMetadataChanges:true},fn,er); }, add:function(d){ return r.add(d); }, doc:function(id){ return id?r.doc(id):r.doc(); } }; },doc:function(p){ var a=p.split("/"); return root.collection(a[0]).doc(a[1]); }};
           giveDb(db); syncCalc(db); }
       });
       $("auth-mode").addEventListener("click",function(){ signup=!signup; $("auth-title").textContent=signup?"Naya account banao":"Login karo"; $("auth-go").textContent=signup?"Account banao":"Login"; $("auth-mode").textContent=signup?"Pehle se account hai? Login":"Naya account banao"; $("auth-pass").autocomplete=signup?"new-password":"current-password"; say(""); });
@@ -406,6 +408,8 @@ img{max-width:100%}
   </div></div>
 </div>
 
+<div id="old-note" hidden style="background:var(--warn-soft);color:var(--warn);font-size:.86rem;padding:10px 16px;text-align:center">Ye purana calculator hai. Naya web app (login ke saath): <b>karebookx04-ops.github.io/aspire-Calculator-app</b>. Yahan ka data wahan le jaane ke liye: Khata tab mein "Backup file download" dabao, phir naye app ke Khata tab mein "Backup se restore" se wahi file chuno. Uske baad entries sirf naye app mein karo.</div>
+<script>if(typeof window.ASPIRE_FIREBASE==="undefined") document.getElementById("old-note").hidden=false;</script>
 <main class="in">
 
   <!-- DASHBOARD -->
@@ -553,7 +557,7 @@ img{max-width:100%}
       </div>
     </div>
     <div class="banner" id="k-status" data-tone="info">Khata load ho raha hai…</div>
-    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 10</div>
+    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 11</div>
     <div class="banner" id="k-note" data-tone="info" hidden></div>
     <div class="card" id="k-rpanel" style="padding:18px 20px" hidden>
       <h3 style="margin:0 0 6px">Backup se restore</h3>
@@ -1643,7 +1647,7 @@ img{max-width:100%}
   });
 
   // ---------- boot ----------
-  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 10 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
+  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 11 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
   buildForm(); renderAll(); diag();
   var use=window.claude&&window.claude.use;
   if(!use){ status("Online khata yahan nahi chal raha. Is page ko Claude mein sign in karke kholo."); return; }
