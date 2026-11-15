@@ -450,6 +450,12 @@ small.pk{display:block;font-size:.72rem;font-weight:500;color:var(--muted)}
 #scan video{width:100%;height:100%;object-fit:cover;display:block}
 #scan .sc-v i{position:absolute;inset:18% 22%;border:3px solid #FF4D1A;border-radius:12px;box-shadow:0 0 0 999px rgba(0,0,0,.25)}
 #scan .sc-m{font-size:.86rem;color:var(--ink-2);min-height:1.4em}
+/* v27: staff role */
+[data-role="staff"] .own,[data-role="staff"] .adv,[data-role="staff"] .tabs a[data-v="actual"],[data-role="staff"] .tabs a[data-v="more"],[data-role="staff"] #mini-real,[data-role="staff"] #mini-plan,[data-role="staff"] .hero,[data-role="staff"] #stk-open,[data-role="staff"] #stk-det,[data-role="staff"] #more-grid,[data-role="staff"] #v-actual,[data-role="staff"] #h-stk-card,[data-role="staff"] #v-khata .view-head .btnrow,[data-role="staff"] #k-rpanel{display:none!important}
+[data-role="staff"] #v-home .sumrow .kpi:nth-child(2),[data-role="staff"] #v-home .sumrow .kpi:nth-child(3),[data-role="staff"] #v-stock .sumrow .kpi:nth-child(2),[data-role="staff"] #v-stock .sumrow .kpi:nth-child(4){display:none!important}
+[data-role="staff"] #v-stock table.stk th:nth-child(n+3),[data-role="staff"] #v-stock table.stk td:nth-child(n+3){display:none!important}
+[data-role="staff"] #v-stock .card>.note,[data-role="staff"] #v-stock .stk-tools>div{display:none!important}
+.aud{max-height:420px;overflow:auto}
 </style>
 <style>
 body{margin:0}
@@ -503,6 +509,8 @@ img{max-width:100%}
   }catch(e){ rej({code:"unavailable"}); } }); }};
   window.claude={use:function(n){ return n==="db"?dbP:Promise.resolve(n==="downloads"?downloads:null); }};
   function $(i){ return document.getElementById(i); }
+  // staff invite link: ?join=<owner id>. Remember it, then clean the address bar.
+  try{ var jq=new URLSearchParams(location.search).get("join"); if(jq&&/^[A-Za-z0-9]{10,64}$/.test(jq)){ localStorage.setItem("aspire_join",jq); history.replaceState(null,"",location.pathname+location.hash); } }catch(e){}
 
   // ----- demo mode: same API over localStorage -----
   function localDb(){
@@ -552,6 +560,7 @@ img{max-width:100%}
   function say(t,ok){ var m=$("auth-msg"); m.textContent=t||""; m.className=ok?"ok":""; }
   document.addEventListener("DOMContentLoaded",function(){
     var signup=false; $("auth").hidden=false;
+    try{ if(localStorage.getItem("aspire_join")) say("Staff login: pehli baar ho to \"Naya account banao\" dabao aur wahi email likho jo malik ne joda hai.",true); }catch(e){}
     load(base+"firebase-app-compat.js").then(function(){ return Promise.all([load(base+"firebase-auth-compat.js"),load(base+"firebase-firestore-compat.js")]); }).then(function(){
       var fb=window.firebase; fb.initializeApp(CFG);
       var auth=fb.auth(), fs=fb.firestore(), given=false;
@@ -563,11 +572,25 @@ img{max-width:100%}
         var bar=document.querySelector(".appbar .in"), box=document.createElement("div"); box.id="app-user";
         var sp=document.createElement("span"); sp.textContent=u.email||""; var bt=document.createElement("button"); bt.type="button"; bt.textContent="Logout";
         bt.addEventListener("click",function(){ try{ ["aspire_seller_calc_v1","aspire_launch_plan_v1","aspire_calc_bin_v1"].forEach(function(k){ localStorage.removeItem(k); }); }catch(e){} auth.signOut(); }); box.appendChild(sp); box.appendChild(bt); if(bar&&!$("app-user")) bar.appendChild(box);
-        if(!given){ given=true; var root=fs.collection("users").doc(u.uid);
-          // includeMetadataChanges: without it Firestore stays silent when the server copy equals the
-          // cached copy, and the app would wait forever for a "loaded from server" signal.
-          var db={collection:function(c){ var r=root.collection(c); return { onSnapshot:function(fn,er){ return r.onSnapshot({includeMetadataChanges:true},fn,er); }, add:function(d){ return r.add(d); }, doc:function(id){ return id?r.doc(id):r.doc(); } }; },doc:function(p){ var a=p.split("/"); return root.collection(a[0]).doc(a[1]); }};
-          giveDb(db); syncCalc(db); }
+        if(!given){ given=true;
+          var em=String(u.email||"").toLowerCase(), join=""; try{ join=localStorage.getItem("aspire_join")||""; }catch(e){}
+          // owner: data under users/{own uid}. staff: data under users/{owner uid}, allowed by the rules
+          // only while the owner keeps this email in users/{owner uid}/staff.
+          var start=function(ownerUid,role){
+            var root=fs.collection("users").doc(ownerUid);
+            window.aspUser={email:em,uid:u.uid,role:role,owner:ownerUid};
+            if(role==="staff"){ document.documentElement.setAttribute("data-role","staff"); sp.textContent=(u.email||"")+" (staff)"; }
+            // includeMetadataChanges: without it Firestore stays silent when the server copy equals the
+            // cached copy, and the app would wait forever for a "loaded from server" signal.
+            var db={collection:function(c){ var r=root.collection(c); return { onSnapshot:function(fn,er){ return r.onSnapshot({includeMetadataChanges:true},fn,er); }, add:function(d){ return r.add(d); }, doc:function(id){ return id?r.doc(id):r.doc(); } }; },doc:function(p){ var a=p.split("/"); return root.collection(a[0]).doc(a[1]); },
+              top:function(c){ return fs.collection(c); }, latest:function(c,f,k,fn,er){ return root.collection(c).orderBy(f,"desc").limit(k).onSnapshot(fn,er); }, user:window.aspUser};
+            giveDb(db); syncCalc(db);
+          };
+          if(join&&join!==u.uid&&em){
+            var sref=fs.collection("users").doc(join).collection("staff").doc(em), own=function(){ window.aspJoinFail=1; start(u.uid,"owner"); };
+            sref.get().then(function(sn){ if(sn.exists) start(join,"staff"); else own(); },function(){ sref.get({source:"cache"}).then(function(sn){ if(sn.exists) start(join,"staff"); else own(); },own); });
+          } else start(u.uid,"owner");
+        }
       });
       $("auth-mode").addEventListener("click",function(){ signup=!signup; $("auth-title").textContent=signup?"Naya account banao":"Login karo"; $("auth-go").textContent=signup?"Account banao":"Login"; $("auth-mode").textContent=signup?"Pehle se account hai? Login":"Naya account banao"; $("auth-pass").autocomplete=signup?"new-password":"current-password"; say(""); });
       $("auth-reset").addEventListener("click",function(){ var e=$("auth-email").value.trim(); if(!e){ say("Pehle upar apna email likho."); return; } auth.sendPasswordResetEmail(e).then(function(){ say("Password badalne ka link aapke email par bhej diya hai.",true); },function(er){ say(ERR[er&&er.code]||"Link nahi bhej paaya. Dobara try karo."); }); });
@@ -829,7 +852,7 @@ img{max-width:100%}
       </div>
     </div>
     <div class="banner" id="k-status" data-tone="info">Khata load ho raha hai…</div>
-    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 26</div>
+    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 27</div>
     <div class="banner" id="k-note" data-tone="info" hidden></div>
     <div class="card" id="k-rpanel" style="padding:18px 20px" hidden>
       <h3 style="margin:0 0 6px">Backup se restore</h3>
@@ -3905,7 +3928,7 @@ var qrcode = function() {
     if($("h-buy")){ $("h-buy").textContent=inr(tv); $("h-buy-s").textContent=pcs?pcs+" piece pade hain":"stock khali hai"; $("h-hero").textContent=inr(tv); }
   }
 
-  function renderAll(){ renderSummary(); renderParties(); renderLedger(); renderStock(); renderBin(); renderBills(); renderHome(); qSync(); prodStock(); renderActual(); renderPO(); renderDaily(); }
+  function renderAll(){ renderSummary(); renderParties(); renderLedger(); renderStock(); renderBin(); renderBills(); renderHome(); qSync(); prodStock(); renderActual(); renderPO(); renderDaily(); renderStore(); soRun(); }
 
   // ---------- entry form ----------
   function opts(list,pick){ return list.map(function(p){ return '<option value="'+esc(p.id)+'"'+(p.id===pick?" selected":"")+'>'+esc(p.name)+'</option>'; }).join(""); }
@@ -4115,7 +4138,8 @@ var qrcode = function() {
       D[c].forEach(function(o){ if(!want[o.id]) jobs.push(function(){ return db.collection(c).doc(o.id).delete(); }); });
       Object.keys(want).forEach(function(id){ jobs.push(function(){ return db.collection(c).doc(id).set(strip(want[id])); }); });
     });
-    return seq(jobs);
+    audLog("edit","restore",{txt:"Backup se purana data wapas laya (restore)"}); audMute++;
+    return seq(jobs).then(function(x){ audMute--; return x; },function(e){ audMute--; throw e; });
   }
   function validSnap(s){ return s&&typeof s==="object"&&DATA.some(function(c){ return Array.isArray(s[c]); })&&DATA.every(function(c){ return s[c]==null||Array.isArray(s[c]); }); }
 
@@ -4350,7 +4374,7 @@ var qrcode = function() {
     if(x.upi&&!/^[\w.\-]{2,}@[A-Za-z][\w.\-]*$/.test(x.upi)){ say("UPI ID sahi nahi lag rahi. Aisi hoti hai: naam@bank","err"); return; }
     if(!db||dead){ say("Online save abhi available nahi hai. Page reload karke dobara try karo.","err"); return; }
     say("Save ho raha hai…");
-    db.doc("settings/seller").set(x).then(function(){ seller=x; sellerDirty=false; sellerGot=true; fillSeller(); say("✓ Save ho gaya","ok"); },function(){ say("Save nahi hua, network check karke dobara try karo.","err"); });
+    db.doc("settings/seller").set(x).then(function(){ seller=x; sellerDirty=false; sellerGot=true; fillSeller(); say("✓ Save ho gaya","ok"); audLog("edit","seller",{txt:"Firm ki details badli"}); },function(){ say("Save nahi hua, network check karke dobara try karo.","err"); });
   });
   $("b-save").addEventListener("click",function(){
     var o=billData(), no=$("b-no").value.trim(), cn=$("b-cname").value.trim(), cg=$("b-cgstin").value.trim(), b=$("b-save");
@@ -4735,8 +4759,8 @@ var qrcode = function() {
   var BK="aspire_bkp_v16", bkBusy=false;
   function safeBackup(){
     var done=false; try{ done=localStorage.getItem(BK)==="1"; }catch(e){}
-    if(done||bkBusy||!db||dead) return; var s=snapshotAll(); if(!countAll(s)){ try{ localStorage.setItem(BK,"1"); }catch(e){} return; }
-    bkBusy=true; autoBackup("Version 26 update se pehle (apne aap)").then(function(){ try{ localStorage.setItem(BK,"1"); }catch(e){} },function(){}).then(function(){ bkBusy=false; });
+    if(done||bkBusy||!db||dead||isStaff()) return; var s=snapshotAll(); if(!countAll(s)){ try{ localStorage.setItem(BK,"1"); }catch(e){} return; }
+    bkBusy=true; autoBackup("Version 27 update se pehle (apne aap)").then(function(){ try{ localStorage.setItem(BK,"1"); }catch(e){} },function(){}).then(function(){ bkBusy=false; });
   }
   document.addEventListener("click",function(e){ var b=e.target.closest&&e.target.closest("[data-qgo]"); if(!b) return; location.hash="#home"; var m=b.dataset.qgo; setTimeout(function(){ qOpen(m); },60); });
   document.getElementById("prod-body").addEventListener("input",function(e){ if(e.target.closest("td.name")) prodStock(); });
@@ -5124,7 +5148,7 @@ var qrcode = function() {
 
   // ----- roz ka backup -----
   function dailyBackup(){
-    if(bkBusy||!db||dead) return; var t=today(); try{ if(localStorage.getItem("aspire_daily")===t) return; }catch(e){}
+    if(bkBusy||!db||dead||isStaff()) return; var t=today(); try{ if(localStorage.getItem("aspire_daily")===t) return; }catch(e){}
     function mark(){ try{ localStorage.setItem("aspire_daily",t); }catch(e){} }
     if(D.backups.some(function(b){ return b.daily&&iso(new Date(b.at))===t; })){ mark(); return; }
     if(!countAll(snapshotAll())) return;
@@ -5135,6 +5159,108 @@ var qrcode = function() {
     if(window.__bkBig){ e.textContent=T2("Data bada ho gaya hai, isliye roz ka online backup nahi ban paaya. \"Backup file download\" se file apne paas rakho.","Your data has grown large, so the daily online backup could not be made. Keep a file with \"Backup file download\"."); return; }
     if(!L.length){ e.textContent=T2("Roz ka backup apne aap banta hai (din mein pehli baar app kholne par). Pichhle 7 din ke backup rehte hain.","A backup is made by itself every day (the first time you open the app). The last 7 days are kept."); return; }
     var d=new Date(L[0].at); e.textContent=T2("✓ Roz ka backup apne aap ban raha hai. Aakhri: ","✓ Daily backup is running by itself. Last: ")+fd(iso(d))+", "+pad(d.getHours())+":"+pad(d.getMinutes())+T2(" · "+L.length+" din ke backup rakhe hain"," · "+L.length+" daily backups kept");
+  }
+  // ---------- v27: staff login, audit log, website store orders ----------
+  var ME={role:"owner",email:"",uid:"",owner:""}, RAW=null, audMute=0, AUD={parties:1,purchases:1,sales:1,payments:1,adjustments:1,invoices:1,orders:1};
+  function isStaff(){ return ME.role==="staff"; }
+  function audTxt(col,d){ d=d||{}; var pn=d.partyId?pname(d.partyId):"";
+    if(col==="purchases") return (n(d.qty)<0?"Maal wapas (party ko): ":"Maal kharida: ")+(d.product||"")+" × "+Math.abs(n(d.qty))+" @ "+inr(d.rate)+(pn?" · "+pn:"");
+    if(col==="sales") return (n(d.qty)<0?"Maal wapas aaya: ":"Maal becha: ")+(d.product||"")+" × "+Math.abs(n(d.qty))+" · "+inr(Math.abs(n(d.amount)))+(pn?" · "+pn:"")+(d.storeOrder?" · website order":"");
+    if(col==="payments") return "Paisa: "+inr(d.amount)+(pn?" · "+pn:"")+(d.mode?" · "+d.mode:"");
+    if(col==="parties") return "Party: "+(d.name||"");
+    if(col==="adjustments") return "Stock ginti: "+(d.product||"")+" "+(n(d.qty)>0?"+":"")+n(d.qty);
+    if(col==="invoices") return (d.status==="cancelled"?"Bill cancel: ":"Bill: ")+(d.no||"")+" · "+inr(d.total);
+    if(col==="orders") return "Purchase order: "+(d.no||"");
+    return String(d.txt||col); }
+  function audLog(act,col,d){ if(audMute||!RAW) return; var t=audTxt(col,d); if(!t) return; try{ var p=RAW.collection("audit").add({at:new Date().toISOString(),by:ME.email||"",role:ME.role||"owner",act:act,col:col,txt:String(t).slice(0,220)}); if(p&&p.catch) p.catch(function(){}); }catch(e){} }
+  function audited(raw){
+    var o=Object.create(raw);
+    o.collection=function(c){ var r=raw.collection(c); if(!AUD[c]) return r; var w=Object.create(r);
+      w.add=function(d){ return r.add(d).then(function(ref){ audLog("add",c,d); return ref; }); };
+      w.doc=function(id){ var ref=id?r.doc(id):r.doc(), x=Object.create(ref);
+        x.set=function(d){ var was=find(c,ref.id), p=ref.set.apply(ref,arguments); p.then(function(){ audLog(was?"edit":"add",c,d); },function(){}); return p; };
+        x.delete=function(){ var was=find(c,ref.id), p=ref.delete(); p.then(function(){ if(was) audLog("del",c,was); },function(){}); return p; };
+        return x; };
+      return w; };
+    return o;
+  }
+  function card27(id,title,sub){ var c=document.createElement("div"); c.className="card own"; c.id=id; c.innerHTML='<div class="card-h"><h3>'+title+'</h3><span>'+(sub||"&nbsp;")+'</span></div><div class="card-b" style="display:flex;flex-direction:column;gap:10px"></div>'; return c; }
+  function hhmm(at){ var d=new Date(at); return fd(iso(d))+", "+pad(d.getHours())+":"+pad(d.getMinutes()); }
+  // --- audit view (owner only) ---
+  var audRows=[];
+  function renderAud(){ var b=document.querySelector("#aud-card .card-b"); if(!b) return; var A={add:"",edit:T2("Badla: ","Changed: "),del:T2("Hataya: ","Deleted: ")};
+    b.innerHTML=audRows.length?'<div class="aud">'+audRows.map(function(a){ return '<div class="binrow"><div class="bl"><b>'+esc((A[a.act]||"")+(a.txt||""))+'</b><span>'+hhmm(a.at)+" · "+esc(a.by||T2("malik","owner"))+(a.role==="staff"?" (staff)":"")+'</span></div></div>'; }).join("")+'</div>':'<div class="help">'+T2("Ab se har entry, badlav aur delete yahan dikhega: kisne kiya aur kab.","From now on every entry, change and delete shows here: who did it and when.")+'</div>'; }
+  // --- staff (owner only) ---
+  var staffRows=[];
+  function joinLink(){ return location.origin+location.pathname+"?join="+encodeURIComponent(ME.owner); }
+  function renderStaff(){ var b=document.querySelector("#staff-card .card-b"); if(!b) return; var keep=b.querySelector("#sf-email"), val=keep?keep.value:"", msg=b.querySelector("#sf-msg"), mt=msg?msg.textContent:"", mc=msg?msg.className:"formmsg";
+    b.innerHTML='<div class="help">'+T2("Staff entry kar sakta hai (maal kharida, becha, paisa, bill) par munafa, Calculator, report aur Settings nahi dekh sakta. Har staff apne email aur password se login karta hai.","Staff can make entries (bought, sold, payments, bills) but cannot see profit, the Calculator, reports or Settings. Each staff member logs in with their own email and password.")+'</div>'
+      +'<div class="btnrow" style="align-items:flex-end"><div style="flex:1;min-width:200px"><label class="fl" for="sf-email">'+T2("Staff ka email","Staff email")+'</label><input type="email" id="sf-email" autocapitalize="off" spellcheck="false" placeholder="staff@example.com"></div><button class="btn" type="button" id="sf-add">'+T2("Staff jodo","Add staff")+'</button></div><div class="formmsg" id="sf-msg" aria-live="polite"></div>'
+      +(staffRows.length?staffRows.map(function(s){ return '<div class="binrow"><div class="bl"><b>'+esc(s.email||s.id)+'</b><span>'+T2("joda ","added ")+(s.addedAt?hhmm(s.addedAt):"")+'</span></div><div class="bb"><button class="btn ghost sm" type="button" data-sflink="'+esc(s.id)+'">'+T2("Link bhejo","Send link")+'</button><button class="btn ghost sm" type="button" data-sfdel="'+esc(s.id)+'">'+T2("Hatao","Remove")+'</button></div></div>'; }).join(""):"")
+      +'<div class="help">'+T2("Staff ko \"Link bhejo\" se link bhejo. Wo link khol kar \"Naya account banao\" se isi email ka account banaye. Uske baad wo aapka hi khata dekhega.","Send the link with \"Send link\". They open it and create an account with this same email using \"Create new account\". After that they see your ledger.")+'</div>';
+    b.querySelector("#sf-email").value=val; var m2e=b.querySelector("#sf-msg"); m2e.textContent=mt; m2e.className=mc; }
+  function sfSay(t,c){ var m=$("sf-msg"); if(m){ m.textContent=t||""; m.className="formmsg "+(c||""); } }
+  document.addEventListener("click",function(e){ var t=e.target; if(!t||!t.closest||!t.closest("#staff-card")||!RAW) return;
+    if(t.id==="sf-add"){ var em=$("sf-email").value.trim().toLowerCase(); if(!/^[^\s@\/]+@[^\s@\/]+\.[^\s@\/]+$/.test(em)){ sfSay(T2("Email sahi likho.","Enter a valid email."),"err"); return; } if(em===ME.email){ sfSay(T2("Ye aapka apna email hai.","That is your own email."),"err"); return; }
+      t.disabled=true; RAW.collection("staff").doc(em).set({email:em,addedAt:new Date().toISOString()}).then(function(){ t.disabled=false; $("sf-email").value=""; sfSay(T2("✓ Jud gaya. Ab \"Link bhejo\" se staff ko link bhejo.","✓ Added. Now send them the link with \"Send link\"."),"ok"); audLog("add","staff",{txt:"Staff joda: "+em}); },function(){ t.disabled=false; sfSay(T2("Save nahi hua, network check karke dobara try karo.","Not saved. Check the network and try again."),"err"); }); return; }
+    if(t.dataset.sflink){ var msg=T2("Aspire app me staff login: ye link kholo aur \"Naya account banao\" se email "+t.dataset.sflink+" ka account banao. ","Aspire app staff login: open this link and create an account for "+t.dataset.sflink+" with \"Create new account\". ")+joinLink(); waOpen(msg); return; }
+    if(t.dataset.sfdel){ if(!t.dataset.armed){ t.dataset.armed="1"; t.textContent=T2("Pakka hatao?","Really remove?"); t.classList.add("armed"); setTimeout(function(){ if(t.isConnected){ delete t.dataset.armed; t.classList.remove("armed"); t.textContent=T2("Hatao","Remove"); } },3000); return; }
+      var id=t.dataset.sfdel; t.disabled=true; RAW.collection("staff").doc(id).delete().then(function(){ audLog("del","staff",{txt:"Staff hataya: "+id}); },function(){ t.disabled=false; }); }
+  });
+  // --- website store orders -> stock (owner only) ---
+  var ST={on:false,since:"",map:{}}, SO=[], soErr=false, soGot=false, soBusy=false, SOUT=["confirmed","shipped","delivered"];
+  function soDate(o){ var c=o.createdAt, d=c&&c.toDate?c.toDate():new Date(c); return isNaN(d)?new Date():d; }
+  function soMap(it){ var m=ST.map&&ST.map[it.id]; if(m) return m; var k=key(it.name), hit=""; prodNames().forEach(function(x){ if(key(x)===k) hit=x; }); return hit||null; }
+  function soLive(){ return SO.filter(function(o){ return ST.since&&soDate(o).toISOString()>=ST.since; }); }
+  function soInfo(id){ var G=-1, rev=false; D.sales.forEach(function(s){ if(s.storeOrder===id) G=Math.max(G,n(s.sgen)); }); D.sales.forEach(function(s){ if(s.storeOrder===id&&n(s.sgen)===G&&s.ret) rev=true; }); return {G:G,imp:G>=0&&!rev}; }
+  function soPending(){ var un={}, wait=0; soLive().forEach(function(o){ if(SOUT.indexOf(o.status)<0||soInfo(o._id).imp) return; var bad=false; (o.items||[]).forEach(function(it){ if(!soMap(it)){ un[it.id]=it.name||it.id; bad=true; } }); if(bad) wait++; }); return {un:un,wait:wait}; }
+  function soRun(){
+    if(soBusy||!ST.on||!soGot||isStaff()||!db||dead||Object.keys(got).length<COLS.length) return;
+    var jobs=[], now=new Date().toISOString();
+    soLive().forEach(function(o){ var st=soInfo(o._id), want=SOUT.indexOf(o.status)>=0, id=o._id;
+      if(want&&!st.imp){ var items=o.items||[]; if(!items.length||items.some(function(it){ return !soMap(it); })) return; var g=st.G+1, f=n(o.sub)>0?Math.max(0,(n(o.sub)-n(o.couponAmt))/n(o.sub)):1, date=iso(soDate(o));
+        jobs.push(function(){ return findOrAdd("Website","customer","Website store ke order",now).then(function(pid){ var tot=0, w=[];
+          items.forEach(function(it,i){ var nm=soMap(it); if(nm==="-") return; var amt=r2(n(it.price)*n(it.qty)*f); tot+=amt; w.push(db.collection("sales").doc("so_"+id+"_"+g+"_"+i).set({date:date,partyId:pid,product:nm,qty:n(it.qty),amount:amt,fees:0,billNo:o.invoiceNo||o.orderNo||"",storeOrder:id,sgen:g,createdAt:now})); });
+          if(tot>0) w.push(db.collection("payments").doc("sp_"+id+"_"+g).set({date:date,partyId:pid,amount:r2(tot),mode:String(o.pay||"Website").slice(0,30),ref:"Website "+(o.orderNo||""),storeOrder:id,sgen:g,createdAt:now}));
+          return Promise.all(w).then(function(){ toast(T2("Website order "+(o.orderNo||"")+" stock se ghat gaya.","Website order "+(o.orderNo||"")+" taken out of stock.")); }); }); }); }
+      else if(!want&&st.imp&&(o.status==="cancelled"||o.status==="new")){ var rows=D.sales.filter(function(s){ return s.storeOrder===id&&n(s.sgen)===st.G&&!s.ret; }), pay=D.payments.filter(function(p){ return p.storeOrder===id&&n(p.sgen)===st.G&&!p.ret; });
+        jobs.push(function(){ var w=rows.map(function(s,i){ return db.collection("sales").doc("sr_"+id+"_"+st.G+"_"+i).set({date:today(),partyId:s.partyId,product:s.product,qty:-n(s.qty),amount:-n(s.amount),fees:0,ret:true,billNo:s.billNo||"",storeOrder:id,sgen:st.G,createdAt:now}); });
+          pay.forEach(function(p,i){ w.push(db.collection("payments").doc("spr_"+id+"_"+st.G+"_"+i).set({date:today(),partyId:p.partyId,amount:-n(p.amount),mode:p.mode||"",ref:"Website order cancel "+(o.orderNo||""),ret:true,storeOrder:id,sgen:st.G,createdAt:now})); });
+          return Promise.all(w).then(function(){ toast(T2("Website order "+(o.orderNo||"")+" cancel hua, stock wapas jud gaya.","Website order "+(o.orderNo||"")+" was cancelled; stock added back.")); }); }); }
+    });
+    if(!jobs.length) return; soBusy=true; seq(jobs).then(function(){},function(){}).then(function(){ setTimeout(function(){ soBusy=false; soRun(); },2500); });
+  }
+  function renderStore(){
+    var b=document.querySelector("#store-card .card-b"); if(!b) return; var P=soPending(), ids=Object.keys(P.un), imp=0; soLive().forEach(function(o){ if(soInfo(o._id).imp) imp++; });
+    var h='<div class="help">'+T2("Chalu karne ke baad website ka jo order admin panel me Confirm hota hai, uska maal yahan stock se apne aap ghat jata hai aur \"Website\" naam ki party me bikri likh jati hai. Order cancel ho to stock wapas jud jata hai. Purane order nahi chhede jaate.","Once on, when a website order is Confirmed in the admin panel its goods come out of stock here by themselves and a sale is written under a party named \"Website\". If the order is cancelled the stock is added back. Old orders are not touched.")+'</div>';
+    if(soErr) h+='<div class="banner" data-tone="warn">'+T2("Website ke order padhne ki permission nahi mili. Is app me usi email se login karo jisse website ka admin panel chalta hai.","No permission to read website orders. Log in to this app with the same email that runs the website admin panel.")+'</div>';
+    h+='<div class="btnrow" style="align-items:center"><button class="btn'+(ST.on?" ghost":"")+'" type="button" id="so-tog">'+(ST.on?T2("Band karo","Turn off"):T2("Chalu karo","Turn on"))+'</button><span class="help" style="margin:0">'+(ST.on?T2("✓ Chalu hai, "+fd(ST.since.slice(0,10))+" se. "+imp+" order stock me chadhe.","✓ On since "+fd(ST.since.slice(0,10))+". "+imp+" orders applied to stock."):T2("Abhi band hai.","Currently off."))+'</span></div>';
+    if(ST.on&&ids.length){ var opts='<option value="">'+T2("Product chuno","Choose product")+'</option>'+prodNames().map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join("")+'<option value="-">'+T2("Iska stock app me nahi rakhna","Do not track this in stock")+'</option>';
+      h+='<div class="banner" data-tone="warn">'+T2(P.wait+" order ruke hain. Batao website ka ye product app ke kis product se judta hai:",P.wait+" orders are waiting. Tell which app product each website product matches:")+'</div>'+ids.map(function(id){ return '<div class="form-grid"><div><label class="fl">'+esc(P.un[id])+'</label><select data-somap="'+esc(id)+'">'+opts+'</select></div></div>'; }).join("")+'<div class="btnrow"><button class="btn" type="button" id="so-save">'+T2("Save karo","Save")+'</button></div>'; }
+    var keep={}; b.querySelectorAll("[data-somap]").forEach(function(s){ keep[s.dataset.somap]=s.value; });
+    b.innerHTML=h; b.querySelectorAll("[data-somap]").forEach(function(s){ if(keep[s.dataset.somap]) s.value=keep[s.dataset.somap]; });
+    var hb=$("so-home"); if(hb){ hb.hidden=!(ST.on&&ids.length&&!isStaff()); if(!hb.hidden) hb.innerHTML=T2(P.wait+" website order stock me chadhne se ruke hain. ",P.wait+" website orders are waiting to be applied to stock. ")+'<a href="#more">'+T2("Settings me product jodo","Match products in Settings")+'</a>'; }
+  }
+  function stSave(x){ ST=x; return db.doc("settings/store").set(x).then(function(){ renderStore(); soRun(); }); }
+  document.addEventListener("click",function(e){ var t=e.target; if(!t||!db) return;
+    if(t.id==="so-tog"){ var on=!ST.on; stSave({on:on,since:on?(ST.since||new Date().toISOString()):ST.since,map:ST.map||{}}).then(function(){ audLog("edit","store",{txt:on?"Website order se stock: chalu kiya":"Website order se stock: band kiya"}); },function(){ toast(T2("Save nahi hua, dobara try karo.","Not saved, try again.")); }); }
+    if(t.id==="so-save"){ var m=Object.assign({},ST.map||{}), k=0; document.querySelectorAll("[data-somap]").forEach(function(s){ if(s.value){ m[s.dataset.somap]=s.value; k++; } }); if(!k){ toast(T2("Pehle product chuno.","Choose a product first.")); return; } stSave({on:ST.on,since:ST.since,map:m}).catch(function(){ toast(T2("Save nahi hua, dobara try karo.","Not saved, try again.")); }); }
+  });
+  function role27(x){
+    RAW=x; if(x.user) ME=x.user; var staff=isStaff();
+    if(staff){ document.documentElement.setAttribute("data-role","staff"); var gate=function(){ if(/^#(actual|more|dashboard|products|plan|settings)/.test(location.hash)) location.hash="#home"; }; window.addEventListener("hashchange",gate); gate(); }
+    var hm=$("v-home"), so=document.createElement("div"); so.className="banner"; so.id="so-home"; so.dataset.tone="warn"; so.hidden=true; var qc=$("q-card"); if(hm&&qc) hm.insertBefore(so,qc);
+    if(window.aspJoinFail&&hm){ var jb=document.createElement("div"); jb.className="banner"; jb.dataset.tone="warn"; jb.innerHTML=T2("Staff link se aaye ho, par malik ne is email ko staff me abhi nahi joda hai. Abhi aap apne khud ke khali khate me ho. Malik se bolo Settings me aapka email jode, phir page reload karo. ","You came from a staff link, but the owner has not added this email as staff yet. Right now you are in your own empty ledger. Ask the owner to add your email in Settings, then reload. ")+'<button class="btn ghost sm" type="button" id="join-clear">'+T2("Staff link hatao","Remove staff link")+'</button>'; hm.insertBefore(jb,hm.firstChild);
+      jb.querySelector("#join-clear").addEventListener("click",function(){ try{ localStorage.removeItem("aspire_join"); }catch(e){} location.reload(); }); }
+    if(staff){ var bb=$("bk-body"); if(bb){ bb.style.display="none"; if(bb.previousElementSibling) bb.previousElementSibling.style.display="none"; } return; }
+    var grid=$("more-grid"); if(!grid) return; var cols=grid.querySelectorAll(":scope > .stack"), left=cols[0]||grid, right=cols[1]||grid;
+    if(x.user&&x.user.uid){ left.appendChild(card27("staff-card",T2("Staff login","Staff login"),T2("entry kar sake, munafa na dekhe","can make entries, cannot see profit"))); try{ x.collection("staff").onSnapshot(function(sn){ staffRows=sn.docs.map(function(d){ var o=Object.assign({},d.data()); o.id=d.id; return o; }); renderStaff(); },function(){}); }catch(e){} renderStaff(); }
+    if(x.top){ left.appendChild(card27("store-card",T2("Website ke order se stock","Stock from website orders"),"")); renderStore();
+      try{ x.top("store_orders").orderBy("createdAt","desc").limit(200).onSnapshot(function(sn){ SO=sn.docs.map(function(d){ var o=Object.assign({},d.data()); o._id=d.id; return o; }); soGot=true; soErr=false; renderStore(); soRun(); },function(){ soErr=true; renderStore(); }); }catch(e){}
+      try{ db.doc("settings/store").onSnapshot(function(sn){ if(sn&&sn.exists){ var d=sn.data()||{}; ST={on:!!d.on,since:d.since||"",map:d.map||{}}; } renderStore(); soRun(); },function(){}); }catch(e){} }
+    right.appendChild(card27("aud-card",T2("Kisne kya kiya","Who did what"),T2("aakhri 100","last 100"))); renderAud();
+    function got27(sn){ audRows=sn.docs.map(function(d){ return d.data(); }).sort(function(a,b){ return a.at<b.at?1:-1; }).slice(0,100); renderAud(); }
+    try{ if(x.latest) x.latest("audit","at",100,got27,function(){}); else x.collection("audit").onSnapshot(got27,function(){}); }catch(e){}
   }
   // ---------- bhasha / language ----------
   var LANG=window.aspLang==="en"?"en":"hi";
@@ -5267,14 +5393,14 @@ var qrcode = function() {
   })();
 
   // ---------- boot ----------
-  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 26 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
+  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 27 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
   buildForm(); renderAll(); diag();
   var use=window.claude&&window.claude.use;
   if(!use){ status("Online khata yahan nahi chal raha. Is page ko Claude mein sign in karke kholo."); return; }
   var timer=setTimeout(function(){ if(Object.keys(got).length<COLS.length) status("Khata tak pahunch nahi ho pa rahi. Internet check karo, data aate hi yahan dikhega."); },10000);
   use("db").then(function(x){
     if(!x){ clearTimeout(timer); status("Online khata is view mein available nahi hai. Sign in karke apne Claude account se kholo."); return; }
-    db=x;
+    db=audited(x); role27(x);
     try{ db.doc("settings/ui").onSnapshot(function(sn){ if(sn&&sn.exists){ var l=(sn.data()||{}).lang; if(l) langSet(l,true); } },function(){}); }catch(e){}
     try{ db.doc("settings/seller").onSnapshot(function(sn){ sellerGot=true; if(sn.exists){ var d=sn.data()||{}; Object.keys(SF).forEach(function(k){ if(d[k]!=null&&!(d[k]===""&&/^(gstin|addr|state|phone)$/.test(k))) seller[k]=d[k]; }); } fillSeller(); qSync(); },function(){}); }catch(err){}
     COLS.forEach(function(c){

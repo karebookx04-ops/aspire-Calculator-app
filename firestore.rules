@@ -1,9 +1,22 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isStaffOf(uid) {
+      return signedIn() && request.auth.token.email != null
+        && exists(/databases/$(database)/documents/users/$(uid)/staff/$(request.auth.token.email));
+    }
+
     // Each signed-in user can read and write only their own data.
     match /users/{uid}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+    // Staff added by the owner (Settings > Staff login) can make entries in the owner's data.
+    // They cannot change the staff list, the audit log or the backups.
+    match /users/{uid}/{col}/{docId} {
+      allow read: if col != 'audit' && isStaffOf(uid);
+      allow create: if col == 'audit' && isStaffOf(uid);
+      allow create, update, delete: if !(col in ['staff', 'audit', 'backups']) && isStaffOf(uid);
     }
   }
 }
