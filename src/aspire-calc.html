@@ -352,6 +352,7 @@ span.pcs{display:none}
   #v-home .sumrow .k-stk{display:none}
   #v-home .sumrow .kpi:last-child{grid-column:1/-1}
   #v-home .hh{order:3}
+  #v-home .h-per{order:3}
   #v-home .hh>div:first-child{display:none}
   #v-home #q-card{order:4}
   #v-home>*{order:5}
@@ -395,6 +396,14 @@ table.stk{min-width:820px}
 #stk-det td.l,#stk-det th.l{text-align:left}
 #stk-det{scroll-margin-top:84px}
 table.stk td.l,table.stk th.l{text-align:left}
+.h-per{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+[data-adv] .h-per{display:none}
+small.pk{display:block;font-size:.72rem;font-weight:500;color:var(--muted)}
+.ch-seg{min-width:300px}
+.ch-seg button{white-space:nowrap}
+.det-pack{margin-top:14px;padding:12px;border:1px dashed var(--line);border-radius:10px}
+.qi-pk{color:var(--brand);font-weight:600}
+@media(max-width:899px){.ch-seg{min-width:0;width:100%}.stk-tools>div{width:100%}small.pk.dsk{display:none}}
 @media(max-width:899px){
   .detk{grid-template-columns:repeat(3,minmax(0,1fr))}
   .det-2{grid-template-columns:1fr}
@@ -452,10 +461,11 @@ table.stk td.l,table.stk th.l{text-align:left}
       </div>
     </div>
     <div class="adv"><label class="fl" for="h-month">Mahina</label><select id="h-month" style="min-width:150px"></select></div>
+    <div class="h-per" id="h-per"><div><label class="fl" for="h-period">Kab ka hisaab</label><select id="h-period" style="min-width:170px"><option value="all">Shuru se ab tak</option><option value="d0">Aaj</option><option value="d1">Kal</option><option value="w0">Is hafte</option><option value="m0" selected>Is mahine</option><option value="m1">Pichhla mahina</option><option value="m3">Pichhle 3 mahine</option><option value="fy">Is saal (April se)</option><option value="cust">Apni date chuno</option></select></div><div id="h-cust" hidden style="display:none;gap:8px;align-items:flex-end"><div><label class="fl" for="h-from">Kab se</label><input type="date" id="h-from"></div><div><label class="fl" for="h-to">Kab tak</label><input type="date" id="h-to"></div></div></div>
     <div class="card" id="q-card" hidden></div>
     <div class="banner" id="h-empty" data-tone="info" hidden>Abhi khata mein koi entry nahi hai, isliye neeche sab zero dikhega. Upar ke button se pehli entry karo: pehle "Maal kharida", phir "Maal becha". Baaki sab apne aap hoga.</div>
     <div class="sumrow">
-      <div class="card kpi"><div class="l">Bikri (is mahine)</div><div class="v" id="h-sale">—</div><div class="s" id="h-sale-s">&nbsp;</div></div>
+      <div class="card kpi"><div class="l">Bikri</div><div class="v" id="h-sale">—</div><div class="s" id="h-sale-s">&nbsp;</div></div>
       <div class="card kpi"><div class="l">Munafa</div><div class="v" id="h-prof">—</div><div class="s" id="h-prof-s">&nbsp;</div></div>
       <div class="card kpi k-stk"><div class="l">Stock ki value</div><div class="v" id="h-buy">—</div><div class="s" id="h-buy-s">&nbsp;</div></div>
       <div class="card kpi"><div class="l">Party ko dena hai</div><div class="v" id="h-owe">—</div><div class="s" id="h-owe-s">&nbsp;</div></div>
@@ -466,9 +476,9 @@ table.stk td.l,table.stk th.l{text-align:left}
       <div class="card adv"><div class="card-h"><h3>Pichhle 6 mahine</h3><span>bikri aur munafa</span></div><div class="card-b h-chart" id="h-chart"></div></div>
       <div class="card adv"><div class="card-h"><h3>Sabse zyada bikne wale</h3><span>pichhle 6 mahine</span></div><div class="card-b" id="h-top"></div></div>
     </div>
-    <div class="card" id="h-last-card"><div class="card-h"><h3>Aakhri 5 entry</h3><span><a href="#khata" style="color:var(--brand);font-weight:700;text-decoration:none">Sab dekho</a></span></div><div class="card-b" id="h-last"></div></div>
-    <div class="card" id="h-stk-card"><div class="card-h"><h3>Aaj tak ka stock</h3><span><a href="#stock" style="color:var(--brand);font-weight:700;text-decoration:none">Stock kholo</a></span></div>
-      <div class="tscroll"><table class="stk cardy"><thead><tr><th class="l">Product</th><th>Stock</th><th>Kharid rate</th><th>Bechne ka daam</th><th>Kharcha / piece</th><th>Asli munafa / piece</th><th>Stock ki value</th></tr></thead><tbody id="h-stk-body"></tbody></table></div></div>
+    <div class="card" id="h-last-card"><div class="card-h"><h3 id="h-last-t">Aakhri 5 entry</h3><span><a href="#khata" style="color:var(--brand);font-weight:700;text-decoration:none">Sab dekho</a></span></div><div class="card-b" id="h-last"></div></div>
+    <div class="card" id="h-stk-card"><div class="card-h"><h3>Aaj tak ka stock</h3><span><span id="h-ch" style="margin-right:12px"></span><a href="#stock" style="color:var(--brand);font-weight:700;text-decoration:none">Stock kholo</a></span></div>
+      <div class="tscroll"><table class="stk cardy"><thead><tr><th class="l">Product</th><th>Stock</th><th>Kharid rate</th><th>Bechne ka daam</th><th>Kharcha / order</th><th>Asli munafa / order</th><th>Stock ki value</th></tr></thead><tbody id="h-stk-body"></tbody></table></div></div>
   </div>
 
   <!-- ACTUAL CALCULATOR -->
@@ -653,7 +663,7 @@ table.stk td.l,table.stk th.l{text-align:left}
       </div>
     </div>
     <div class="banner" id="k-status" data-tone="info">Khata load ho raha hai…</div>
-    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 23</div>
+    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 24</div>
     <div class="banner" id="k-note" data-tone="info" hidden></div>
     <div class="card" id="k-rpanel" style="padding:18px 20px" hidden>
       <h3 style="margin:0 0 6px">Backup se restore</h3>
@@ -788,7 +798,7 @@ table.stk td.l,table.stk th.l{text-align:left}
   <!-- STOCK -->
   <div class="view" id="v-stock" hidden>
     <div class="view-head">
-      <div><h2>Stock</h2><p>Kitna maal pada hai aur ek piece bechne par asli munafa kitna hai. Product ke naam par click karo to uski poori history khulegi.</p></div>
+      <div><h2>Stock</h2><p>Kitna maal pada hai aur ek order bechne par asli munafa kitna hai. Product ke naam par click karo to uski history, pack aur kharcha khulega.</p></div>
       <div class="btnrow"><button class="btn" type="button" data-qgo="buy">+ Maal kharida</button><button class="btn ghost" type="button" id="stk-open">Stock ginti theek karo</button></div>
     </div>
     <div class="sumrow">
@@ -805,14 +815,14 @@ table.stk td.l,table.stk th.l{text-align:left}
     </div>
     <div class="card" id="stk-det" hidden></div>
     <div class="card">
-      <div class="stk-tools"><input type="search" id="stk-q" placeholder="Product dhundo" aria-label="Product dhundo"><span>Naam par click karo: history aur kharcha</span></div>
+      <div class="stk-tools"><input type="search" id="stk-q" placeholder="Product dhundo" aria-label="Product dhundo"><div><label class="fl" id="ch-l">Kahan bechoge</label><div class="seg ch-seg" id="ch-seg" role="group" aria-labelledby="ch-l"></div></div></div>
       <div class="tscroll"><table class="stk cardy">
-        <thead><tr><th class="l">Product</th><th>Stock<small>piece</small></th><th>Kharid rate<small>GST ke bina</small></th><th>Bechne ka daam<small>ek piece, GST sahit</small></th><th>Kharcha<small>fees, shipping, packing</small></th><th>Asli munafa<small>ek piece par</small></th><th>Stock ki value</th></tr></thead>
+        <thead><tr><th class="l">Product</th><th>Stock<small>piece</small></th><th>Kharid rate<small>GST ke bina</small></th><th>Bechne ka daam<small>ek order ka, GST sahit</small></th><th>Kharcha<small>ek order par</small></th><th>Asli munafa<small>ek order par</small></th><th>Stock ki value</th></tr></thead>
         <tbody id="stk-body"></tbody>
         <tfoot id="stk-foot"></tfoot>
       </table></div>
       <div class="help" id="stk-none" style="padding:14px 16px" hidden>Is naam ka koi product nahi mila.</div>
-      <div class="note">Asli munafa = bechne ka daam − GST − kharid rate − marketplace fees − shipping − packing. Jahan "andaza" likha hai wahan kharcha abhi andaze se hai (shipping ₹40, packing ₹5). Us par click karke apna asli kharcha likh do.</div>
+      <div class="note">Asli munafa = ek order ka daam − GST − maal ki kharid − marketplace fees − shipping − packing. Upar Amazon, Flipkart, Meesho ya Seedha chuno to usi ka kharcha lagta hai. Jahan "andaza" likha hai wahan fees abhi andaze se hai, us par click karke asli fees likh do. Chhota maal pack mein bikta hai to product par click karke pack ke piece likho.</div>
     </div>
   </div>
 
@@ -854,7 +864,7 @@ table.stk td.l,table.stk th.l{text-align:left}
 "Jo maal nahi bika aur party ko lauta diya, wo yahan likho. Stock ghatega aur party ko dena utna kam ho jayega. GST bhi apne aap ghat jayega.":"Enter goods that did not sell and were returned to the party. Stock goes down and the amount you owe the party reduces. GST reduces by itself too.",
 "Kaise":"How","Kam se kam ek line mein product, qty aur rate bharo.":"Fill product, qty and rate in at least one line.","Kharcha":"Costs","Kharcha / piece":"Cost / piece","Kharcha save ho gaya":"Costs saved","Kharid par GST (wapas milta hai, ITC)":"GST on purchases (comes back, ITC)","Kharid rate":"Purchase rate","Kharida":"Bought","Khata":"Ledger",
 "Kis ko paisa dena / lena hai":"Money to pay / receive","Kis party ko wapas kiya":"Returned to which party","Kis party se liya":"Bought from which party","Kisko becha":"Sold to",
-"Kitna maal pada hai aur ek piece bechne par asli munafa kitna hai. Product ke naam par click karo to uski poori history khulegi.":"How much stock you have and the real profit on selling one piece. Click a product name to open its full history.",
+"Kitna maal pada hai aur ek order bechne par asli munafa kitna hai. Product ke naam par click karo to uski history, pack aur kharcha khulega.":"How much stock you have and the real profit on one order. Click a product name to open its history, pack size and costs.",
 "Koi farak nahi hai, kuch badla nahi.":"No difference, nothing changed.","Kul munafa":"Total profit","Kul piece":"Total pieces","Kya deti hai":"What it supplies","Kya hua":"What happened","Late ho gaya":"Overdue","Line hatao":"Remove line",
 "Maal (GST ke bina)":"Goods (excl. GST)","Maal aaya":"Goods in","Maal becha":"Sold goods","Maal ka bill":"Goods bill","Maal kharida":"Bought goods","Maal ki kharid ya bikri Home se likho:":"Enter purchases and sales from Home:","Maal wapas":"Goods return","Maal wapas kiya":"Goods returned","Maal wapas aaya":"Goods came back",
 "Marketplace fees":"Marketplace fees","Marketplace ne kitni fees kaati ₹ (commission, shipping, GST)":"Fees charged by marketplace ₹ (commission, shipping, GST)","Marketplace se aana hai":"To receive from marketplaces","Marketplace · Seedhe customer ko bill se bikri":"Marketplace · Direct sale to customer with bill",
@@ -881,12 +891,13 @@ table.stk td.l,table.stk th.l{text-align:left}
 "Abhi stock khali hai. \"Maal kharida\" se pehli kharid likho, yahan apne aap dikhega.":"Stock is empty. Enter your first purchase with \"Bought goods\" and it will show here.","Is party ki abhi koi entry nahi hai.":"This party has no entries yet.","Is product ki koi entry nahi hai.":"This product has no entries.","Party hatao":"Delete party",
 "Login karo":"Log in","Naya account banao":"Create new account","Password bhool gaye?":"Forgot password?","Account banao":"Create account","Pehle se account hai? Login":"Already have an account? Log in","Stock, khata aur bill":"Stock, ledger and bills","Bhasha":"Language",
 "Demo mode: abhi data sirf isi browser mein save ho raha hai. Online login chalu hone ke baad har device par milega.":"Demo mode: data is saved only in this browser for now. After online login it will be on every device.",
-"Stock reset ya restore se pehle backup apne aap yahan banta hai.":"A backup is made here automatically before a stock reset or restore.","Abhi koi bill nahi bana. Bill save karte hi yahan dikhega, aur kabhi bhi dobara download kar sakte ho.":"No bills made yet. A bill shows here as soon as it is saved, and you can download it again any time.","party se maal aaya":"goods came from a party","bikri aur GST bill":"sale and GST bill","payment likho":"enter a payment","lautaya hua maal":"returned goods","Party":"Party","Parties":"Parties","Views":"Views","last 5":"last 5","piece":"pieces","Piece":"Pieces","Kharid":"Purchases"
+"Stock reset ya restore se pehle backup apne aap yahan banta hai.":"A backup is made here automatically before a stock reset or restore.","Abhi koi bill nahi bana. Bill save karte hi yahan dikhega, aur kabhi bhi dobara download kar sakte ho.":"No bills made yet. A bill shows here as soon as it is saved, and you can download it again any time.","party se maal aaya":"goods came from a party","bikri aur GST bill":"sale and GST bill","payment likho":"enter a payment","lautaya hua maal":"returned goods","Seedha":"Direct","Kahan bechoge":"Where will you sell","Kharcha / order":"Cost / order","Asli munafa / order":"Real profit / order","ek order ka, GST sahit":"per order, incl. GST","ek order par":"per order","Ek order ka kharcha":"Cost of one order","Ek order par munafa":"Profit per order","Ek order mein kitne piece bikte hain (pack)":"Pieces sold in one order (pack)","Pack save karo":"Save pack","Chhota maal 12 ka pack bikta hai to yahan 12 likho. Stock piece mein hi ginta hai.":"If small items sell as a pack of 12, enter 12 here. Stock is still counted in pieces.","Ye andaza hai. Apne seller panel se asli fees dekh kar likho aur Save karo.":"This is an estimate. Check the real fees in your seller panel, enter them and Save.","Ye is channel ka aam kharcha hai, sab product par lagta hai.":"These are this channel's general costs and apply to all products.","Sirf is product ke liye save":"Save for this product only","Is channel ke sab product par lagao":"Apply to all products of this channel","Ab ye ek ek piece bikta hai.":"This now sells one piece at a time.","Kharid rate (kharid entry nahi mili)":"Purchase rate (no purchase entry found)",
+"Asli munafa = ek order ka daam − GST − maal ki kharid − marketplace fees − shipping − packing. Upar Amazon, Flipkart, Meesho ya Seedha chuno to usi ka kharcha lagta hai. Jahan \"andaza\" likha hai wahan fees abhi andaze se hai, us par click karke asli fees likh do. Chhota maal pack mein bikta hai to product par click karke pack ke piece likho.":"Real profit = price of one order − GST − cost of goods − marketplace fees − shipping − packing. Choose Amazon, Flipkart, Meesho or Direct above to apply that channel's costs. Where it says \"estimate\" the fees are a guess; click it and enter the real fees. If small items sell in packs, click the product and enter the pieces per pack.","Is dauran ki entry":"Entries in this period","is dauran koi sale nahi":"no sales in this period","Party":"Party","Parties":"Parties","Views":"Views","last 5":"last 5","piece":"pieces","Piece":"Pieces","Kharid":"Purchases"
   };
   var RX=[
 [/^(\d[\d.,]*) piece pade hain$/,"$1 pieces in stock"],[/^(-?[\d.]+) piece$/,"$1 pieces"],[/^(\d[\d.,]*) piece bache hain · GST ke bina$/,"$1 pieces left · excl. GST"],[/^(\d+) piece bike$/,"$1 pieces sold"],
 [/^(\d+) sale · (-?[\d.]+) pcs$/,"$1 sales · $2 pcs"],[/^(\d+) sale · (-?[\d.]+) piece · GST sahit$/,"$1 sales · $2 pieces · incl. GST"],[/^(\d+) kharid · GST sahit$/,"$1 purchases · incl. GST"],
-[/^(\d+) entry · (-?[\d.]+) piece · total (.*)$/,"$1 entries · $2 pieces · total $3"],[/^(\d+) product$/,"$1 products"],[/^(\d+) party ka baaki$/,"$1 parties to pay"],[/^(\d+) party ki due date nikal gayi$/,"$1 parties past due date"],
+[/^(\d+) entry · (-?[\d.]+) piece · total (.*)$/,"$1 entries · $2 pieces · total $3"],[/^(\d+) product$/,"$1 products"],[/^(\d+) ka pack$/,"pack of $1"],[/^(\d+) pack$/,"$1 packs"],[/^(\d+) piece ka$/,"for $1 pieces"],[/^(.+) \/ piece$/,"$1 / piece"],[/^Daam \((\d+) ka pack\)$/,"Price (pack of $1)"],[/^(.+) ke kharche se$/,"with $1 costs"],[/^Bechne ka daam \((\d+) piece ka pack, GST sahit\)$/,"Selling price (pack of $1, incl. GST)"],[/^Kharid \((\d+) piece × (.+)\)$/,"Cost of goods ($1 pieces × $2)"],[/^Ek piece par (.+)$/,"Per piece $1"],[/^Pack (\d+) piece ka ho gaya\. Daam ab ek pack ka hai\.$/,"Pack is now $1 pieces. The price is now per pack."],[/^(.+) ke sab product par ye kharcha lag gaya$/,"These costs were applied to all $1 products"],[/^(.+) ke rule se andaza: (.+)\. Asli fees alag ho to yahan badal do\.$/,"Estimate from $1 rules: $2. Change it here if the real fees differ."],[/^(\d+) pack \((\d+) piece ka pack\)$/,"$1 packs (pack of $2)"],[/^(\d+) piece ka pack hai, qty (\d+) ke guna mein likho$/,"Pack of $1: enter qty in multiples of $2"],[/^(\d+) piece ka pack hai$/,"Pack of $1"],[/^(\d+) party ka baaki$/,"$1 parties to pay"],[/^(\d+) party ki due date nikal gayi$/,"$1 parties past due date"],
 [/^(\d+) din udhaar$/,"$1 days credit"],[/^(\d+) entries, nayi upar$/,"$1 entries, newest first"],[/^(.+) se baaki hai$/,"pending since $1"],
 [/^(.+) late ho gaya, (.+) 7 din mein$/,"$1 overdue, $2 in 7 days"],[/^(.+) late ho gaya$/,"$1 overdue"],[/^(.+) late$/,"$1 overdue"],[/^(.+) aaj dena hai, (.+) agle 7 din mein$/,"$1 due today, $2 in next 7 days"],[/^(.+) aaj dena hai$/,"$1 due today"],[/^(.+) agle 7 din mein dena hai$/,"$1 due in next 7 days"],
 [/^Stock mein abhi (-?[\d.]+) pcs$/,"In stock now: $1 pcs"],[/^Stock mein sirf (-?[\d.]+) pcs hain$/,"Only $1 pcs in stock"],[/^(.+) ka khata$/,"$1's ledger"],[/^(.+) ke khate mein$/,"Added to $1's ledger:"],[/^(.+) ke khate se$/,"From $1's ledger:"],[/^(.+) ko abhi$/,"To $1 now"],[/^(.+) se$/,"From $1:"],
@@ -1393,18 +1404,19 @@ table.stk td.l,table.stk th.l{text-align:left}
   function spOf(name){ var r=null; calcProds().forEach(function(p){ if(key(p[0])===key(name)&&n(p[3])>0) r=n(p[3])/Math.max(1,n(p[10])||1); }); return r; }
   function renderStock(){
     var body=$("stk-body"), ae=document.activeElement, busy=ae&&ae.classList&&ae.classList.contains("sp")&&body.contains(ae);
-    var s=stock(), info=prodInfo(), low=lowAt(), tp=0, tv=0, lows=[], nop=0, A=[], B=[];
+    var s=stock(), info=prodInfo(), low=lowAt(), tp=0, tv=0, lows=[], nop=0, A=[], B=[], ch=curCh();
     s.forEach(function(x){
-      var left=Math.round((x.inq-x.out+x.adj)*100)/100, avg=x.inq>0?x.val/x.inq:0, sp=spOf(x.name), g=gstOf(x.name,info), cc=costOf(x.name), ca=costAmt(cc,sp), pr=(sp==null||!(x.inq>0))?null:sp/(1+g/100)-avg-ca, isLow=left<=low, nm=esc(x.name);
+      var left=Math.round((x.inq-x.out+x.adj)*100)/100, avg=x.inq>0?x.val/x.inq:0, ps=psOf(x.name), sp=packPrice(x.name), g=gstOf(x.name,info), cc=costOf(x.name,ch), ca=costAmt(cc,sp), pr=(sp==null||!(x.inq>0))?null:sp/(1+g/100)-avg*ps-ca, isLow=left<=low, nm=esc(x.name);
       if(left>0){ tp+=left; tv+=left*avg; } if(isLow) lows.push(x.name); if(sp==null) nop++;
-      var c1='<td class="l" style="text-align:left;font-weight:600"><button type="button" class="pn" data-prod="'+nm+'">'+nm+'</button></td><td class="o '+(left<0?"neg":"")+'">'+left+'<span class="pcs"> pcs</span>'+(isLow?' <span class="chip c-warn">kam</span>':'')+'</td><td data-l="Kharid rate">'+(x.inq>0?inr(avg):"—")+'</td>';
-      var c3='<td data-l="Kharcha / piece"><button type="button" class="kc" data-prod="'+nm+'">'+inr(ca)+(cc.own?"":"<small>andaza</small>")+'</button></td><td data-l="Asli munafa / piece" class="'+(pr==null?"":(pr<0?"neg":"pos"))+'" style="font-weight:700">'+(pr==null?"—":inr(pr))+'</td><td class="o val">'+inr(Math.max(0,left)*avg)+'</td></tr>';
-      var tr='<tr data-k="'+esc(key(x.name))+'">'; A.push(tr+c1+'<td data-l="Bechne ka daam"><input type="number" class="sp" min="0" step="any" inputmode="decimal" data-name="'+esc(x.name)+'" value="'+(sp==null?"":r2(sp))+'" placeholder="likho" aria-label="Bechne ka daam"></td>'+c3);
-      B.push(tr+c1+'<td data-l="Bechne ka daam">'+(sp==null?'<span style="color:var(--muted)">—</span>':inr(sp))+'</td>'+c3);
+      var c1='<td class="l" style="text-align:left;font-weight:600"><button type="button" class="pn" data-prod="'+nm+'">'+nm+'</button>'+(ps>1?' <span class="chip c-good">'+ps+' ka pack</span>':'')+'</td><td class="o '+(left<0?"neg":"")+'">'+left+'<span class="pcs"> pcs</span>'+(isLow?' <span class="chip c-warn">kam</span>':'')+(ps>1&&left>0?'<small class="pk">'+Math.floor(left/ps)+' pack</small>':'')+'</td><td data-l="Kharid rate">'+(x.inq>0?inr(avg):"—")+'</td>';
+      var c3='<td data-l="Kharcha / order"><button type="button" class="kc" data-prod="'+nm+'">'+inr(ca)+(cc.est?"<small>andaza</small>":"")+'</button></td><td data-l="Asli munafa / order" class="'+(pr==null?"":(pr<0?"neg":"pos"))+'" style="font-weight:700">'+(pr==null?"—":inr(pr))+(pr!=null&&ps>1?'<small class="pk">'+inr(pr/ps)+' / piece</small>':'')+'</td><td class="o val">'+inr(Math.max(0,left)*avg)+'</td></tr>';
+      var dl=ps>1?"Daam ("+ps+" ka pack)":"Bechne ka daam";
+      var tr='<tr data-k="'+esc(key(x.name))+'">'; A.push(tr+c1+'<td data-l="'+dl+'"><input type="number" class="sp" min="0" step="any" inputmode="decimal" data-name="'+esc(x.name)+'" value="'+(sp==null?"":r2(sp))+'" placeholder="likho" aria-label="Bechne ka daam">'+(ps>1?'<small class="pk dsk">'+ps+' piece ka</small>':'')+'</td>'+c3);
+      B.push(tr+c1+'<td data-l="'+dl+'">'+(sp==null?'<span style="color:var(--muted)">—</span>':inr(sp))+'</td>'+c3);
     });
     var empty='<tr><td colspan="7" style="text-align:left;color:var(--muted)">Abhi stock khali hai. "Maal kharida" se pehli kharid likho, yahan apne aap dikhega.</td></tr>';
     if(!busy){ body.innerHTML=A.join("")||empty; $("stk-foot").innerHTML=s.length?'<tr><td style="text-align:left">Total</td><td>'+Math.round(tp*100)/100+'</td><td></td><td></td><td></td><td></td><td>'+inr(tv)+'</td></tr>':""; stkFilter(); }
-    renderDet();
+    renderDet(); document.querySelectorAll("#ch-seg").forEach(function(e){ e.innerHTML=chSegHtml(); }); if($("h-ch")) $("h-ch").textContent=chName(ch)+" ke kharche se";
     if($("h-stk-body")){ $("h-stk-body").innerHTML=B.join("")||empty; }
     var pcs=Math.round(tp*100)/100;
     if($("st-pcs")){ $("st-pcs").textContent=pcs; $("st-prod").textContent=s.length+" product"; $("st-val").textContent=inr(tv); $("st-low").textContent=lows.length+" product"; $("st-low-s").textContent=lows.length?lows.slice(0,2).join(", ")+(lows.length>2?" aur "+(lows.length-2):""):low+" piece se zyada hai"; $("st-nop").textContent=nop+" product"; }
@@ -1923,12 +1935,14 @@ table.stk td.l,table.stk th.l{text-align:left}
     if(week>0.5) return [inr(week)+" agle 7 din mein dena hai","amb"];
     return [bal>0.5?(since?fd(since)+" se baaki hai":"baaki hai"):"kisi ka baaki nahi",""];
   }
+  var hRange=null;
   function renderLast(){
-    var box=$("h-last"); if(!box) return; var rows=[];
+    var box=$("h-last"); if(!box) return; var rows=[], all=!hRange||$("h-period").value==="all";
+    $("h-last-t").textContent=all?"Aakhri 5 entry":"Is dauran ki entry";
     function at(c,id){ var x=find(c,id); return x?String(x.createdAt||""):""; }
-    rowsFor(null).forEach(function(r){ r.at=at(r.c,r.id); rows.push(r); });
+    rowsFor(null).forEach(function(r){ if(!all&&(String(r.date)<hRange[0]||String(r.date)>hRange[1])) return; r.at=at(r.c,r.id); rows.push(r); });
     rows.sort(function(a,b){ return a.date<b.date?1:a.date>b.date?-1:(a.at<b.at?1:a.at>b.at?-1:0); });
-    box.innerHTML=rows.length? rows.slice(0,5).map(function(r){ var amt=r.plus||r.minus;
+    box.innerHTML=rows.length? rows.slice(0,all?5:30).map(function(r){ var amt=r.plus||r.minus;
       return '<div class="hrow"><div class="a"><b><span class="tag '+r.tag+'">'+r.tl+'</span> '+esc(r.pid?pname(r.pid):"")+'</b><span>'+fd(r.date)+' · '+esc(r.desc)+'</span></div><div class="b">'+(amt?inr(amt):"")+'</div></div>'; }).join("") : '<div class="help">Abhi koi entry nahi hai.</div>';
   }
   function renderHome(){
@@ -1938,10 +1952,13 @@ table.stk td.l,table.stk th.l{text-align:left}
     var info=prodInfo(), agg={}; ms.forEach(function(k){ agg[k]={sale:0,buy:0,prof:0,ns:0,nb:0,pcs:0,unk:0}; });
     D.sales.forEach(function(x){ var a=agg[mkey(x.date)]; if(!a) return; var r=saleProfit(x,info); a.sale+=n(x.amount); a.prof+=r.p; a.ns++; a.pcs+=n(x.qty); if(!r.known) a.unk++; });
     D.purchases.forEach(function(x){ var a=agg[mkey(x.date)]; if(!a) return; a.buy+=pTotal(x); a.nb++; });
-    var A=agg[cur];
+    var A=agg[cur], HR=null;
+    if(!ADV){ HR=aRange("h"); A={sale:0,prof:0,ns:0,pcs:0,unk:0}; var cu=$("h-period").value==="cust"; $("h-cust").hidden=!cu; $("h-cust").style.display=cu?"flex":"none";
+      D.sales.forEach(function(x){ var dd=String(x.date||""); if(dd<HR[0]||dd>HR[1]) return; var r=saleProfit(x,info); A.sale+=n(x.amount); A.prof+=r.p; A.ns++; A.pcs+=n(x.qty); if(!r.known) A.unk++; }); }
+    hRange=HR;
     $("h-empty").hidden=!!(D.sales.length||D.purchases.length||D.payments.length);
     var NOW=agg[ms[5]]; if($("r-sale")){ $("r-sale").textContent=inr(NOW.sale); var rp=$("r-prof"); rp.textContent=inr(NOW.prof); rp.style.color=NOW.prof<0?"var(--bad)":""; }
-    $("h-sale").textContent=inr(A.sale); $("h-sale-s").textContent=A.ns? A.ns+" sale · "+A.pcs+" pcs" : "is mahine koi sale nahi";
+    $("h-sale").textContent=inr(A.sale); $("h-sale-s").textContent=A.ns? A.ns+" sale · "+A.pcs+" pcs" : (ADV?"is mahine koi sale nahi":"is dauran koi sale nahi");
 
     var pe=$("h-prof"); pe.textContent=inr(A.prof); pe.className="v "+(A.prof<0?"red":(A.prof>0?"grn":""));
     $("h-prof-s").textContent=A.unk? A.unk+" sale ka kharid rate nahi mila, munafa zyada dikh sakta hai" : "GST, fees aur maal ka rate ghata ke";
@@ -1984,7 +2001,7 @@ table.stk td.l,table.stk th.l{text-align:left}
   });
 
   // ---------- quick entry: ek jagah se kharid / bikri ----------
-  var qm="", qr=false, qPaidEdited=false;
+  var qm="", qr=false, qPaidEdited=false, qFeesEdited=false;
   function qEl(id){ return document.getElementById(id); }
   function calcProds(){ try{ return (window.aspCalc.get().prods)||[]; }catch(e){ return []; } }
   function lastBuy(name){ var k=key(name), best=null; D.purchases.forEach(function(x){ if(key(x.product)===k&&(!best||String(x.createdAt||x.date||"")>String(best.createdAt||best.date||""))) best=x; }); return best; }
@@ -2020,6 +2037,7 @@ table.stk td.l,table.stk th.l{text-align:left}
       tr.querySelector(".qi-a").textContent=q>0&&r>0?m2(tx+t):"—";
       var s=tr.querySelector(".qi-s"), av=d?availOf(d):null, outw=(qm==="sell")!==qr, bad=outw&&d&&(av==null||q>av);
       s.textContent=!d?"":(av==null?(outw?"Ye maal stock mein nahi hai":"Naya product, stock mein jud jayega"):(bad?"Stock mein sirf "+av+" pcs hain":"Stock mein abhi "+av+" pcs"));
+      var pk=d?psOf(d):1; if(qm==="sell"&&pk>1&&d){ var sp2=document.createElement("span"); sp2.className="qi-pk"; sp2.textContent=q>0?(q%pk===0?q/pk+" pack ("+pk+" piece ka pack)":pk+" piece ka pack hai, qty "+pk+" ke guna mein likho"):pk+" piece ka pack hai"; s.appendChild(document.createTextNode(" · ")); s.appendChild(sp2); }
       s.className="qi-s"+(bad?" bad":"");
       if(d&&q>0&&r>0){ if(bad) o.over++; o.lines.push({desc:d,hsn:hh?hh.value.trim():"",qty:q,rate:r2(tx/q),gst:g,taxable:tx,tax:t,total:r2(tx+t)}); o.taxable+=tx; o.tax+=t; }
     });
@@ -2034,6 +2052,12 @@ table.stk td.l,table.stk th.l{text-align:left}
     if(k!=="buy"&&o.round) h+='<div><span>Round off</span><b>'+m2(o.round)+'</b></div>';
     h+='<div class="g"><span>Total</span><span>'+m2(tot)+'</span></div>';
     var pd=qEl("q-paid");
+    if(k==="mkt"&&!qr&&qEl("q-fees-h")){
+      var pv0=qEl("q-party").value, pn0=pv0==="__newm"||pv0==="__new"?(qEl("q-new")?qEl("q-new").value:""):pname(pv0), ch0=chOfName(pn0), fh=qEl("q-fees-h");
+      if(ch0&&o.lines.length){ var fe=0; o.lines.forEach(function(l){ var c=costOf(l.desc,ch0), ords=l.qty/psOf(l.desc); fe+=l.total*c.comm/100+(c.fixed+c.ship)*ords; }); fe=Math.round(fe);
+        if(!qFeesEdited) qEl("q-fees").value=fe; fh.textContent=chName(ch0)+" ke rule se andaza: "+inr(fe)+". Asli fees alag ho to yahan badal do."; }
+      else fh.textContent="";
+    }
     if(k==="direct"&&!qPaidEdited) pd.value=o.lines.length?tot:"";
     if(k==="mkt"){ h+='<div><span>'+(qr?"Payout itna kam hoga":"Fees kat ke payout aana hai")+'</span><b>'+m2(tot-n(qEl("q-fees").value))+'</b></div>'; }
     else if(qr){ if(o.lines.length) h+='<div><span>'+(k==="buy"?"Party ke khate se kam hoga":"Customer ke khate se kam hoga")+'</span><b>'+m2(tot)+'</b></div>'; }
@@ -2063,7 +2087,7 @@ table.stk td.l,table.stk th.l{text-align:left}
   }
   function qClose(){ $("v-home").classList.remove("qopen"); qm=""; qr=false; var c=qEl("q-card"); c.hidden=true; c.innerHTML=""; document.querySelectorAll("#h-quick button").forEach(function(b){ b.removeAttribute("aria-pressed"); }); }
   function qOpen(mode,ret){
-    $("v-home").classList.add("qopen"); qm=mode; qr=!!ret; qPaidEdited=false; var c=qEl("q-card"), buy=mode==="buy", h="";
+    $("v-home").classList.add("qopen"); qm=mode; qr=!!ret; qPaidEdited=false; qFeesEdited=false; var c=qEl("q-card"), buy=mode==="buy", h="";
     document.querySelectorAll("#h-quick button").forEach(function(b){ if(b.dataset.q===(qr?"ret":mode)) b.setAttribute("aria-pressed","true"); else b.removeAttribute("aria-pressed"); });
     h+='<div class="card-h"><h3>'+(qr?"Maal wapas":(buy?"Maal kharida":"Maal becha"))+'</h3><span><button class="btn ghost sm" type="button" id="q-close">Band karo</button></span></div><div class="card-b" id="q-body" style="display:flex;flex-direction:column;gap:14px">';
     if(qr) h+='<div class="seg" role="group" aria-label="Wapsi ka type"><button type="button" data-rt="buy" aria-pressed="'+buy+'">Party ko wapas kiya</button><button type="button" data-rt="sell" aria-pressed="'+(!buy)+'">Customer se wapas aaya</button></div>';
@@ -2074,7 +2098,7 @@ table.stk td.l,table.stk th.l{text-align:left}
     if(buy) h+=f("q-bill",qr?"Note / debit note no. (ho to)":"Party ka bill no. (ho to)",'<input type="text" id="q-bill">',true);
     else {
       h+='<div class="full" id="q-cust"><div class="form-grid">'+f("q-cname","Customer ka naam",'<input type="text" id="q-cname" list="q-custs" placeholder="jaise Rahul Traders"><datalist id="q-custs"></datalist>',true)+(qr?"":f("q-cstate","Customer ka state",'<select id="q-cstate">'+stOpts()+'</select>')+f("q-cgstin","Customer GSTIN (ho to)",'<input type="text" id="q-cgstin" maxlength="15">')+f("q-caddr","Customer ka address (ho to)",'<input type="text" id="q-caddr">',true))+'</div></div>';
-      h+='<div class="full" id="q-fees-w" hidden><label class="fl" for="q-fees">'+(qr?"Marketplace ne kitni fees wapas ki ₹ (nahi ki to 0)":"Marketplace ne kitni fees kaati ₹ (commission, shipping, GST)")+'</label><input type="number" id="q-fees" min="0" step="any" value="0" inputmode="decimal"></div>';
+      h+='<div class="full" id="q-fees-w" hidden><label class="fl" for="q-fees">'+(qr?"Marketplace ne kitni fees wapas ki ₹ (nahi ki to 0)":"Marketplace ne kitni fees kaati ₹ (commission, shipping, GST)")+'</label><input type="number" id="q-fees" min="0" step="any" value="0" inputmode="decimal"><div class="help" id="q-fees-h"></div></div>';
     }
     h+='</div><div class="tscroll"><table class="bi"><thead><tr><th class="l" style="text-align:left">Product</th>'+(buy||qr?"":"<th>HSN</th>")+'<th>Qty (piece)</th><th>Rate ₹ (1 piece)</th><th>GST %</th><th>Amount</th><th></th></tr></thead><tbody id="q-items"></tbody></table></div><datalist id="q-prods"></datalist>';
     h+='<div class="btnrow" style="align-items:center"><button class="btn ghost" type="button" id="q-add">+ Ek aur product</button>'+(buy&&!qr?'<button class="btn ghost adv" type="button" id="q-imp">Products tab ki qty yahan bhar do</button>':'')+'<label style="display:flex;gap:8px;align-items:center;font-size:.86rem"><input type="checkbox" id="q-incl"'+(buy?"":" checked")+' style="width:16px;height:16px"> Rate mein GST shamil hai</label></div>';
@@ -2191,6 +2215,7 @@ table.stk td.l,table.stk th.l{text-align:left}
     ["input","change"].forEach(function(ev){ c.addEventListener(ev,function(e){
       var t=e.target; if(!qEl("q-items")) return;
       if(t.id==="q-paid") qPaidEdited=true;
+      if(t.id==="q-fees") qFeesEdited=true;
       if(t.id==="q-cstate") t.dataset.touched="1";
       if(t.classList.contains("qi-r")&&ev==="input") delete t.dataset.auto;
       if(t.id==="q-cgstin"){ t.value=t.value.toUpperCase().replace(/\s+/g,""); if(/^\d{2}/.test(t.value)&&stName(t.value.slice(0,2))){ qEl("q-cstate").value=t.value.slice(0,2); qEl("q-cstate").dataset.touched="1"; } }
@@ -2227,7 +2252,7 @@ table.stk td.l,table.stk th.l{text-align:left}
   function safeBackup(){
     var done=false; try{ done=localStorage.getItem(BK)==="1"; }catch(e){}
     if(done||bkBusy||!db||dead) return; var s=snapshotAll(); if(!countAll(s)){ try{ localStorage.setItem(BK,"1"); }catch(e){} return; }
-    bkBusy=true; autoBackup("Version 23 update se pehle (apne aap)").then(function(){ try{ localStorage.setItem(BK,"1"); }catch(e){} },function(){}).then(function(){ bkBusy=false; });
+    bkBusy=true; autoBackup("Version 24 update se pehle (apne aap)").then(function(){ try{ localStorage.setItem(BK,"1"); }catch(e){} },function(){}).then(function(){ bkBusy=false; });
   }
   document.addEventListener("click",function(e){ var b=e.target.closest&&e.target.closest("[data-qgo]"); if(!b) return; location.hash="#home"; var m=b.dataset.qgo; setTimeout(function(){ qOpen(m); },60); });
   document.getElementById("prod-body").addEventListener("input",function(e){ if(e.target.closest("td.name")) prodStock(); });
@@ -2235,14 +2260,14 @@ table.stk td.l,table.stk th.l{text-align:left}
 
   // ---------- calculator: asli hisaab ----------
   function gstOf(name,info){ var o=info[key(name)]; if(o&&o.q) return o.g; var g=0; calcProds().forEach(function(p){ if(key(p[0])===key(name)) g=n(p[1]); }); return g; }
-  function aRange(){
-    var v=$("a-period").value, d=new Date(), y=d.getFullYear(), m=d.getMonth();
+  function aRange(pre){
+    pre=pre||"a"; var v=$(pre+"-period").value, d=new Date(), y=d.getFullYear(), m=d.getMonth();
     function first(yy,mm){ return iso(new Date(yy,mm,1)); }
     var t=today();
     if(v==="d0") return [t,t];
     if(v==="d1") return [addDays(t,-1),addDays(t,-1)];
     if(v==="w0") return [addDays(t,-((d.getDay()+6)%7)),"9999"];
-    if(v==="cust"){ var f=$("a-from").value||"", e=$("a-to").value||"9999"; if(f&&e<f){ var x=f; f=e; e=x; } return [f,e]; }
+    if(v==="cust"){ var f=$(pre+"-from").value||"", e=$(pre+"-to").value||"9999"; if(f&&e<f){ var x=f; f=e; e=x; } return [f,e]; }
     if(v==="m0") return [first(y,m),"9999"];
     if(v==="m1") return [first(y,m-1),addDays(first(y,m),-1)];
     if(v==="m3") return [first(y,m-2),"9999"];
@@ -2291,6 +2316,7 @@ table.stk td.l,table.stk th.l{text-align:left}
     $("a-pl-t").textContent=PL.length?PL.length+" entry · "+bp+" piece · total "+inr(T.buy):"";
   }
   ["a-from","a-to"].forEach(function(i){ $(i).addEventListener("change",renderActual); });
+  ["h-period","h-from","h-to"].forEach(function(i){ $(i).addEventListener("change",renderHome); });
   $("a-period").addEventListener("change",renderActual);
   // ---------- bhasha / language ----------
   var LANG=window.aspLang==="en"?"en":"hi";
@@ -2304,14 +2330,30 @@ table.stk td.l,table.stk th.l{text-align:left}
   $("lang-seg").addEventListener("click",function(e){ var b=e.target.closest("button[data-lang]"); if(b) langSet(b.dataset.lang); });
   // ---------- v21: asli kharcha, product history, search ----------
   var COSTDEF={comm:0,fixed:0,ship:40,pack:5}, detName="";
-  function costCfg(){ var c=null; try{ c=window.aspCalc.get().cost; }catch(e){} c=c||{}; var d={}; Object.keys(COSTDEF).forEach(function(k){ d[k]=(c.def&&c.def[k]!=null)?n(c.def[k]):COSTDEF[k]; }); return {def:d,own:c.own||{}}; }
-  function costOf(name){
-    var cfg=costCfg(), k=key(name), hit=null; calcProds().forEach(function(p){ if(key(p[0])===k) hit=p; });
-    var ps=hit?Math.max(1,n(hit[10])||1):1;
-    if(hit&&(cfg.own[k]||n(hit[4])||n(hit[5])||n(hit[6])||n(hit[7]))) return {comm:n(hit[4]),fixed:n(hit[5])/ps,ship:n(hit[6])/ps,pack:n(hit[7])/ps,own:true};
-    return {comm:cfg.def.comm,fixed:cfg.def.fixed,ship:cfg.def.ship,pack:cfg.def.pack,own:false};
+  var CHS=[["amazon","Amazon"],["flipkart","Flipkart"],["meesho","Meesho"],["direct","Seedha"]];
+  var CHDEF={amazon:{comm:0,fixed:6,ship:40,pack:5},flipkart:{comm:0,fixed:5,ship:45,pack:5},meesho:{comm:0,fixed:0,ship:0,pack:5},direct:{comm:0,fixed:0,ship:0,pack:0}};
+  function chName(id){ for(var i=0;i<CHS.length;i++) if(CHS[i][0]===id) return CHS[i][1]; return id; }
+  function curCh(){ var v=""; try{ v=localStorage.getItem("aspire_ch")||""; }catch(e){} return CHDEF[v]?v:"amazon"; }
+  function chOfName(nm){ nm=key(nm); return nm.indexOf("amazon")>=0?"amazon":nm.indexOf("flipkart")>=0?"flipkart":nm.indexOf("meesho")>=0?"meesho":""; }
+  function c4(o,d){ d=d||{}; o=o||{}; function g(k){ return o[k]!=null?n(o[k]):n(d[k]); } return {comm:g("comm"),fixed:g("fixed"),ship:g("ship"),pack:g("pack")}; }
+  function prodRow(name){ var hit=null, k=key(name); calcProds().forEach(function(p){ if(key(p[0])===k) hit=p; }); return hit; }
+  function psOf(name){ var p=prodRow(name); return p?Math.max(1,Math.round(n(p[10]))||1):1; }
+  function packPrice(name){ var p=prodRow(name); return p&&n(p[3])>0?n(p[3]):null; }
+  function costCfg(){
+    var c=null; try{ c=window.aspCalc.get().cost; }catch(e){} c=c||{};
+    var out={v:2,ch:{},est:{},prod:{}};
+    if(c.v===2){ CHS.forEach(function(x){ out.ch[x[0]]=c4((c.ch||{})[x[0]],CHDEF[x[0]]); }); out.est=c.est||{}; out.prod=c.prod||{}; return out; }
+    CHS.forEach(function(x){ var id=x[0]; if(id!=="direct"&&c.def) out.ch[id]=c4(c.def,COSTDEF); else { out.ch[id]=c4(CHDEF[id]); if(id!=="direct") out.est[id]=1; } });
+    calcProds().forEach(function(p){ var k=key(p[0]); if(!k) return; if(!((c.own&&c.own[k])||n(p[4])||n(p[5])||n(p[6])||n(p[7]))) return;
+      var v={comm:n(p[4]),fixed:n(p[5]),ship:n(p[6]),pack:n(p[7])}, d=out.ch.amazon;
+      if(c.def&&v.comm===d.comm&&v.fixed===d.fixed&&v.ship===d.ship&&v.pack===d.pack) return;
+      out.prod[k]={amazon:v,flipkart:c4(v),meesho:c4(v)}; });
+    return out;
   }
-  function costAmt(c,sp){ return n(sp)*c.comm/100+c.fixed+c.ship+c.pack; }
+  function costOf(name,ch){ ch=ch||curCh(); var cfg=costCfg(), o=(cfg.prod[key(name)]||{})[ch], r=c4(o||cfg.ch[ch]); r.own=!!o; r.est=!o&&!!cfg.est[ch]; return r; }
+  function costAmt(c,pp){ return n(pp)*c.comm/100+c.fixed+c.ship+c.pack; }
+  function costWrite(fn){ var d=window.aspCalc.get(), cfg=costCfg(); fn(cfg,d); d.cost={v:2,ch:cfg.ch,est:cfg.est,prod:cfg.prod}; window.aspCalc.load(d); }
+  function chSegHtml(){ var cur=curCh(); return CHS.map(function(x){ return '<button type="button" data-ch="'+x[0]+'" aria-pressed="'+(x[0]===cur)+'">'+x[1]+'</button>'; }).join(""); }
   function stkFilter(){
     var q=key($("stk-q").value), any=false, tot=0;
     $("stk-body").querySelectorAll("tr[data-k]").forEach(function(tr){ tot++; var ok=!q||tr.dataset.k.indexOf(q)>=0; tr.hidden=!ok; if(ok) any=true; });
@@ -2329,44 +2371,55 @@ table.stk td.l,table.stk th.l{text-align:left}
   function renderDet(){
     var box=$("stk-det"); if(!box) return; if(!detName){ box.hidden=true; return; }
     var ae=document.activeElement; if(ae&&box.contains(ae)&&ae.tagName==="INPUT") return;
-    var info=prodInfo(), o=info[key(detName)], avg=o&&o.q?o.v/o.q:0, g=gstOf(detName,info), sp=spOf(detName), c=costOf(detName), H=detHist(detName), T=H.T;
+    var info=prodInfo(), o=info[key(detName)], avg=o&&o.q?o.v/o.q:0, g=gstOf(detName,info), ch=curCh(), c=costOf(detName,ch), H=detHist(detName), T=H.T, ps=psOf(detName);
     var h='<div class="card-h"><h3>'+esc(detName)+'</h3><span><button class="btn ghost sm" type="button" id="det-close">Band karo</button></span></div><div class="card-b">';
     h+='<div class="detk"><div><b>'+T.buy+'</b>kharida</div><div><b>'+T.sold+'</b>becha</div><div><b>'+T.rb+'</b>party ko wapas</div><div><b>'+T.rs+'</b>customer se wapas</div><div><b>'+T.left+'</b>abhi stock mein</div></div>';
-    h+='<div class="det-2"><div><h4>Ek piece bechne ka kharcha</h4><div class="form-grid">'
+    h+='<div class="det-pack"><label class="fl" for="dc-ps">Ek order mein kitne piece bikte hain (pack)</label><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input type="number" id="dc-ps" min="1" step="1" inputmode="numeric" value="'+ps+'" style="width:90px"><button class="btn ghost" type="button" id="dc-ps-save">Pack save karo</button><span class="help">Chhota maal 12 ka pack bikta hai to yahan 12 likho. Stock piece mein hi ginta hai.</span></div></div>';
+    h+='<div class="det-2"><div><h4>Ek order ka kharcha</h4><div class="seg ch-seg" style="margin-bottom:10px">'+chSegHtml()+'</div><div class="form-grid">'
       +'<div><label class="fl" for="dc-comm">Marketplace fees %</label><input type="number" id="dc-comm" min="0" step="any" inputmode="decimal" value="'+r2(c.comm)+'"></div>'
       +'<div><label class="fl" for="dc-fixed">Fixed fee ₹</label><input type="number" id="dc-fixed" min="0" step="any" inputmode="decimal" value="'+r2(c.fixed)+'"></div>'
       +'<div><label class="fl" for="dc-ship">Shipping ₹</label><input type="number" id="dc-ship" min="0" step="any" inputmode="decimal" value="'+r2(c.ship)+'"></div>'
       +'<div><label class="fl" for="dc-pack">Packing ₹</label><input type="number" id="dc-pack" min="0" step="any" inputmode="decimal" value="'+r2(c.pack)+'"></div></div>'
-      +'<div class="help" style="margin-top:8px">'+(c.own?"Ye is product ka apna kharcha hai.":"Abhi ye andaza hai. Apna asli kharcha likh kar Save karo. Seedha dukaan se bechte ho to sab 0 kar do.")+'</div>'
-      +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="btn" type="button" id="dc-save">Save karo</button><button class="btn ghost" type="button" id="dc-all">Sab product par yahi lagao</button><span class="formmsg" id="dc-msg" aria-live="polite"></span></div></div>';
-    h+='<div><h4>Ek piece par munafa</h4><div id="dc-sum">'+detSum(sp,g,avg,c,!!(o&&o.q))+'</div></div></div>';
+      +'<div class="help" style="margin-top:8px">'+(c.own?"Ye is product ka apna kharcha hai.":(c.est?"Ye andaza hai. Apne seller panel se asli fees dekh kar likho aur Save karo.":"Ye is channel ka aam kharcha hai, sab product par lagta hai."))+'</div>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="btn" type="button" id="dc-save">Sirf is product ke liye save</button><button class="btn ghost" type="button" id="dc-all">Is channel ke sab product par lagao</button><span class="formmsg" id="dc-msg" aria-live="polite"></span></div></div>';
+    h+='<div><h4>Ek order par munafa</h4><div id="dc-sum">'+detSum(packPrice(detName),g,avg,c,!!(o&&o.q),ps)+'</div></div></div>';
     h+='<h4 style="margin:18px 0 8px;font-size:.9rem">Poori history</h4><div class="tscroll"><table><thead><tr><th class="l">Date</th><th class="l">Kya hua</th><th class="l">Party</th><th>Piece</th><th>Rate / amount</th><th>Stock bacha</th></tr></thead><tbody>'
       +(H.rows.length?H.rows.map(function(r){ return '<tr><td class="l">'+fd(r.d)+'</td><td class="l"><span class="tag '+r.c+'">'+r.t+'</span></td><td class="l">'+esc(r.p)+'</td><td class="'+(r.q<0?"neg":"pos")+'">'+(r.q>0?"+":"")+r.q+'</td><td>'+r.a+'</td><td class="o">'+r.bal+'</td></tr>'; }).join(""):'<tr><td class="l" colspan="6" style="color:var(--muted)">Is product ki koi entry nahi hai.</td></tr>')+'</tbody></table></div></div>';
     box.innerHTML=h; box.hidden=false;
   }
-  function detSum(sp,g,avg,c,known){
-    if(sp==null) return '<div class="help">Pehle neeche list mein is product ka "Bechne ka daam" likho, phir munafa yahan dikhega.</div>';
-    var net=sp/(1+g/100), fee=sp*c.comm/100+c.fixed, pr=net-avg-fee-c.ship-c.pack;
-    return lr("Bechne ka daam (GST sahit)",inr(sp))+lr("GST "+g+"% jo sarkar ko jayega",inr(-(sp-net)),"","neg")+lr("Kharid rate"+(known?"":" (kharid entry nahi mili)"),inr(-avg),"","neg")+lr("Marketplace fees",inr(-fee),"","neg")+lr("Shipping",inr(-c.ship),"","neg")+lr("Packing",inr(-c.pack),"","neg")+lr("Asli munafa",inr(pr),"total",pr<0?"neg":"pos");
+  function detSum(pp,g,avg,c,known,ps){
+    if(pp==null) return '<div class="help">Pehle neeche list mein is product ka "Bechne ka daam" likho, phir munafa yahan dikhega.</div>';
+    var net=pp/(1+g/100), fee=pp*c.comm/100+c.fixed, pr=net-avg*ps-fee-c.ship-c.pack;
+    return lr(ps>1?"Bechne ka daam ("+ps+" piece ka pack, GST sahit)":"Bechne ka daam (GST sahit)",inr(pp))+lr("GST "+g+"% jo sarkar ko jayega",inr(-(pp-net)),"","neg")+lr((ps>1?"Kharid ("+ps+" piece × "+inr(avg)+")":"Kharid rate")+(known?"":" (kharid entry nahi mili)"),inr(-avg*ps),"","neg")+lr("Marketplace fees",inr(-fee),"","neg")+lr("Shipping",inr(-c.ship),"","neg")+lr("Packing",inr(-c.pack),"","neg")+lr("Asli munafa",inr(pr),"total",pr<0?"neg":"pos")+(ps>1?lr("Ek piece par "+inr(pr/ps),"","meta"):"");
   }
   function detOpen(name){ detName=name; if(location.hash!=="#stock") location.hash="#stock"; var a=document.activeElement; if(a&&a.blur) a.blur(); renderDet(); setTimeout(function(){ try{ $("stk-det").scrollIntoView({block:"start",behavior:"smooth"}); }catch(e){} },80); }
   function detVals(){ return {comm:Math.max(0,n($("dc-comm").value)),fixed:Math.max(0,n($("dc-fixed").value)),ship:Math.max(0,n($("dc-ship").value)),pack:Math.max(0,n($("dc-pack").value))}; }
+  function unfocus(){ if(document.activeElement&&document.activeElement.blur) document.activeElement.blur(); }
   function detSave(all){
     try{
-      var v=detVals(), d=window.aspCalc.get(), k=key(detName), hit=null; d.prods.forEach(function(p){ if(key(p[0])===k) hit=p; });
-      if(!hit){ var o=prodInfo()[k]; hit=[detName,o?o.g:5,o&&o.q?r2(o.v/o.q*(1+o.g/100)):0,0,0,0,0,0,0,0,1]; d.prods.push(hit); }
-      var c=d.cost||{}; c.def=c.def||{}; c.own=c.own||{};
-      function put(p){ var ps=Math.max(1,n(p[10])||1); p[4]=v.comm; p[5]=r2(v.fixed*ps); p[6]=r2(v.ship*ps); p[7]=r2(v.pack*ps); }
-      if(all){ c.def=v; c.own={}; d.prods.forEach(put); } else { put(hit); c.own[k]=1; }
-      d.cost=c; window.aspCalc.load(d); if(document.activeElement&&document.activeElement.blur) document.activeElement.blur();
-      renderStock(); toast(all?"Sab product par ye kharcha lag gaya":"Kharcha save ho gaya");
+      var v=detVals(), k=key(detName), ch=curCh();
+      costWrite(function(cfg){
+        if(all){ cfg.ch[ch]=v; delete cfg.est[ch]; Object.keys(cfg.prod).forEach(function(pk){ if(cfg.prod[pk]) delete cfg.prod[pk][ch]; }); }
+        else { cfg.prod[k]=cfg.prod[k]||{}; cfg.prod[k][ch]=v; }
+      });
+      unfocus(); renderStock(); toast(all?chName(ch)+" ke sab product par ye kharcha lag gaya":"Kharcha save ho gaya");
     }catch(err){ var m=$("dc-msg"); if(m){ m.textContent="Save nahi hua, dobara try karo."; m.className="formmsg err"; } }
+  }
+  function packSave(){
+    try{
+      var ps=Math.max(1,Math.round(n($("dc-ps").value))||1), d=window.aspCalc.get(), k=key(detName), hit=null; d.prods.forEach(function(p){ if(key(p[0])===k) hit=p; });
+      if(!hit){ var o=prodInfo()[k]; hit=[detName,o?o.g:5,o&&o.q?r2(o.v/o.q*(1+o.g/100)):0,0,0,0,0,0,0,0,1]; d.prods.push(hit); }
+      var old=Math.max(1,n(hit[10])||1); if(old!==ps){ hit[3]=r2(n(hit[3])/old*ps); hit[10]=ps; window.aspCalc.load(d); }
+      unfocus(); renderStock(); toast(ps>1?"Pack "+ps+" piece ka ho gaya. Daam ab ek pack ka hai.":"Ab ye ek ek piece bikta hai.");
+    }catch(err){}
   }
   document.addEventListener("click",function(e){
     var t=e.target.closest&&e.target.closest("[data-prod]"); if(t){ detOpen(t.dataset.prod); return; }
     if(e.target.id==="det-close"){ detName=""; renderDet(); return; }
     if(e.target.id==="dc-save"){ detSave(false); return; }
     if(e.target.id==="dc-all"){ detSave(true); return; }
+    if(e.target.id==="dc-ps-save"){ packSave(); return; }
+    var cb=e.target.closest&&e.target.closest("[data-ch]"); if(cb){ try{ localStorage.setItem("aspire_ch",cb.dataset.ch); }catch(err){} unfocus(); renderStock(); return; }
   });
   document.addEventListener("change",function(e){
     if(e.target.id!=="led-terms"||!sel||!db) return; var p0=party(sel); if(!p0) return;
@@ -2375,7 +2428,7 @@ table.stk td.l,table.stk th.l{text-align:left}
   });
   document.addEventListener("input",function(e){
     if(e.target.id==="stk-q"){ stkFilter(); return; }
-    if(/^dc-(comm|fixed|ship|pack)$/.test(e.target.id||"")&&detName){ var info=prodInfo(), o=info[key(detName)]; $("dc-sum").innerHTML=detSum(spOf(detName),gstOf(detName,info),o&&o.q?o.v/o.q:0,detVals(),!!(o&&o.q)); }
+    if(/^dc-(comm|fixed|ship|pack)$/.test(e.target.id||"")&&detName){ var info=prodInfo(), o=info[key(detName)]; $("dc-sum").innerHTML=detSum(packPrice(detName),gstOf(detName,info),o&&o.q?o.v/o.q:0,detVals(),!!(o&&o.q),psOf(detName)); }
   });
 
 
@@ -2385,7 +2438,7 @@ table.stk td.l,table.stk th.l{text-align:left}
     try{
       var d=window.aspCalc.get(), nm=t.dataset.name, hit=null; d.prods.forEach(function(p){ if(key(p[0])===key(nm)) hit=p; });
       if(!hit){ var o=prodInfo()[key(nm)]; hit=[nm,o?o.g:5,o&&o.q?r2(o.v/o.q*(1+o.g/100)):0,0,0,0,0,0,0,0,1]; d.prods.push(hit); }
-      hit[3]=r2(n(t.value)*Math.max(1,n(hit[10])||1)); window.aspCalc.load(d); t.blur(); renderStock(); toast("Bechne ka daam save ho gaya");
+      hit[3]=r2(n(t.value)); window.aspCalc.load(d); t.blur(); renderStock(); toast("Bechne ka daam save ho gaya");
     }catch(err){}
   });
   (function(){
@@ -2396,7 +2449,7 @@ table.stk td.l,table.stk th.l{text-align:left}
   })();
 
   // ---------- boot ----------
-  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 23 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
+  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 24 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
   buildForm(); renderAll(); diag();
   var use=window.claude&&window.claude.use;
   if(!use){ status("Online khata yahan nahi chal raha. Is page ko Claude mein sign in karke kholo."); return; }
