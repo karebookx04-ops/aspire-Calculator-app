@@ -629,7 +629,7 @@ img{max-width:100%}
       </div>
     </div>
     <div class="banner" id="k-status" data-tone="info">Khata load ho raha hai…</div>
-    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 14</div>
+    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 15</div>
     <div class="banner" id="k-note" data-tone="info" hidden></div>
     <div class="card" id="k-rpanel" style="padding:18px 20px" hidden>
       <h3 style="margin:0 0 6px">Backup se restore</h3>
@@ -1891,7 +1891,7 @@ img{max-width:100%}
       h+='<div class="full" id="q-fees-w" hidden><label class="fl" for="q-fees">Marketplace ne kitni fees kaati ₹ (commission, shipping, GST)</label><input type="number" id="q-fees" min="0" step="any" value="0" inputmode="decimal"></div>';
     }
     h+='</div><div class="tscroll"><table class="bi"><thead><tr><th class="l" style="text-align:left">Product</th>'+(buy?"":"<th>HSN</th>")+'<th>Qty (piece)</th><th>Rate ₹ (1 piece)</th><th>GST %</th><th>Amount</th><th></th></tr></thead><tbody id="q-items"></tbody></table></div><datalist id="q-prods"></datalist>';
-    h+='<div class="btnrow" style="align-items:center"><button class="btn ghost" type="button" id="q-add">+ Ek aur product</button><label style="display:flex;gap:8px;align-items:center;font-size:.86rem"><input type="checkbox" id="q-incl"'+(buy?"":" checked")+' style="width:16px;height:16px"> Rate mein GST shamil hai</label></div>';
+    h+='<div class="btnrow" style="align-items:center"><button class="btn ghost" type="button" id="q-add">+ Ek aur product</button>'+(buy?'<button class="btn ghost" type="button" id="q-imp">Products tab ki qty yahan bhar do</button>':'')+'<label style="display:flex;gap:8px;align-items:center;font-size:.86rem"><input type="checkbox" id="q-incl"'+(buy?"":" checked")+' style="width:16px;height:16px"> Rate mein GST shamil hai</label></div>';
     h+='<div class="b-tot" id="q-tot"></div>';
     h+='<div class="form-grid" id="q-paid-w"><div><label class="fl" for="q-paid">'+(buy?"Abhi kitna paisa diya ₹ (udhaar hai to 0)":"Abhi kitna paisa mila ₹")+'</label><input type="number" id="q-paid" min="0" step="any" inputmode="decimal"'+(buy?' placeholder="0"':"")+'></div><div><label class="fl" for="q-pmode">Kaise</label><select id="q-pmode"><option>UPI</option><option>Cash</option><option>Bank</option></select></div><div class="full btnrow"><button class="btn ghost sm" type="button" id="q-full">Poora '+(buy?"de diya":"mil gaya")+'</button><button class="btn ghost sm" type="button" id="q-zero">Poora udhaar</button></div></div>';
     if(!buy) h+='<label id="q-mkbill-w" style="display:flex;gap:8px;align-items:center;font-size:.86rem"><input type="checkbox" id="q-mkbill" checked style="width:16px;height:16px;flex:none"> GST bill bhi banao (print / PDF)</label>';
@@ -1961,6 +1961,13 @@ img{max-width:100%}
       if(t.id==="q-again"){ qOpen(qm); return; }
       if(t.id==="q-dl"){ var v=c._inv; if(v) offer(t,"Bill download / print karo","Bill "+v.no,billFile(v),invoiceHtml(v)); return; }
       if(t.id==="q-add"){ qRow().querySelector("input").focus(); return; }
+      if(t.id==="q-imp"){
+        var L=calcProds().filter(function(x){ return String(x[0]||"").trim()&&n(x[9])>0; });
+        if(!L.length){ qsay("Products tab mein kisi product ki Qty nahi bhari hai.","err"); return; }
+        qEl("q-items").innerHTML=""; qEl("q-incl").checked=true;
+        L.forEach(function(x){ var tr=qRow(); tr.querySelector(".qi-d").value=String(x[0]).trim(); tr.querySelector(".qi-q").value=n(x[9])*Math.max(1,n(x[10])||1); if(n(x[2])>0) tr.querySelector(".qi-r").value=n(x[2]); setSel(tr.querySelector(".qi-g"),n(x[1])); });
+        qCalc(); qsay(L.length+" product bhar diye. Qty aur rate ek baar dekh lo, galat ho to yahin theek karo, phir Save dabao.","ok"); return;
+      }
       if(t.id==="q-full"){ var o=qData(); qPaidEdited=true; qEl("q-paid").value=qm==="buy"?o.gross:o.total; qCalc(); return; }
       if(t.id==="q-zero"){ qPaidEdited=true; qEl("q-paid").value=0; qCalc(); return; }
       if(t.id==="q-save"){ qSave(); return; }
@@ -1981,7 +1988,7 @@ img{max-width:100%}
   })();
 
   // ---------- boot ----------
-  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 14 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
+  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 15 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
   buildForm(); renderAll(); diag();
   var use=window.claude&&window.claude.use;
   if(!use){ status("Online khata yahan nahi chal raha. Is page ko Claude mein sign in karke kholo."); return; }
