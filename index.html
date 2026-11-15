@@ -335,7 +335,9 @@ span.pcs{display:none}
   .tabs a[aria-current="page"]{background:var(--accent);color:#fff}
   .mini{color:#9a948a;white-space:normal;padding:12px 14px 4px;margin-top:auto;font-size:.78rem;line-height:1.7;border-top:1px solid rgba(255,255,255,.1)}
   .mini b{color:#fff}
-  #app-user{flex-direction:column;align-items:flex-start!important;gap:8px!important}
+  #app-user{position:fixed;left:0;bottom:0;width:232px;box-sizing:border-box;margin:0!important;padding:12px 20px 16px;background:var(--bar);border-top:1px solid rgba(255,255,255,.1);flex-direction:column;align-items:flex-start!important;gap:8px!important;z-index:2}
+  #app-user span{max-width:100%;overflow-wrap:anywhere}
+  .top{padding-bottom:96px}
   main.in,main .in{max-width:1240px}
   main{padding-inline:28px!important}
 }
@@ -779,7 +781,7 @@ img{max-width:100%}
       </div>
     </div>
     <div class="banner" id="k-status" data-tone="info">Khata load ho raha hai…</div>
-    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 21</div>
+    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 22</div>
     <div class="banner" id="k-note" data-tone="info" hidden></div>
     <div class="card" id="k-rpanel" style="padding:18px 20px" hidden>
       <h3 style="margin:0 0 6px">Backup se restore</h3>
@@ -1338,7 +1340,7 @@ img{max-width:100%}
 
   // ---------- derived numbers ----------
   function partyStats(p){
-    var t=today(), r={billed:0,paid:0,bal:0,late:0,week:0,now:0,count:0};
+    var t=today(), r={billed:0,paid:0,bal:0,late:0,week:0,now:0,count:0,since:""};
     if(isMkt(p)){
       D.sales.forEach(function(s){ if(s.partyId===p.id){ r.billed+=n(s.amount)-n(s.fees); r.count++; } });
       D.payments.forEach(function(x){ if(x.partyId===p.id){ r.paid+=n(x.amount); r.count++; } });
@@ -1351,7 +1353,8 @@ img{max-width:100%}
     bills.forEach(function(b){
       var tot=pTotal(b); r.billed+=tot; r.count++; if(tot<0) return;
       var cover=Math.min(pool,tot); pool-=cover; var left=tot-cover;
-      if(left>0.5){ var due=addDays(b.date,terms); if(due<t) r.late+=left; else if(due===t) r.now+=left; else if(due<=addDays(t,7)) r.week+=left; }
+      if(left>0.5&&!r.since) r.since=b.date;
+      if(left>0.5&&terms>0){ var due=addDays(b.date,terms); if(due<t) r.late+=left; else if(due===t) r.now+=left; else if(due<=addDays(t,7)) r.week+=left; }
     });
     r.bal=r.billed-r.paid; return r;
   }
@@ -1371,7 +1374,7 @@ img{max-width:100%}
     D.parties.forEach(function(p){ var s=partyStats(p); if(isMkt(p)) recv+=s.bal; else { owe+=s.bal; late+=s.late; week+=s.week; if(s.late>0.5) lp++; if(s.bal>0.5) np++; } });
     $("ks-owe").textContent=inr(owe); $("ks-owe-s").textContent=np? np+" party ka baaki" : "Kisi ka baaki nahi";
     var kl=$("ks-late"); kl.textContent=inr(late); kl.className="v "+(late>0.5?"neg":"");
-    $("ks-late-s").textContent=lp? lp+" party ki due date nikal gayi" : "Sab time pe hai";
+    $("ks-late-s").textContent=lp? lp+" party ki due date nikal gayi" : (D.parties.some(function(p){ return !isMkt(p)&&n(p.terms)>0; })?"Sab time pe hai":"kisi party ka time fix nahi");
     $("ks-week").textContent=inr(week); $("ks-recv").textContent=inr(recv);
   }
 
@@ -1383,7 +1386,7 @@ img{max-width:100%}
       var s=partyStats(p), m=isMkt(p);
       var lab= m ? (s.bal>0.5?"aana hai":"sab mil gaya") : (s.bal>0.5?"dena hai":(s.bal<-0.5?"advance diya hua":"hisaab barabar"));
       var chip= (!m && s.late>0.5) ? '<span class="chip c-bad">'+inr(s.late)+' late</span>' : "";
-      var terms= m ? (p.kind==="customer"?"Customer":"Marketplace") : (n(p.terms)>0? n(p.terms)+" din udhaar" : "Turant payment");
+      var terms= m ? (p.kind==="customer"?"Customer":"Marketplace") : (n(p.terms)>0? n(p.terms)+" din udhaar" : "Udhaar ka time fix nahi");
       return '<button type="button" class="pcard" data-id="'+esc(p.id)+'" aria-pressed="'+(sel===p.id)+'"><span class="pn">'+esc(p.name)+'</span><span class="pt">'+esc(terms)+(p.supplies?" · "+esc(p.supplies):"")+'</span><span class="pb '+(!m&&s.bal>0.5?"neg":(m&&s.bal>0.5?"pos":""))+'">'+inr(Math.abs(s.bal))+'</span><span class="pl">'+lab+' '+chip+'</span></button>';
     }).join("");
   }
@@ -1404,7 +1407,7 @@ img{max-width:100%}
     if(p){
       var m=isMkt(p), s=partyStats(p);
       $("led-title").textContent=p.name+" ka khata";
-      $("led-sub").innerHTML=esc([p.phone,p.gstin].filter(Boolean).join(" · "))+' <button class="link" type="button" id="led-all">Saari entries dikhao</button>'+(s.count?"":' · <button class="link" type="button" id="led-delparty">Party hatao</button>');
+      $("led-sub").innerHTML=esc([p.phone,p.gstin].filter(Boolean).join(" · "))+' <button class="link" type="button" id="led-all">Saari entries dikhao</button>'+(s.count?"":' · <button class="link" type="button" id="led-delparty">Party hatao</button>')+(m?"":' <span style="white-space:nowrap"> · <label for="led-terms">Udhaar ke din</label> <input type="number" id="led-terms" min="0" step="1" inputmode="numeric" value="'+n(p.terms)+'" style="width:64px;padding:2px 6px"> <span style="color:var(--muted)">(0 = time fix nahi)</span></span>');
       head.innerHTML='<tr><th class="l">Date</th><th class="l">Entry</th><th>'+(m?"Aana tha":"Maal ka bill")+'</th><th>'+(m?"Mila":"Diya")+'</th><th>Baaki</th><th></th></tr>';
       var bal=0;
       var html=rows.map(function(r){ bal+=r.plus-r.minus; return '<tr><td class="l">'+fd(r.date)+'</td><td class="l"><span class="tag '+r.tag+'">'+r.tl+'</span> '+esc(r.desc)+'</td><td>'+(r.plus?inr(r.plus):"")+'</td><td>'+(r.minus?inr(r.minus):"")+'</td><td class="o">'+inr(bal)+'</td><td><button class="del" type="button" data-c="'+r.c+'" data-id="'+esc(r.id)+'" aria-label="Entry hatao">×</button></td></tr>'; });
@@ -1466,7 +1469,7 @@ img{max-width:100%}
     if(type==="party"){
       h+=f("e-name","Party ka naam",'<input type="text" id="e-name" required placeholder="jaise Sharma Bag Factory">',true);
       h+=f("e-kind","Type",'<select id="e-kind"><option value="supplier">Supplier (maal deti hai)</option><option value="marketplace">Marketplace (Amazon, Flipkart…)</option></select>');
-      h+=f("e-terms","Udhaar kitne din (0 = turant)",'<input type="number" id="e-terms" min="0" value="0" inputmode="numeric">');
+      h+=f("e-terms","Udhaar kitne din (0 = koi time fix nahi)",'<input type="number" id="e-terms" min="0" value="0" inputmode="numeric">');
       h+=f("e-phone","Phone",'<input type="text" id="e-phone" inputmode="tel">');
       h+=f("e-gstin","GSTIN",'<input type="text" id="e-gstin">');
       h+=f("e-supplies","Kya deti hai",'<input type="text" id="e-supplies" placeholder="jaise laptop bags">',true);
@@ -1943,11 +1946,11 @@ img{max-width:100%}
   function mlabel(k){ var p=k.split("-"); return MON[+p[1]-1]+" "+p[0]; }
   function prodInfo(){ var m={}; D.purchases.forEach(function(p){ var k=key(p.product); if(!k) return; var o=m[k]||(m[k]={q:0,v:0,g:0,d:""}); o.q+=n(p.qty); o.v+=n(p.qty)*n(p.rate); if(String(p.date)>=o.d){ o.d=String(p.date); o.g=n(p.gst); } }); return m; }
   function saleProfit(x,info){ var o=info[key(x.product)], g=o?o.g:0, cost=o&&o.q?o.v/o.q:0; return {p:n(x.amount)/(1+g/100)-n(x.fees)-n(x.qty)*cost, known:!!(o&&o.q)}; }
-  function dueTxt(late,now,week,bal){
+  function dueTxt(late,now,week,bal,since){
     if(late>0.5) return [inr(late)+" late ho gaya"+(now+week>0.5?", "+inr(now+week)+" 7 din mein":""),"red"];
     if(now>0.5) return [inr(now)+" aaj dena hai"+(week>0.5?", "+inr(week)+" agle 7 din mein":""),"amb"];
     if(week>0.5) return [inr(week)+" agle 7 din mein dena hai","amb"];
-    return [bal>0.5?"abhi due nahi hai":"kisi ka baaki nahi",""];
+    return [bal>0.5?(since?fd(since)+" se baaki hai":"baaki hai"):"kisi ka baaki nahi",""];
   }
   function renderLast(){
     var box=$("h-last"); if(!box) return; var rows=[];
@@ -1972,13 +1975,13 @@ img{max-width:100%}
     var pe=$("h-prof"); pe.textContent=inr(A.prof); pe.className="v "+(A.prof<0?"red":(A.prof>0?"grn":""));
     $("h-prof-s").textContent=A.unk? A.unk+" sale ka kharid rate nahi mila, munafa zyada dikh sakta hai" : "GST, fees aur maal ka rate ghata ke";
     // dues
-    var owe=0, late=0, dnow=0, dweek=0, rows=[];
+    var owe=0, late=0, dnow=0, dweek=0, dsince="", rows=[];
     D.parties.forEach(function(p){ var s=partyStats(p); if(Math.abs(s.bal)<0.5) return;
       if(isMkt(p)) rows.push({o:2,amt:s.bal,h:'<div class="hrow"><div class="a"><b>'+esc(p.name)+'</b><span>marketplace / customer</span></div><div class="b grn">'+inr(s.bal)+'<small>aana hai</small></div></div>'});
-      else { owe+=s.bal; late+=s.late; dnow+=s.now; dweek+=s.week; var dt=dueTxt(s.late,s.now,s.week,s.bal), t='<small class="'+dt[1]+'">'+dt[0]+'</small>';
-        rows.push({o:s.late>0.5?0:1,amt:s.late>0.5?s.late:s.bal,h:'<div class="hrow"><div class="a"><b>'+esc(p.name)+'</b><span>'+(n(p.terms)?n(p.terms)+" din udhaar":"turant payment")+'</span></div><div class="b'+(s.late>0.5?" red":"")+'">'+inr(s.bal)+t+'</div></div>'}); } });
+      else { owe+=s.bal; late+=s.late; dnow+=s.now; dweek+=s.week; if(s.since&&(!dsince||s.since<dsince)) dsince=s.since; var dt=dueTxt(s.late,s.now,s.week,s.bal,s.since), t='<small class="'+dt[1]+'">'+dt[0]+'</small>';
+        rows.push({o:s.late>0.5?0:1,amt:s.late>0.5?s.late:s.bal,h:'<div class="hrow"><div class="a"><b>'+esc(p.name)+'</b><span>'+(n(p.terms)?n(p.terms)+" din udhaar":"udhaar ka time fix nahi")+'</span></div><div class="b'+(s.late>0.5?" red":"")+'">'+inr(s.bal)+t+'</div></div>'}); } });
     rows.sort(function(a,b){ return a.o-b.o||b.amt-a.amt; });
-    $("h-owe").textContent=inr(owe); $("h-owe").className="v "+(late>0.5?"red":""); $("h-owe-s").textContent=dueTxt(late,dnow,dweek,owe)[0]; renderLast();
+    $("h-owe").textContent=inr(owe); $("h-owe").className="v "+(late>0.5?"red":""); $("h-owe-s").textContent=dueTxt(late,dnow,dweek,owe,dsince)[0]; renderLast();
     $("h-due").innerHTML=rows.length? rows.slice(0,8).map(function(r){ return r.h; }).join("")+(rows.length>8?'<div class="help">aur '+(rows.length-8)+' Khata tab mein</div>':"") : '<div class="help">Kisi ko dena ya kisi se lena baaki nahi hai.</div>';
     // low stock
     var lim=lowAt(); if(document.activeElement!==$("h-low")) $("h-low").value=lim;
@@ -2253,7 +2256,7 @@ img{max-width:100%}
   function safeBackup(){
     var done=false; try{ done=localStorage.getItem(BK)==="1"; }catch(e){}
     if(done||bkBusy||!db||dead) return; var s=snapshotAll(); if(!countAll(s)){ try{ localStorage.setItem(BK,"1"); }catch(e){} return; }
-    bkBusy=true; autoBackup("Version 21 update se pehle (apne aap)").then(function(){ try{ localStorage.setItem(BK,"1"); }catch(e){} },function(){}).then(function(){ bkBusy=false; });
+    bkBusy=true; autoBackup("Version 22 update se pehle (apne aap)").then(function(){ try{ localStorage.setItem(BK,"1"); }catch(e){} },function(){}).then(function(){ bkBusy=false; });
   }
   document.addEventListener("click",function(e){ var b=e.target.closest&&e.target.closest("[data-qgo]"); if(!b) return; location.hash="#home"; var m=b.dataset.qgo; setTimeout(function(){ qOpen(m); },60); });
   document.getElementById("prod-body").addEventListener("input",function(e){ if(e.target.closest("td.name")) prodStock(); });
@@ -2369,6 +2372,11 @@ img{max-width:100%}
     if(e.target.id==="dc-save"){ detSave(false); return; }
     if(e.target.id==="dc-all"){ detSave(true); return; }
   });
+  document.addEventListener("change",function(e){
+    if(e.target.id!=="led-terms"||!sel||!db) return; var p0=party(sel); if(!p0) return;
+    var x=strip(p0); x.terms=Math.max(0,Math.round(n(e.target.value)));
+    db.collection("parties").doc(sel).set(x).then(function(){ toast(x.terms?"Udhaar "+x.terms+" din save ho gaya":"Udhaar ka time hata diya"); },function(){ toast("Save nahi hua, dobara try karo"); });
+  });
   document.addEventListener("input",function(e){
     if(e.target.id==="stk-q"){ stkFilter(); return; }
     if(/^dc-(comm|fixed|ship|pack)$/.test(e.target.id||"")&&detName){ var info=prodInfo(), o=info[key(detName)]; $("dc-sum").innerHTML=detSum(spOf(detName),gstOf(detName,info),o&&o.q?o.v/o.q:0,detVals(),!!(o&&o.q)); }
@@ -2392,7 +2400,7 @@ img{max-width:100%}
   })();
 
   // ---------- boot ----------
-  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 21 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
+  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 22 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
   buildForm(); renderAll(); diag();
   var use=window.claude&&window.claude.use;
   if(!use){ status("Online khata yahan nahi chal raha. Is page ko Claude mein sign in karke kholo."); return; }
