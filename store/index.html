@@ -520,7 +520,7 @@ function card(p){
   return `<article class="pc"><div class="art"><a href="#p-${p.id}" aria-label="${esc(pn(p))}" style="display:contents">${oos(p)?`<span class="tag" style="background:#111;color:#F6F2EA">${t("oos")}</span>`:p.tag?`<span class="tag">${esc(p.tag)}</span>`:""}${pic(p,0)}</a>${heart(p)}</div>
   <div class="info"><span class="cat">${esc(pt(p))}</span><a href="#p-${p.id}"><h3>${esc(pn(p))}</h3></a>
   ${r.length?`<span class="rating"><span class="stars">${stars(avg(p.id))}</span> (${r.length})</span>`:""}
-  <div class="price rs"><b>${rs(p.price)}</b><s>${rs(p.mrp)}</s><span class="off">${off(p)}% ${t("off")}</span></div></div>
+  <div class="price rs"><b>${rs(p.price)}</b>${p.mrp>p.price?`<s>${rs(p.mrp)}</s><span class="off">${off(p)}% ${t("off")}</span>`:""}</div></div>
   ${oos(p)?`<button class="btn add" disabled style="opacity:.55;cursor:not-allowed">${t("oos")}</button>`:`<button class="btn dark add" data-add="${p.id}">${t("add")}</button>`}</article>`;
 }
 const icons={
@@ -628,7 +628,7 @@ function product(id){
     <div class="pd-info">
       <div style="display:grid;gap:8px"><span class="eyebrow">${esc(pt(p))}</span><h1>${esc(pn(p))}</h1>
       ${revs(p).length?`<span class="muted"><span class="stars">${stars(avg(p.id))}</span> ${t("nRev",{n:revs(p).length})}</span>`:""}</div>
-      <div><div class="price rs"><b>${rs(p.price)}</b><s>${t("mrp")} ${rs(p.mrp)}</s><span class="off">${off(p)}% ${t("off")}</span></div><span class="muted" style="font-size:13px">${t("incl")}</span></div>
+      <div><div class="price rs"><b>${rs(p.price)}</b>${p.mrp>p.price?`<s>${t("mrp")} ${rs(p.mrp)}</s><span class="off">${off(p)}% ${t("off")}</span>`:""}</div><span class="muted" style="font-size:13px">${t("incl")}</span></div>
       ${p.colours?`<div class="opt"><span class="lbl">${t("colour")}: <span style="color:var(--ink)">${cn(col[0])}</span></span><div class="swatches">${p.colours.map((c,i)=>`<button class="sw ${i===pdState.colour?"on":""}" style="background:${c[1]}" data-colour="${i}" aria-label="${cn(c[0])}" aria-pressed="${i===pdState.colour}"></button>`).join("")}</div></div>`:""}
       ${p.sizes?`<div class="opt"><span class="lbl">${t("size")}</span><div class="sizes">${p.sizes.map((s,i)=>`<button class="sz ${i===pdState.size?"on":""}" data-size="${i}" aria-pressed="${i===pdState.size}">${s}</button>`).join("")}</div></div>`:""}
       ${sizeGuide(p)}
@@ -640,7 +640,7 @@ function product(id){
     </div>
   </div>
   ${reviewsBlock(p)}
-  <div class="buybar"><span class="bp rs"><b>${rs(p.price)}</b><s>${rs(p.mrp)}</s></span>${oos(p)?`<button class="btn" disabled style="opacity:.6">${t("oos")}</button>`:`<button class="btn dark" data-bar="add">${t("add")}</button><button class="btn solid" data-bar="buy">${t("buy")}</button>`}</div>
+  <div class="buybar"><span class="bp rs"><b>${rs(p.price)}</b>${p.mrp>p.price?`<s>${rs(p.mrp)}</s>`:""}</span>${oos(p)?`<button class="btn" disabled style="opacity:.6">${t("oos")}</button>`:`<button class="btn dark" data-bar="add">${t("add")}</button><button class="btn solid" data-bar="buy">${t("buy")}</button>`}</div>
   <section class="sec" style="padding-top:0"><div class="sec-head"><div><h2>${t("alsoLike")}</h2></div></div>
   <div class="grid">${PRODUCTS.filter(x=>x.cat===p.cat&&x.id!==p.id).slice(0,4).map(card).join("")}</div></section></div>`;
 }
@@ -675,7 +675,7 @@ function cartView(){
   const tt=totals();
   return `<div class="wrap">${crumbs(`<span>${t("cart")}</span>`)}<h2>${t("yourCart")}</h2>
   <div class="two"><div class="panel">${cart.map((i,ix)=>{const p=pById(i.id);const ci=p.colours?Math.max(0,p.colours.findIndex(x=>x[0]===i.colour)):0;
-    return `<div class="ci"><a class="thumb" href="#p-${p.id}" style="overflow:hidden">${pic(p,ci)}</a><div style="min-width:0"><a href="#p-${p.id}"><h3>${esc(pn(p))}</h3></a><div class="meta">${[i.colour&&cn(i.colour),i.size].filter(Boolean).map(esc).join(" · ")}</div><div class="price rs"><b style="font-size:16px">${rs(p.price)}</b><s>${rs(p.mrp)}</s></div></div>
+    return `<div class="ci"><a class="thumb" href="#p-${p.id}" style="overflow:hidden">${pic(p,ci)}</a><div style="min-width:0"><a href="#p-${p.id}"><h3>${esc(pn(p))}</h3></a><div class="meta">${[i.colour&&cn(i.colour),i.size].filter(Boolean).map(esc).join(" · ")}</div><div class="price rs"><b style="font-size:16px">${rs(p.price)}</b>${p.mrp>p.price?`<s>${rs(p.mrp)}</s>`:""}</div></div>
     <div class="right"><div class="qty"><button data-cq="${ix}" data-d="-1" aria-label="-">−</button><span class="rs">${i.qty}</span><button data-cq="${ix}" data-d="1" aria-label="+">+</button></div><b class="rs">${rs(p.price*i.qty)}</b><button class="rm" data-rm="${ix}">${t("remove")}</button></div></div>`}).join("")}</div>
   ${summary(tt,`<a class="btn solid block" href="#checkout">${t("proceed")}</a>`,true)}</div></div>`;
 }

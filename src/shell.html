@@ -88,7 +88,7 @@ img{max-width:100%}
     var STORE="aspire_seller_calc_v1", last=null, synced=false, r=db.doc("calc/main");
     r.onSnapshot(function(sn){
       var cur=localStorage.getItem(STORE);
-      if(sn.exists){ var d=sn.data()||{}; if(d.json&&d.json!==cur&&d.json!==last){ try{ last=d.json; if(window.aspCalc) window.aspCalc.load(JSON.parse(d.json)); }catch(e){} } }
+      if(sn.exists){ var d=sn.data()||{}; if(d.json===cur) last=cur; else if(d.json&&d.json!==last){ try{ last=d.json; if(window.aspCalc) window.aspCalc.load(JSON.parse(d.json)); }catch(e){} } }
       synced=true;
     },function(){});
     setInterval(function(){ if(!synced) return; var cur=localStorage.getItem(STORE); if(cur&&cur!==last){ last=cur; r.set({json:cur,at:new Date().toISOString()}).catch(function(){}); } },2500);

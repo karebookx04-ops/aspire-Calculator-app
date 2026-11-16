@@ -456,6 +456,14 @@ small.pk{display:block;font-size:.72rem;font-weight:500;color:var(--muted)}
 [data-role="staff"] #v-stock table.stk th:nth-child(n+3),[data-role="staff"] #v-stock table.stk td:nth-child(n+3){display:none!important}
 [data-role="staff"] #v-stock .card>.note,[data-role="staff"] #v-stock .stk-tools>div{display:none!important}
 .aud{max-height:420px;overflow:auto}
+/* v28: website product sync */
+.sy-sec{display:flex;flex-direction:column;gap:6px;padding-top:10px;border-top:1px solid var(--line-2);font-size:.86rem}
+.sy-sec ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px}
+.sy-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:8px;align-items:center}
+.sy-row .fl{margin:0;overflow-wrap:anywhere}
+.sy-row select{width:100%;min-width:0}
+.sy-row .btn{justify-self:start}
+@media (max-width:560px){.sy-row{grid-template-columns:minmax(0,1fr)}}
 </style>
 <style>
 body{margin:0}
@@ -537,7 +545,7 @@ img{max-width:100%}
     var STORE="aspire_seller_calc_v1", last=null, synced=false, r=db.doc("calc/main");
     r.onSnapshot(function(sn){
       var cur=localStorage.getItem(STORE);
-      if(sn.exists){ var d=sn.data()||{}; if(d.json&&d.json!==cur&&d.json!==last){ try{ last=d.json; if(window.aspCalc) window.aspCalc.load(JSON.parse(d.json)); }catch(e){} } }
+      if(sn.exists){ var d=sn.data()||{}; if(d.json===cur) last=cur; else if(d.json&&d.json!==last){ try{ last=d.json; if(window.aspCalc) window.aspCalc.load(JSON.parse(d.json)); }catch(e){} } }
       synced=true;
     },function(){});
     setInterval(function(){ if(!synced) return; var cur=localStorage.getItem(STORE); if(cur&&cur!==last){ last=cur; r.set({json:cur,at:new Date().toISOString()}).catch(function(){}); } },2500);
@@ -852,7 +860,7 @@ img{max-width:100%}
       </div>
     </div>
     <div class="banner" id="k-status" data-tone="info">Khata load ho raha hai…</div>
-    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 27</div>
+    <div class="help" id="k-diag" style="margin:-4px 0 0">Version 28</div>
     <div class="banner" id="k-note" data-tone="info" hidden></div>
     <div class="card" id="k-rpanel" style="padding:18px 20px" hidden>
       <h3 style="margin:0 0 6px">Backup se restore</h3>
@@ -3907,7 +3915,7 @@ var qrcode = function() {
   }
 
   function spOf(name){ var r=null; calcProds().forEach(function(p){ if(key(p[0])===key(name)&&n(p[3])>0) r=n(p[3])/Math.max(1,n(p[10])||1); }); return r; }
-  function renderStock(){
+  function renderStock(){ syNM=null; syKick();
     var body=$("stk-body"), ae=document.activeElement, busy=ae&&ae.classList&&ae.classList.contains("sp")&&body.contains(ae);
     var s=stock(), info=prodInfo(), low=lowAt(), tp=0, tv=0, lows=[], nop=0, A=[], B=[], ch=curCh();
     s.forEach(function(x){
@@ -4760,7 +4768,7 @@ var qrcode = function() {
   function safeBackup(){
     var done=false; try{ done=localStorage.getItem(BK)==="1"; }catch(e){}
     if(done||bkBusy||!db||dead||isStaff()) return; var s=snapshotAll(); if(!countAll(s)){ try{ localStorage.setItem(BK,"1"); }catch(e){} return; }
-    bkBusy=true; autoBackup("Version 27 update se pehle (apne aap)").then(function(){ try{ localStorage.setItem(BK,"1"); }catch(e){} },function(){}).then(function(){ bkBusy=false; });
+    bkBusy=true; autoBackup("Version 28 update se pehle (apne aap)").then(function(){ try{ localStorage.setItem(BK,"1"); }catch(e){} },function(){}).then(function(){ bkBusy=false; });
   }
   document.addEventListener("click",function(e){ var b=e.target.closest&&e.target.closest("[data-qgo]"); if(!b) return; location.hash="#home"; var m=b.dataset.qgo; setTimeout(function(){ qOpen(m); },60); });
   document.getElementById("prod-body").addEventListener("input",function(e){ if(e.target.closest("td.name")) prodStock(); });
@@ -5210,17 +5218,17 @@ var qrcode = function() {
   // --- website store orders -> stock (owner only) ---
   var ST={on:false,since:"",map:{}}, SO=[], soErr=false, soGot=false, soBusy=false, SOUT=["confirmed","shipped","delivered"];
   function soDate(o){ var c=o.createdAt, d=c&&c.toDate?c.toDate():new Date(c); return isNaN(d)?new Date():d; }
-  function soMap(it){ var m=ST.map&&ST.map[it.id]; if(m) return m; var k=key(it.name), hit=""; prodNames().forEach(function(x){ if(key(x)===k) hit=x; }); return hit||null; }
+  function soMap(it){ var m=ST.map&&ST.map[it.id]; if(m) return m; var au=spAuto(spDoc(it.id)); if(au) return au; var k=key(it.name), hit=""; prodNames().forEach(function(x){ if(key(x)===k) hit=x; }); return hit||null; }
   function soLive(){ return SO.filter(function(o){ return ST.since&&soDate(o).toISOString()>=ST.since; }); }
   function soInfo(id){ var G=-1, rev=false; D.sales.forEach(function(s){ if(s.storeOrder===id) G=Math.max(G,n(s.sgen)); }); D.sales.forEach(function(s){ if(s.storeOrder===id&&n(s.sgen)===G&&s.ret) rev=true; }); return {G:G,imp:G>=0&&!rev}; }
   function soPending(){ var un={}, wait=0; soLive().forEach(function(o){ if(SOUT.indexOf(o.status)<0||soInfo(o._id).imp) return; var bad=false; (o.items||[]).forEach(function(it){ if(!soMap(it)){ un[it.id]=it.name||it.id; bad=true; } }); if(bad) wait++; }); return {un:un,wait:wait}; }
   function soRun(){
-    if(soBusy||!ST.on||!soGot||isStaff()||!db||dead||Object.keys(got).length<COLS.length) return;
+    if(soBusy||!ST.on||!soGot||(!spGot&&!spErr)||isStaff()||!db||dead||Object.keys(got).length<COLS.length) return;
     var jobs=[], now=new Date().toISOString();
     soLive().forEach(function(o){ var st=soInfo(o._id), want=SOUT.indexOf(o.status)>=0, id=o._id;
-      if(want&&!st.imp){ var items=o.items||[]; if(!items.length||items.some(function(it){ return !soMap(it); })) return; var g=st.G+1, f=n(o.sub)>0?Math.max(0,(n(o.sub)-n(o.couponAmt))/n(o.sub)):1, date=iso(soDate(o));
+      if(want&&!st.imp){ var items=o.items||[]; if(!items.length||items.some(function(it){ return !soMap(it); })||items.every(function(it){ return soMap(it)==="-"; })) return; var g=st.G+1, f=n(o.sub)>0?Math.max(0,(n(o.sub)-n(o.couponAmt))/n(o.sub)):1, date=iso(soDate(o));
         jobs.push(function(){ return findOrAdd("Website","customer","Website store ke order",now).then(function(pid){ var tot=0, w=[];
-          items.forEach(function(it,i){ var nm=soMap(it); if(nm==="-") return; var amt=r2(n(it.price)*n(it.qty)*f); tot+=amt; w.push(db.collection("sales").doc("so_"+id+"_"+g+"_"+i).set({date:date,partyId:pid,product:nm,qty:n(it.qty),amount:amt,fees:0,billNo:o.invoiceNo||o.orderNo||"",storeOrder:id,sgen:g,createdAt:now})); });
+          items.forEach(function(it,i){ var nm=soMap(it); if(nm==="-") return; var amt=r2(n(it.price)*n(it.qty)*f); tot+=amt; w.push(db.collection("sales").doc("so_"+id+"_"+g+"_"+i).set({date:date,partyId:pid,product:nm,qty:n(it.qty)*syItemUnit(it),amount:amt,fees:0,billNo:o.invoiceNo||o.orderNo||"",storeOrder:id,sgen:g,createdAt:now})); });
           if(tot>0) w.push(db.collection("payments").doc("sp_"+id+"_"+g).set({date:date,partyId:pid,amount:r2(tot),mode:String(o.pay||"Website").slice(0,30),ref:"Website "+(o.orderNo||""),storeOrder:id,sgen:g,createdAt:now}));
           return Promise.all(w).then(function(){ toast(T2("Website order "+(o.orderNo||"")+" stock se ghat gaya.","Website order "+(o.orderNo||"")+" taken out of stock.")); }); }); }); }
       else if(!want&&st.imp&&(o.status==="cancelled"||o.status==="new")){ var rows=D.sales.filter(function(s){ return s.storeOrder===id&&n(s.sgen)===st.G&&!s.ret; }), pay=D.payments.filter(function(p){ return p.storeOrder===id&&n(p.sgen)===st.G&&!p.ret; });
@@ -5234,16 +5242,16 @@ var qrcode = function() {
     var b=document.querySelector("#store-card .card-b"); if(!b) return; var P=soPending(), ids=Object.keys(P.un), imp=0; soLive().forEach(function(o){ if(soInfo(o._id).imp) imp++; });
     var h='<div class="help">'+T2("Chalu karne ke baad website ka jo order admin panel me Confirm hota hai, uska maal yahan stock se apne aap ghat jata hai aur \"Website\" naam ki party me bikri likh jati hai. Order cancel ho to stock wapas jud jata hai. Purane order nahi chhede jaate.","Once on, when a website order is Confirmed in the admin panel its goods come out of stock here by themselves and a sale is written under a party named \"Website\". If the order is cancelled the stock is added back. Old orders are not touched.")+'</div>';
     if(soErr) h+='<div class="banner" data-tone="warn">'+T2("Website ke order padhne ki permission nahi mili. Is app me usi email se login karo jisse website ka admin panel chalta hai.","No permission to read website orders. Log in to this app with the same email that runs the website admin panel.")+'</div>';
-    h+='<div class="btnrow" style="align-items:center"><button class="btn'+(ST.on?" ghost":"")+'" type="button" id="so-tog">'+(ST.on?T2("Band karo","Turn off"):T2("Chalu karo","Turn on"))+'</button><span class="help" style="margin:0">'+(ST.on?T2("✓ Chalu hai, "+fd(ST.since.slice(0,10))+" se. "+imp+" order stock me chadhe.","✓ On since "+fd(ST.since.slice(0,10))+". "+imp+" orders applied to stock."):T2("Abhi band hai.","Currently off."))+'</span></div>';
+    h+='<div class="btnrow" style="align-items:center"><button class="btn'+(ST.on?" ghost":"")+'" type="button" id="so-tog"'+(SY.sync?" disabled":"")+'>'+(ST.on?T2("Band karo","Turn off"):T2("Chalu karo","Turn on"))+'</button><span class="help" style="margin:0">'+(SY.sync?T2("Ye neeche wale \"App ke product website pe\" ke saath chalu rehta hai. ","This stays on together with \"App products on the website\" below. "):"")+(ST.on?T2("✓ Chalu hai, "+fd(ST.since.slice(0,10))+" se. "+imp+" order stock me chadhe.","✓ On since "+fd(ST.since.slice(0,10))+". "+imp+" orders applied to stock."):T2("Abhi band hai.","Currently off."))+'</span></div>';
     if(ST.on&&ids.length){ var opts='<option value="">'+T2("Product chuno","Choose product")+'</option>'+prodNames().map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join("")+'<option value="-">'+T2("Iska stock app me nahi rakhna","Do not track this in stock")+'</option>';
       h+='<div class="banner" data-tone="warn">'+T2(P.wait+" order ruke hain. Batao website ka ye product app ke kis product se judta hai:",P.wait+" orders are waiting. Tell which app product each website product matches:")+'</div>'+ids.map(function(id){ return '<div class="form-grid"><div><label class="fl">'+esc(P.un[id])+'</label><select data-somap="'+esc(id)+'">'+opts+'</select></div></div>'; }).join("")+'<div class="btnrow"><button class="btn" type="button" id="so-save">'+T2("Save karo","Save")+'</button></div>'; }
     var keep={}; b.querySelectorAll("[data-somap]").forEach(function(s){ keep[s.dataset.somap]=s.value; });
     b.innerHTML=h; b.querySelectorAll("[data-somap]").forEach(function(s){ if(keep[s.dataset.somap]) s.value=keep[s.dataset.somap]; });
     var hb=$("so-home"); if(hb){ hb.hidden=!(ST.on&&ids.length&&!isStaff()); if(!hb.hidden) hb.innerHTML=T2(P.wait+" website order stock me chadhne se ruke hain. ",P.wait+" website orders are waiting to be applied to stock. ")+'<a href="#more">'+T2("Settings me product jodo","Match products in Settings")+'</a>'; }
   }
-  function stSave(x){ ST=x; return db.doc("settings/store").set(x).then(function(){ renderStore(); soRun(); }); }
+  function stSave(x){ ST=x; syHtml=null; return db.doc("settings/store").set(x).then(function(){ renderStore(); renderSync(); soRun(); }); }
   document.addEventListener("click",function(e){ var t=e.target; if(!t||!db) return;
-    if(t.id==="so-tog"){ var on=!ST.on; stSave({on:on,since:on?(ST.since||new Date().toISOString()):ST.since,map:ST.map||{}}).then(function(){ audLog("edit","store",{txt:on?"Website order se stock: chalu kiya":"Website order se stock: band kiya"}); },function(){ toast(T2("Save nahi hua, dobara try karo.","Not saved, try again.")); }); }
+    if(t.id==="so-tog"){ if(SY.sync) return; var on=!ST.on; stSave({on:on,since:on?(ST.since||new Date().toISOString()):ST.since,map:ST.map||{}}).then(function(){ audLog("edit","store",{txt:on?"Website order se stock: chalu kiya":"Website order se stock: band kiya"}); },function(){ toast(T2("Save nahi hua, dobara try karo.","Not saved, try again.")); }); }
     if(t.id==="so-save"){ var m=Object.assign({},ST.map||{}), k=0; document.querySelectorAll("[data-somap]").forEach(function(s){ if(s.value){ m[s.dataset.somap]=s.value; k++; } }); if(!k){ toast(T2("Pehle product chuno.","Choose a product first.")); return; } stSave({on:ST.on,since:ST.since,map:m}).catch(function(){ toast(T2("Save nahi hua, dobara try karo.","Not saved, try again.")); }); }
   });
   function role27(x){
@@ -5257,10 +5265,150 @@ var qrcode = function() {
     if(x.user&&x.user.uid){ left.appendChild(card27("staff-card",T2("Staff login","Staff login"),T2("entry kar sake, munafa na dekhe","can make entries, cannot see profit"))); try{ x.collection("staff").onSnapshot(function(sn){ staffRows=sn.docs.map(function(d){ var o=Object.assign({},d.data()); o.id=d.id; return o; }); renderStaff(); },function(){}); }catch(e){} renderStaff(); }
     if(x.top){ left.appendChild(card27("store-card",T2("Website ke order se stock","Stock from website orders"),"")); renderStore();
       try{ x.top("store_orders").orderBy("createdAt","desc").limit(200).onSnapshot(function(sn){ SO=sn.docs.map(function(d){ var o=Object.assign({},d.data()); o._id=d.id; return o; }); soGot=true; soErr=false; renderStore(); soRun(); },function(){ soErr=true; renderStore(); }); }catch(e){}
-      try{ db.doc("settings/store").onSnapshot(function(sn){ if(sn&&sn.exists){ var d=sn.data()||{}; ST={on:!!d.on,since:d.since||"",map:d.map||{}}; } renderStore(); soRun(); },function(){}); }catch(e){} }
+      try{ db.doc("settings/store").onSnapshot({includeMetadataChanges:true},function(sn){ if(sn&&sn.exists){ var d=sn.data()||{}; ST={on:!!d.on,since:d.since||"",map:d.map||{}}; } if(!(sn&&sn.metadata&&sn.metadata.fromCache)) stGot=true; syHtml=null; renderStore(); renderSync(); soRun(); syKick(); },function(){}); }catch(e){} role28(x,left); }
     right.appendChild(card27("aud-card",T2("Kisne kya kiya","Who did what"),T2("aakhri 100","last 100"))); renderAud();
     function got27(sn){ audRows=sn.docs.map(function(d){ return d.data(); }).sort(function(a,b){ return a.at<b.at?1:-1; }).slice(0,100); renderAud(); }
     try{ if(x.latest) x.latest("audit","at",100,got27,function(){}); else x.collection("audit").onSnapshot(got27,function(){}); }catch(e){}
+  }
+  // --- v28: app ke product <-> website ke product (owner only) ---
+  // Rules: website product kabhi delete nahi hota; purane website product me sirf "stock" (aur wapas lane ke liye "appPrev") badalta hai;
+  // naya product sirf bechne ke daam ke saath banta hai. Kharid rate / munafa website pe kabhi nahi jata.
+  // sync + pushed alag document (settings/storesync) me hain taaki purana Version 27 khula tab inhe mita na sake.
+  var SP=[], spGot=false, spErr=false, stGot=false, SY={sync:false,pushed:{}}, syGot=false, syBusy=false, syTimer=null, syDeny=false, syWait=0, syN=0, syDay="", syHtml=null, syCalcSig=null, syCalcAt=0, syCapSaid=false;
+  var SYMAX=500, SYLIMIT=250, SYSTABLE=(window.aspTest&&window.aspTest.stable)||15000;
+  function syCol(){ return RAW&&RAW.top?RAW.top("store_products"):null; }
+  var syNM=null, syNMt=0;
+  function syName(k){ if(!k) return ""; var now=Date.now(); if(!syNM||now-syNMt>400){ syNM={}; syNMt=now; prodNames().forEach(function(x){ syNM[key(x)]=x; }); } return syNM[k]||""; }
+  function syItemUnit(it){ var d=spDoc(it.id); if(d&&d.src==="app"){ var m=/\(Pack of (\d+)\)\s*$/.exec(String(it.name||"")); if(m&&+m[1]>1) return +m[1]; } return syUnit(d); }
+  function syUnit(d){ var u=Math.round(n(d&&d.appPack)); return u>1?u:1; }
+  function spDoc(id){ for(var i=0;i<SP.length;i++) if(SP[i]._id===id) return SP[i]; return null; }
+  function spAuto(d){ return d?(syName(d.appKey)||syName(key(d.name))):""; }
+  function spApp(d){ var m=ST.map&&ST.map[d._id]; if(m==="-") return "-"; if(m){ var a=syName(key(m)); if(a) return a; } return spAuto(d); }
+  function syPrev(d){ return !!(d&&d.appPrev&&typeof d.appPrev==="object"); }
+  function syId(nm){ var k=key(nm), s=k.replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,28).replace(/-+$/,""), h=0; for(var i=0;i<k.length;i++) h=(h*31+k.charCodeAt(i))>>>0; return "a-"+(s?s+"-":"")+("000"+(h%1679616).toString(36)).slice(-4); }
+  function syGen(nm,ps){ return (String(nm).trim()+(ps>1?" (Pack of "+ps+")":"")).slice(0,120); }
+  function syGuess(nm){ var k=" "+key(nm).replace(/[^a-z0-9]+/g," ")+" ";
+    if(/ (laptop|backpack|sleeve|macbook|notebook) /.test(k)) return ["bags","Laptop bags",/ sleeve /.test(k)?"sleeve":/ backpack /.test(k)?"backpack":"laptop"];
+    if(/ (ac|a c|air conditioner|aircon) /.test(k)) return ["covers","AC covers",/ window /.test(k)?"ac-window":/ outdoor /.test(k)?"ac-outdoor":"ac-split"];
+    if(/ (washing|wm) /.test(k)) return ["covers","Washing machine covers",/ front /.test(k)?"wm-front":"wm-top"];
+    if(/ cover(s)? /.test(k)) return ["covers","Kitchen appliance covers","microwave"];
+    if(/ (bag|bags|tote|sling|purse|handbag|pouch|shoulder) /.test(k)) return ["bags","Hand bags",/ sling /.test(k)?"sling":/ shoulder /.test(k)?"shoulder":"tote"];
+    return ["covers","Kitchen appliance covers","microwave"]; }
+  function syStock(left,unit){ return Math.max(0,Math.floor(n(left)/unit+1e-9)); }
+  // calcOk=false: bechne ka daam / pack abhi badal raha hai, isliye naya product aur daam ka badlav rok do (stock chalta rahta hai)
+  function syPlan(calcOk){
+    var left={}, led={}; stock().forEach(function(s){ var k=key(s.name); left[k]=s.inq-s.out+s.adj; led[k]=1; });
+    // website ke jo Confirm order abhi app me nahi chadhe (product jodna baaki), unka maal pehle se alag rakho
+    if(ST.on) soLive().forEach(function(o){ if(SOUT.indexOf(o.status)<0||soInfo(o._id).imp) return; (o.items||[]).forEach(function(it){ var a=soMap(it); if(a&&a!=="-") left[key(a)]=n(left[key(a)])-n(it.qty)*syItemUnit(it); }); });
+    var onSite={}, set=[], fix=[], un=[], keep=[], back=[], add=[], noPrice=[], gone=[], over=[], auto=[], link=[], linked=[], ids={}, keepId={}, pu=SY.pushed||{};
+    SP.forEach(function(d){ ids[d._id]=1; var a=spApp(d), want;
+      if(a==="-"){ var au=spAuto(d); keepId[d._id]=1; if(au){ onSite[key(au)]=1; link.push({k:key(au),id:d._id}); } keep.push(d); if(syPrev(d)) back.push(d); return; }
+      if(!a){ un.push(d); if(d.stock!==0) set.push({d:d,want:0}); return; }
+      var k=key(a), unit=syUnit(d), u=null; onSite[k]=1; link.push({k:k,id:d._id}); if(d.src!=="app") linked.push({d:d,a:a});
+      if(d.src!=="app"&&!(ST.map&&ST.map[d._id])) auto.push({id:d._id,name:a});
+      if(calcOk&&d.src==="app"&&typeof d.appPrice==="number"&&d.price===d.appPrice){ var pp=packPrice(a), np=pp?Math.round(pp):0, ps=psOf(a);
+        var own=!!(d.appName&&d.name===d.appName); // pack tabhi badlo jab naam bhi app ka diya hua ho, warna naam me purana pack reh jayega
+        if(np>0&&(np!==d.price||ps!==unit)&&(ps===unit||own)){ u={price:np,appPrice:np,appPack:ps}; if(d.mrp===d.appPrice||n(d.mrp)<np) u.mrp=np; var gen=syGen(a,ps); if(own&&gen!==d.name){ u.name=gen; u.appName=gen; } unit=ps; } }
+      want=syStock(left[k],unit);
+      if(u){ u.stock=want; fix.push({d:d,u:u}); } else if(d.stock!==want) set.push({d:d,want:want}); });
+    var room=SYLIMIT-SP.length;
+    prodNames().forEach(function(nm){ var k=key(nm); if(onSite[k]||!led[k]) return;
+      if(pu[k]){ if(!ids[pu[k]]){ gone.push(nm); return; } if(keepId[pu[k]]) return; }
+      var pp=packPrice(nm); if(!(pp&&Math.round(pp)>0)){ noPrice.push(nm); return; }
+      if(add.length<room) add.push(nm); else over.push(nm); });
+    var empty=!SP.length; if(!calcOk||empty) add=[];
+    return {set:set,fix:fix,un:un,keep:keep,back:back,add:add,noPrice:noPrice,gone:gone,over:over,auto:auto,link:link,linked:linked,ids:ids,left:left,empty:empty};
+  }
+  function syDoc(nm,left){ var ps=psOf(nm), price=Math.round(packPrice(nm)), g=syGuess(nm), r=prodRow(nm), gst=r&&n(r[1])>0?n(r[1]):n(gstOf(nm,prodInfo())), name=syGen(nm,ps);
+    return {cat:g[0],type:g[1],name:name,name_hi:"",price:price,mrp:price,tag:"",images:[],colours:[],sizes:[],points:[],points_hi:[],size_guide:null,reviews:[],art:g[2],order:900,active:true,
+      stock:syStock(left,ps),lowStock:5,hsn:String(hsnOf(nm)||""),gst:gst>0?gst:null,appKey:key(nm),appPack:ps,appPrice:price,appName:name,src:"app",createdAt:new Date().toISOString()}; }
+  function syPerm(e){ return !!e&&/permission|insufficient|unauth/i.test(String(e.code||"")+" "+String(e.message||"")); }
+  function sySave(x,part){ SY=x; syHtml=null; return db.doc("settings/storesync").set(part,{merge:true}); }
+  function syKick(ms){ if(!RAW||!RAW.top||isStaff()) return; if(syTimer) clearTimeout(syTimer); syTimer=setTimeout(function(){ syTimer=null; syCalcOk(); renderSync(); syRun(); },ms||2000); }
+  function syCalcOk(){ var sg=JSON.stringify(calcProds().map(function(p){ return [p[0],p[1],p[3],p[10]]; })), ae=document.activeElement, now=Date.now();
+    if(sg!==syCalcSig){ syCalcSig=sg; syCalcAt=now; }
+    return now-syCalcAt>=SYSTABLE&&!(ae&&ae.closest&&ae.closest("#prod-body")); }
+  function syRun(){
+    if(syBusy||!syGot||!stGot||!spGot||spErr||syDeny||isStaff()||!db||dead||Object.keys(got).length<COLS.length) return;
+    var col=syCol(), td=new Date().toDateString(); if(td!==syDay){ syDay=td; syN=0; syCapSaid=false; }
+    if(!col||Date.now()<syWait||navigator.onLine===false) return;
+    var jobs=[], fail=0, made=[];
+    function guard(p){ return p.then(function(){ syN++; },function(e){ if(syPerm(e)){ syDeny=true; throw e; } fail++; }); }
+    function restore(d){ return function(){ var cur=spDoc(d._id); if(!syPrev(cur)) return; return guard(col.doc(d._id).update({stock:typeof cur.appPrev.stock==="number"?cur.appPrev.stock:null,appPrev:null})); }; }
+    function done(){ syBusy=false; if(fail) syWait=Date.now()+60000; syHtml=null; renderSync(); if(!syDeny&&!fail) syKick(); }
+    if(!SY.sync){ // band hai: jo stock app ne badla tha use wapas karo (adhura reh gaya ho to yahin se poora hota hai)
+      SP.filter(syPrev).forEach(function(d){ jobs.push(function(){ if(SY.sync) return; return restore(d)(); }); });
+      if(!jobs.length) return; syBusy=true; seq(jobs).then(function(){},function(){}).then(done); return; }
+    if(syN>=SYMAX){ if(!syCapSaid){ syCapSaid=true; toast(T2("Website ka stock aaj bahut baar badla, isliye kal tak ruk gaya.","Website stock changed too many times today, so it paused until tomorrow.")); } return; }
+    if(soBusy){ syKick(); return; }
+    var ok=syCalcOk(), P=syPlan(ok), puNew={}, puCh=false, hasAuto=false;
+    if(!ok) syKick(Math.max(1000,SYSTABLE-(Date.now()-syCalcAt)+500));
+    P.set.forEach(function(x){ jobs.push(function(){ if(!SY.sync) return; var cur=spDoc(x.d._id)||x.d, u={stock:x.want}; if(cur.src!=="app") u.appPrev=syPrev(cur)?cur.appPrev:{stock:typeof cur.stock==="number"?cur.stock:null}; return guard(col.doc(x.d._id).update(u)); }); });
+    P.fix.forEach(function(x){ jobs.push(function(){ if(!SY.sync) return; var cur=spDoc(x.d._id); if(!cur||cur.src!=="app"||cur.price!==cur.appPrice) return; return guard(col.doc(x.d._id).update(x.u)); }); });
+    P.back.forEach(function(d){ jobs.push(function(){ if(!SY.sync) return; return restore(d)(); }); });
+    P.add.forEach(function(nm){ jobs.push(function(){ if(!SY.sync) return; var k=key(nm), id=syId(nm), ref=col.doc(id);
+      return ref.get().then(function(sn){ if(!SY.sync) return null; if(sn&&sn.exists) return false; var pp=packPrice(nm); if(!syCalcOk()||!(pp&&Math.round(pp)>0)) return null; return ref.set(syDoc(nm,P.left[k])).then(function(){ return true; }); })
+        .then(function(nu){ if(nu===null) return; syN++; puNew[k]=id; puCh=true; if(nu){ made.push(nm); audLog("add","store",{txt:"Website pe product joda: "+nm}); } },function(e){ if(syPerm(e)){ syDeny=true; throw e; } fail++; }); }); });
+    // naam se apne aap mile product yaad rakho, taaki website pe naam badalne par bhi jod bana rahe
+    P.auto.forEach(function(){ hasAuto=true; });
+    P.link.forEach(function(x){ var cur=(SY.pushed||{})[x.k]; if(!cur||!P.ids[cur]){ if(!puNew[x.k]){ puNew[x.k]=x.id; puCh=true; } } });
+    if(!jobs.length&&!hasAuto&&!puCh) return;
+    syBusy=true;
+    seq(jobs).then(function(){},function(){}).then(function(){
+      if(hasAuto&&!syDeny){ var m2=Object.assign({},ST.map||{}), mc=false; P.auto.forEach(function(x){ if(!m2[x.id]){ m2[x.id]=x.name; mc=true; } }); if(mc) stSave(Object.assign({},ST,{map:m2})).then(function(){},function(){}); }
+      if(puCh&&!syDeny){ var p2=Object.assign({},SY.pushed||{}), ch={}, pc=false; Object.keys(puNew).forEach(function(k){ if(p2[k]!==puNew[k]){ p2[k]=puNew[k]; ch[k]=puNew[k]; pc=true; } }); if(pc) sySave(Object.assign({},SY,{pushed:p2}),{pushed:ch}).then(function(){},function(){}); }
+      if(made.length) toast(made.length===1?T2("\""+made[0]+"\" website pe jud gaya.","\""+made[0]+"\" was added to the website."):T2(made.length+" product website pe jud gaye.",made.length+" products were added to the website."));
+      done(); });
+  }
+  function syMapRead(){ var m=Object.assign({},ST.map||{}); document.querySelectorAll("[data-symap]").forEach(function(s){ if(s.value) m[s.dataset.symap]=s.value; else delete m[s.dataset.symap]; }); return m; }
+  function renderSync(){
+    var b=document.querySelector("#sync-card .card-b"); if(!b) return;
+    var ready=spGot&&stGot&&syGot&&Object.keys(got).length>=COLS.length, P=ready?syPlan(true):null, live=0, out=0, prev=0;
+    SP.forEach(function(d){ if(syPrev(d)) prev++; if(d.active!==false){ live++; if(typeof d.stock==="number"&&d.stock<=0) out++; } });
+    var h='<div class="help">'+T2("Chalu karne ke baad ye dono kaam apne aap hote hain: (1) App ke stock ka jo product website pe nahi hai, wo bechne ke daam ke saath website pe jud jata hai. (2) Website ka stock app ke stock se chalta hai: jo product app me nahi hai ya jiska stock khatam hai, wo website pe \"Out of stock\" dikhta hai. Website ka koi product delete nahi hota, aur kharid rate ya munafa website pe kabhi nahi jata.","Once on, both of these happen by themselves: (1) A product in the app stock that is not on the website is added there with its selling price. (2) Website stock follows the app stock: a product that is not in the app, or has no stock left, shows \"Out of stock\" on the website. No website product is ever deleted, and purchase rate or profit never goes to the website.")+'</div>';
+    if(spErr) h+='<div class="banner" data-tone="warn">'+T2("Website ke product padh nahi paye. Internet check karke page dobara kholo.","Could not read the website products. Check the internet and reload the page.")+'</div>';
+    if(syDeny) h+='<div class="banner" data-tone="warn">'+T2("Website pe likhne ki permission nahi mili. Is app me usi email se login karo jisse website ka admin panel chalta hai, phir page dobara kholo.","No permission to change the website. Log in to this app with the same email that runs the website admin panel, then reload the page.")+'</div>';
+    if(syN>=SYMAX) h+='<div class="banner" data-tone="warn">'+T2("Aaj bahut zyada badlav ho gaye, isliye kal tak ruk gaya.","Too many changes today, so it paused until tomorrow.")+'</div>';
+    var empty=P&&P.empty&&!SY.sync;
+    if(empty) h+='<div class="banner" data-tone="warn">'+T2("Website pe abhi koi product save nahi hai. Pehle website ke admin panel > Products me \"12 products import karo\" dabao, phir yahan Chalu karo.","No product is saved on the website yet. First press \"12 products import karo\" in the website admin panel > Products, then turn this on.")+'</div>';
+    h+='<div class="btnrow" style="align-items:center"><button class="btn'+(SY.sync?" ghost":"")+'" type="button" id="sy-tog"'+(P&&!empty?"":" disabled")+'>'+(SY.sync?T2("Band karo","Turn off"):T2("Chalu karo","Turn on"))+'</button><span class="help" style="margin:0">'+(SY.sync?T2("✓ Chalu hai. Website pe "+live+" product, "+out+" Out of stock.","✓ On. "+live+" products on the website, "+out+" Out of stock."):prev?T2("Band hai. Website ka purana stock wapas aa raha hai ("+prev+" baaki).","Off. Putting the earlier website stock back ("+prev+" left)."):!P?T2("Website se jud raha hai...","Connecting to the website..."):T2("Abhi band hai. Website pe kuch nahi badla.","Currently off. Nothing has changed on the website."))+'</span></div>';
+    if(P){
+      if(P.add.length) h+='<div class="sy-sec"><b>'+(SY.sync?T2("Website pe jud rahe hain","Being added to the website"):T2("Chalu karne par ye website pe judenge","These will be added to the website"))+' ('+P.add.length+')</b><ul>'+P.add.map(function(nm){ var ps=psOf(nm); return '<li>'+esc(nm)+(ps>1?' <span class="help">('+T2(ps+" ka pack","pack of "+ps)+')</span>':'')+' · '+inr(Math.round(packPrice(nm)))+' · stock '+syStock(P.left[key(nm)],ps)+' <span class="help">· '+esc(syGuess(nm)[1])+'</span></li>'; }).join("")+'</ul><div class="help">'+T2("Photo, category aur HSN / GST % baad me website ke admin panel me badal sakte ho. Bechne ka daam app me badloge to website pe bhi badal jayega.","You can change the photo, category and HSN / GST % later in the website admin panel. If you change the selling price in the app, it changes on the website too.")+'</div></div>';
+      if(P.over.length) h+='<div class="sy-sec"><b>'+T2("Website pe "+SYLIMIT+" se zyada product nahi jodte","No more than "+SYLIMIT+" products are added to the website")+' ('+P.over.length+')</b><div class="help">'+P.over.map(esc).join(", ")+'</div></div>';
+      if(P.noPrice.length) h+='<div class="sy-sec"><b>'+T2("Inka bechne ka daam nahi likha, isliye website pe nahi judenge","No selling price yet, so these will not be added")+' ('+P.noPrice.length+')</b><div class="help">'+P.noPrice.map(esc).join(", ")+'. '+T2("Stock me product ke saamne bechne ka daam likh do, phir apne aap jud jayega.","Enter the selling price next to the product in Stock and it will be added by itself.")+'</div></div>';
+      var rows=P.un.concat(P.keep), opts=prodNames().map(function(x){ return '<option value="'+esc(x)+'">'+T2("Ye app ka product hai: ","This is the app product: ")+esc(x)+'</option>'; }).join("");
+      if(rows.length){
+        h+='<div class="sy-sec"><b>'+(SY.sync?T2("Website ke ye product app me nahi hain","These website products are not in the app"):T2("Chalu karne par website ke ye product Out of stock dikhenge","These website products will show Out of stock"))+' ('+rows.length+')</b><div class="help">'+T2("Ye delete nahi honge. Agar inme se koi app ka hi product hai (bas naam alag hai) to uske saamne app ka product chun do. Website pe ek piece ka stock app ke ek piece se chalta hai.","They will not be deleted. If one of these is really an app product (only the name differs), choose the app product next to it. One piece on the website counts as one piece in the app.")+'</div>'
+          +rows.map(function(d){ var cur=(ST.map&&ST.map[d._id])==="-"?"-":""; return '<div class="sy-row"><label class="fl">'+esc(d.name||d._id)+(d.active===false?' <span class="help">('+T2("chhupa hai","hidden")+')</span>':'')+'</label><select data-symap="'+esc(d._id)+'" data-cur="'+cur+'"><option value="">'+T2("Out of stock dikhao","Show Out of stock")+'</option>'+opts+'<option value="-">'+T2("Ise mat chhedo, jaisa hai waisa rahe","Leave it alone as it is")+'</option></select></div>'; }).join("")
+          +'</div>'; }
+      if(P.linked.length) h+='<div class="sy-sec"><b>'+T2("Website ke ye product app ke product se jude hain","These website products are linked to an app product")+' ('+P.linked.length+')</b><div class="help">'+T2("Inka stock app se chalta hai. Galat juda ho to yahan badal do.","Their stock follows the app. Change it here if a link is wrong.")+'</div>'
+          +P.linked.map(function(x){ return '<div class="sy-row"><label class="fl">'+esc(x.d.name||x.d._id)+(x.d.active===false?' <span class="help">('+T2("chhupa hai","hidden")+')</span>':'')+'</label><select data-symap="'+esc(x.d._id)+'" data-cur="'+esc(x.a)+'"><option value="">'+T2("Koi nahi (Out of stock dikhao)","None (show Out of stock)")+'</option>'+opts+'<option value="-">'+T2("Ise mat chhedo, jaisa hai waisa rahe","Leave it alone as it is")+'</option></select></div>'; }).join("")+'</div>';
+      if(SY.sync&&(rows.length||P.linked.length)) h+='<div class="btnrow"><button class="btn" type="button" id="sy-save">'+T2("Save karo","Save")+'</button></div>';
+      if(P.gone.length) h+='<div class="sy-sec"><b>'+T2("Website se hataye gaye, dobara nahi judte","Removed from the website, not added again")+' ('+P.gone.length+')</b>'+P.gone.map(function(nm){ return '<div class="sy-row"><span>'+esc(nm)+'</span><button class="btn ghost sm" type="button" data-syback="'+esc(key(nm))+'">'+T2("Wapas jodo","Add again")+'</button></div>'; }).join("")+'</div>';
+    }
+    if(h===syHtml) return; syHtml=h;
+    var keep={}; b.querySelectorAll("[data-symap]").forEach(function(s){ if(s.value!==s.dataset.cur) keep[s.dataset.symap]=s.value; });
+    b.innerHTML=h; b.querySelectorAll("[data-symap]").forEach(function(s){ var v=keep[s.dataset.symap]!=null?keep[s.dataset.symap]:s.dataset.cur; s.value=v; if(s.value!==v) s.value=s.dataset.cur; });
+  }
+  document.addEventListener("click",function(e){ var t=e.target; if(!t||!db||!t.closest||!t.closest("#sync-card")||isStaff()) return;
+    function bad(){ toast(T2("Save nahi hua, dobara try karo.","Not saved, try again.")); }
+    if(t.id==="sy-tog"){ if(t.disabled) return;
+      if(!SY.sync){ syDeny=false; syWait=0;
+        stSave({on:true,since:ST.since||new Date().toISOString(),map:syMapRead()}).catch(bad);
+        sySave(Object.assign({},SY,{sync:true}),{sync:true}).then(function(){ audLog("edit","store",{txt:"Website pe product aur stock apne aap: chalu kiya"}); },bad); }
+      else { sySave(Object.assign({},SY,{sync:false}),{sync:false}).then(function(){ audLog("edit","store",{txt:"Website pe product aur stock apne aap: band kiya"}); },bad);
+        toast(T2("Band ho gaya. Website ka purana stock wapas aa raha hai.","Turned off. The earlier website stock is being put back.")); }
+      renderStore(); renderSync(); syKick(300); return; }
+    if(t.id==="sy-save"){ stSave(Object.assign({},ST,{map:syMapRead()})).then(function(){ toast(T2("Save ho gaya.","Saved.")); },bad); syHtml=null; renderSync(); syKick(300); return; }
+    if(t.dataset.syback){ var pu=Object.assign({},SY.pushed||{}), ch={}; pu[t.dataset.syback]=""; ch[t.dataset.syback]=""; sySave(Object.assign({},SY,{pushed:pu}),{pushed:ch}).catch(bad); renderSync(); syKick(300); }
+  });
+  function role28(x,left){
+    if(!x.top||isStaff()) return;
+    left.appendChild(card27("sync-card",T2("App ke product website pe","App products on the website"),T2("apne aap","automatic"))); renderSync();
+    var MC={includeMetadataChanges:true}; // iske bina server ki "sab barabar hai" wali khabar nahi aati aur *Got kabhi true nahi hota
+    try{ x.top("store_products").onSnapshot(MC,function(sn){ var cache=!!(sn.metadata&&sn.metadata.fromCache); if(cache&&!spGot) return; SP=sn.docs.map(function(d){ var o=Object.assign({},d.data()); o._id=d.id; return o; }); if(!cache){ spGot=true; spErr=false; } renderSync(); renderStore(); soRun(); if(!cache) syKick(); },function(){ spErr=true; renderSync(); soRun(); }); }catch(e){ spErr=true; }
+    try{ db.doc("settings/storesync").onSnapshot(MC,function(sn){ var cache=!!(sn&&sn.metadata&&sn.metadata.fromCache); if(sn&&sn.exists){ var d=sn.data()||{}; SY={sync:!!d.sync,pushed:d.pushed||{}}; } if(!cache) syGot=true; syHtml=null; renderStore(); renderSync(); syKick(); },function(){}); }catch(e){}
+    setInterval(function(){ if(!syBusy&&!syTimer) syKick(); },15000);
   }
   // ---------- bhasha / language ----------
   var LANG=window.aspLang==="en"?"en":"hi";
@@ -5393,7 +5541,7 @@ var qrcode = function() {
   })();
 
   // ---------- boot ----------
-  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 27 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
+  function diag(){ var k=dead?"connection toota, page reload karo":(!db?"jud raha hai":(Object.keys(got).length<COLS.length?"load ho raha hai":"online ✓")); $("k-diag").textContent="Version 28 · Khata: "+k+" · Download: "+(dl?"chalu ✓":"is jagah band (copy se milega)")+(window.__aspErr?" · Error: "+window.__aspErr:""); }
   buildForm(); renderAll(); diag();
   var use=window.claude&&window.claude.use;
   if(!use){ status("Online khata yahan nahi chal raha. Is page ko Claude mein sign in karke kholo."); return; }
